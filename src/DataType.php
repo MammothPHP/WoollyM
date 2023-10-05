@@ -10,11 +10,11 @@ declare(strict_types=1);
 
 namespace Archon;
 
-class DataType
+enum DataType
 {
-    public const NUMERIC    = 0x001;
-    public const INTEGER    = 0x010;
-    public const DATETIME   = 0x011;
-    public const CURRENCY   = 0x100;
-    public const ACCOUNTING = 0x101;
+    case NUMERIC;
+    case INTEGER;
+    case DATETIME;
+    case CURRENCY;
+    case ACCOUNTING;
 }
