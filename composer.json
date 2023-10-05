@@ -13,8 +13,8 @@
     "phpoffice/phpspreadsheet": "^1.29"
   },
   "require-dev": {
-    "phpunit/phpunit": "^10.3",
-    "laravel/pint": "^1.13"
+    "laravel/pint": "^1.13",
+    "pestphp/pest": "^2.20"
   },
   "autoload": {
     "psr-4": { "Archon\\": "src/"}
@@ -23,7 +23,12 @@
     "psr-4": { "Archon\\Tests\\": "tests/" }
   },
   "scripts": {
-    "test": "phpunit --display-deprecations",
+    "test": "pest",
     "pintify": "pint"
+  },
+  "config": {
+    "allow-plugins": {
+      "pestphp/pest-plugin": true
+    }
   }
 }

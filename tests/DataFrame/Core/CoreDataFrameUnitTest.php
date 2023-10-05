@@ -1,434 +1,370 @@
 <?php
 
 declare(strict_types=1);
-
-namespace Archon\Tests\DataFrame\Core;
-
 use Archon\DataFrame;
-use PHPUnit\Framework\TestCase;
 
-class CoreDataFrameUnitTest extends TestCase
-{
-    /** @var DataFrame */
-    private $df;
-
-    private $input = [
+beforeEach(function (): void {
+    $this->input = $input = [
         ['a' => 1, 'b' => 2, 'c' => 3],
         ['a' => 4, 'b' => 5, 'c' => 6],
         ['a' => 7, 'b' => 8, 'c' => 9],
     ];
 
-    protected function setUp(): void
-    {
-        $this->df = DataFrame::fromArray($this->input);
+    $this->df = DataFrame::fromArray($this->input);
+});
+test('from array', function (): void {
+    expect($this->df->toArray())->toEqual($this->input);
+});
+test('columns', function (): void {
+    expect($this->df->columns())->toEqual(['a', 'b', 'c']);
+});
+test('remove column', function (): void {
+    $df = $this->df;
+
+    $df->removeColumn('a');
+    $expected = [
+        ['b' => 2, 'c' => 3],
+        ['b' => 5, 'c' => 6],
+        ['b' => 8, 'c' => 9],
+    ];
+
+    expect($df->toArray())->toEqual($expected);
+});
+test('for each', function (): void {
+    foreach ($this->df as $i => $row) {
+        expect($this->input[$i])->toEqual($row);
     }
+});
+test('offset get', function (): void {
+    $a = $this->df['a'];
+    $b = $this->df['b'];
 
-    public function testFromArray(): void
-    {
-        $this->assertEquals($this->input, $this->df->toArray());
-    }
+    expect($a->toArray())->toEqual([['a' => 1], ['a' => 4], ['a' => 7]]);
+    expect($b->toArray())->toEqual([['b' => 2], ['b' => 5], ['b' => 8]]);
+});
+test('offset set value', function (): void {
+    $df = $this->df;
+    $df['a'] = 321;
 
-    public function testColumns(): void
-    {
-        $this->assertEquals(['a', 'b', 'c'], $this->df->columns());
-    }
+    $expected = [
+        ['a' => 321, 'b' => 2, 'c' => 3],
+        ['a' => 321, 'b' => 5, 'c' => 6],
+        ['a' => 321, 'b' => 8, 'c' => 9],
+    ];
 
-    public function testRemoveColumn(): void
-    {
-        $df = $this->df;
+    expect($df->toArray())->toEqual($expected);
+});
+test('offset set closure', function (): void {
+    $df = $this->df;
 
-        $df->removeColumn('a');
-        $expected = [
-            ['b' => 2, 'c' => 3],
-            ['b' => 5, 'c' => 6],
-            ['b' => 8, 'c' => 9],
-        ];
-
-        $this->assertEquals($expected, $df->toArray());
-    }
-
-    public function testForEach(): void
-    {
-        foreach ($this->df as $i => $row) {
-            $this->assertEquals($row, $this->input[$i]);
-        }
-    }
-
-    public function testOffsetGet(): void
-    {
-        $a = $this->df['a'];
-        $b = $this->df['b'];
-
-        $this->assertEquals([['a' => 1], ['a' => 4], ['a' => 7]], $a->toArray());
-        $this->assertEquals([['b' => 2], ['b' => 5], ['b' => 8]], $b->toArray());
-    }
-
-    public function testOffsetSetValue(): void
-    {
-        $df = $this->df;
-        $df['a'] = 321;
-
-        $expected = [
-            ['a' => 321, 'b' => 2, 'c' => 3],
-            ['a' => 321, 'b' => 5, 'c' => 6],
-            ['a' => 321, 'b' => 8, 'c' => 9],
-        ];
-
-        $this->assertEquals($expected, $df->toArray());
-    }
-
-    public function testOffsetSetClosure(): void
-    {
-        $df = $this->df;
-
-        $add = static function ($x) {
-            return static function ($y) use ($x) {
-                return $x + $y;
-            };
+    $add = static function ($x) {
+        return static function ($y) use ($x) {
+            return $x + $y;
         };
+    };
 
-        $df['a'] = $add(10);
-        $df['b'] = $add(20);
-        $df['c'] = $add(30);
+    $df['a'] = $add(10);
+    $df['b'] = $add(20);
+    $df['c'] = $add(30);
 
-        $expected = [
-            ['a' => 11, 'b' => 22, 'c' => 33],
-            ['a' => 14, 'b' => 25, 'c' => 36],
-            ['a' => 17, 'b' => 28, 'c' => 39],
-        ];
+    $expected = [
+        ['a' => 11, 'b' => 22, 'c' => 33],
+        ['a' => 14, 'b' => 25, 'c' => 36],
+        ['a' => 17, 'b' => 28, 'c' => 39],
+    ];
 
-        $this->assertEquals($expected, $df->toArray());
-    }
+    expect($df->toArray())->toEqual($expected);
+});
+test('offset set dataframe', function (): void {
+    $df = $this->df;
 
-    public function testOffsetSetDataframe(): void
-    {
-        $df = $this->df;
+    $df['a'] = $df['b'];
 
-        $df['a'] = $df['b'];
+    $expected = [
+        ['a' => 2, 'b' => 2, 'c' => 3],
+        ['a' => 5, 'b' => 5, 'c' => 6],
+        ['a' => 8, 'b' => 8, 'c' => 9],
+    ];
 
-        $expected = [
-            ['a' => 2, 'b' => 2, 'c' => 3],
-            ['a' => 5, 'b' => 5, 'c' => 6],
-            ['a' => 8, 'b' => 8, 'c' => 9],
-        ];
+    expect($df->toArray())->toEqual($expected);
+});
+test('offset set new column', function (): void {
+    $df = $this->df;
 
-        $this->assertEquals($expected, $df->toArray());
-    }
+    $df['d'] = $df['c']->apply(static function ($el) {
+        return $el + 1;
+    });
 
-    public function testOffsetSetNewColumn(): void
-    {
-        $df = $this->df;
+    $expected = [
+        ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4],
+        ['a' => 4, 'b' => 5, 'c' => 6, 'd' => 7],
+        ['a' => 7, 'b' => 8, 'c' => 9, 'd' => 10],
+    ];
 
-        $df['d'] = $df['c']->apply(static function ($el) {
-            return $el + 1;
-        });
+    expect($df->toArray())->toEqual($expected);
+});
+test('apply data frame', function (): void {
+    $df = $this->df;
 
-        $expected = [
-            ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4],
-            ['a' => 4, 'b' => 5, 'c' => 6, 'd' => 7],
-            ['a' => 7, 'b' => 8, 'c' => 9, 'd' => 10],
-        ];
+    $df->apply(static function ($row) {
+        $row['b'] = $row['a'] + 2;
+        $row['c'] = $row['b'] + 2;
+        return $row;
+    });
 
-        $this->assertEquals($expected, $df->toArray());
-    }
+    $expected = [
+        ['a' => 1, 'b' => 3, 'c' => 5],
+        ['a' => 4, 'b' => 6, 'c' => 8],
+        ['a' => 7, 'b' => 9, 'c' => 11],
+    ];
 
-    public function testApplyDataFrame(): void
-    {
-        $df = $this->df;
+    expect($df->toArray())->toEqual($expected);
+});
+test('isset', function (): void {
+    expect(isset($this->df['a']))->toBeTrue();
+    expect(isset($this->df['foo']))->toBeFalse();
+});
+test('apply index map values', function (): void {
+    $df = $this->df;
 
-        $df->apply(static function ($row) {
-            $row['b'] = $row['a'] + 2;
-            $row['c'] = $row['b'] + 2;
+    $df->applyIndexMap([
+        0 => 0,
+        2 => 0,
+    ], 'a');
+
+    expect($df->toArray())->toEqual([
+        ['a' => 0, 'b' => 2, 'c' => 3],
+        ['a' => 4, 'b' => 5, 'c' => 6],
+        ['a' => 0, 'b' => 8, 'c' => 9],
+    ]);
+});
+test('apply index map function', function (): void {
+    $df = $this->df;
+
+    $df->applyIndexMap([
+        0 => static function ($row) {
+            $row['a'] = 10;
             return $row;
-        });
+        },
+        2 => static function ($row) {
+            $row['c'] = 20;
+            return $row;
+        },
+    ]);
 
-        $expected = [
-            ['a' => 1, 'b' => 3, 'c' => 5],
-            ['a' => 4, 'b' => 6, 'c' => 8],
-            ['a' => 7, 'b' => 9, 'c' => 11],
-        ];
+    expect($df->toArray())->toEqual([
+        ['a' => 10, 'b' => 2, 'c' => 3],
+        ['a' => 4, 'b' => 5, 'c' => 6],
+        ['a' => 7, 'b' => 8, 'c' => 20],
+    ]);
+});
+test('apply index map value function', function (): void {
+    $df = $this->df;
 
-        $this->assertEquals($expected, $df->toArray());
-    }
+    $my_function = static function ($value) {
+        if ($value < 4) {
+            return 0;
+        } elseif ($value > 4) {
+            return 1;
+        } else {
+            return $value;
+        }
+    };
 
-    public function testIsset(): void
-    {
-        $this->assertTrue(isset($this->df['a']));
-        $this->assertFalse(isset($this->df['foo']));
-    }
+    $df->applyIndexMap([
+        0 => $my_function,
+        2 => $my_function,
+    ], 'a');
 
-    public function testApplyIndexMapValues(): void
-    {
-        $df = $this->df;
+    expect($df->toArray())->toEqual([
+        ['a' => 0, 'b' => 2, 'c' => 3],
+        ['a' => 4, 'b' => 5, 'c' => 6],
+        ['a' => 1, 'b' => 8, 'c' => 9],
+    ]);
+});
+test('apply index map array', function (): void {
+    $df = $this->df;
 
-        $df->applyIndexMap([
-            0 => 0,
-            2 => 0,
-        ], 'a');
+    $df->applyIndexMap([
+        1 => ['a' => 301, 'b' => 404, 'c' => 500],
+    ]);
 
-        $this->assertEquals([
-            ['a' => 0, 'b' => 2, 'c' => 3],
-            ['a' => 4, 'b' => 5, 'c' => 6],
-            ['a' => 0, 'b' => 8, 'c' => 9],
-        ], $df->toArray());
-    }
+    expect($df->toArray())->toEqual([
+        ['a' => 1, 'b' => 2, 'c' => 3],
+        ['a' => 301, 'b' => 404, 'c' => 500],
+        ['a' => 7, 'b' => 8, 'c' => 9],
+    ]);
+});
+test('filter', function (): void {
+    $df = $this->df;
 
-    public function testApplyIndexMapFunction(): void
-    {
-        $df = $this->df;
+    $df = $df->array_filter(static function ($row) {
+        return $row['a'] > 4 || $row['a'] < 4;
+    });
 
-        $df->applyIndexMap([
-            0 => static function ($row) {
-                $row['a'] = 10;
-                return $row;
-            },
-            2 => static function ($row) {
-                $row['c'] = 20;
-                return $row;
-            },
-        ]);
+    expect($df->toArray())->toEqual([
+        ['a' => 1, 'b' => 2, 'c' => 3],
+        ['a' => 7, 'b' => 8, 'c' => 9],
+    ]);
+});
+test('offset set value array', function (): void {
+    $df = $this->df;
 
-        $this->assertEquals([
-            ['a' => 10, 'b' => 2, 'c' => 3],
-            ['a' => 4, 'b' => 5, 'c' => 6],
-            ['a' => 7, 'b' => 8, 'c' => 20],
-        ], $df->toArray());
-    }
+    $df[] = ['a' => 10, 'b' => 11, 'c' => 12];
 
-    public function testApplyIndexMapValueFunction(): void
-    {
-        $df = $this->df;
+    expect($df->toArray())->toEqual([
+        ['a' => 1, 'b' => 2, 'c' => 3],
+        ['a' => 4, 'b' => 5, 'c' => 6],
+        ['a' => 7, 'b' => 8, 'c' => 9],
+        ['a' => 10, 'b' => 11, 'c' => 12],
+    ]);
+});
+test('append', function (): void {
+    $df1 = $this->df;
+    $df2 = $this->df;
 
-        $my_function = static function ($value) {
-            if ($value < 4) {
-                return 0;
-            } elseif ($value > 4) {
-                return 1;
-            } else {
-                return $value;
-            }
-        };
+    // Test that appending an array with less than count of 1 will simply return the original DataFrame
+    expect($df1->append(DataFrame::fromArray([])))->toBe($df1);
 
-        $df->applyIndexMap([
-            0 => $my_function,
-            2 => $my_function,
-        ], 'a');
+    $df1->append($df2);
 
-        $this->assertEquals([
-            ['a' => 0, 'b' => 2, 'c' => 3],
-            ['a' => 4, 'b' => 5, 'c' => 6],
-            ['a' => 1, 'b' => 8, 'c' => 9],
-        ], $df->toArray());
-    }
+    expect($df1->toArray())->toEqual([
+        ['a' => 1, 'b' => 2, 'c' => 3],
+        ['a' => 4, 'b' => 5, 'c' => 6],
+        ['a' => 7, 'b' => 8, 'c' => 9],
+        ['a' => 1, 'b' => 2, 'c' => 3],
+        ['a' => 4, 'b' => 5, 'c' => 6],
+        ['a' => 7, 'b' => 8, 'c' => 9],
+    ]);
+});
+test('preg replace', function (): void {
+    $df1 = $this->df;
 
-    public function testApplyIndexMapArray(): void
-    {
-        $df = $this->df;
+    $df1->preg_replace('/[1-5]/', 'foo');
 
-        $df->applyIndexMap([
-            1 => ['a' => 301, 'b' => 404, 'c' => 500],
-        ]);
+    expect($df1->toArray())->toEqual([
+        ['a' => 'foo', 'b' => 'foo', 'c' => 'foo'],
+        ['a' => 'foo', 'b' => 'foo', 'c' => 6],
+        ['a' => 7, 'b' => 8, 'c' => 9],
+    ]);
+});
+test('group by', function (): void {
+    $df = DataFrame::fromArray([
+        ['a' => 1, 'b' => 2, 'c' => 3],
+        ['a' => 1, 'b' => 3, 'c' => 4],
+        ['a' => 2, 'b' => 4, 'c' => 5],
+        ['a' => 2, 'b' => 4, 'c' => 6],
+        ['a' => 3, 'b' => 5, 'c' => 7],
+        ['a' => 3, 'b' => 5, 'c' => 8],
+    ]);
 
-        $this->assertEquals([
-            ['a' => 1, 'b' => 2, 'c' => 3],
-            ['a' => 301, 'b' => 404, 'c' => 500],
-            ['a' => 7, 'b' => 8, 'c' => 9],
-        ], $df->toArray());
-    }
+    expect($df->unique('a')->toArray())->toBe([
+        ['a' => 1],
+        ['a' => 2],
+        ['a' => 3],
+    ]);
 
-    public function testFilter(): void
-    {
-        $df = $this->df;
+    expect($df->unique(['a', 'b'])->toArray())->toBe([
+        ['a' => 1, 'b' => 2],
+        ['a' => 1, 'b' => 3],
+        ['a' => 2, 'b' => 4],
+        ['a' => 3, 'b' => 5],
+    ]);
 
-        $df = $df->array_filter(static function ($row) {
-            return $row['a'] > 4 || $row['a'] < 4;
-        });
+    expect($df->unique(['a', 'b', 'c'])->toArray())->toBe([
+        ['a' => 1, 'b' => 2, 'c' => 3],
+        ['a' => 1, 'b' => 3, 'c' => 4],
+        ['a' => 2, 'b' => 4, 'c' => 5],
+        ['a' => 2, 'b' => 4, 'c' => 6],
+        ['a' => 3, 'b' => 5, 'c' => 7],
+        ['a' => 3, 'b' => 5, 'c' => 8],
+    ]);
+});
+test('rename', function (): void {
+    $df = $this->df;
 
-        $this->assertEquals([
-            ['a' => 1, 'b' => 2, 'c' => 3],
-            ['a' => 7, 'b' => 8, 'c' => 9],
-        ], $df->toArray());
-    }
+    $df->renameColumn('a', 'foo');
 
-    public function testOffsetSetValueArray(): void
-    {
-        $df = $this->df;
+    expect($df->toArray())->toBe([
+        ['foo' => 1, 'b' => 2, 'c' => 3],
+        ['foo' => 4, 'b' => 5, 'c' => 6],
+        ['foo' => 7, 'b' => 8, 'c' => 9],
+    ]);
+});
+test('sort values', function (): void {
+    // Single column
+    $unordered_df = DataFrame::fromArray([
+        ['a' => 1, 'x' => 'a'],
+        ['a' => 3, 'x' => 'b'],
+        ['a' => 2, 'x' => 'c'],
+        ['a' => 4, 'x' => 'd'],
+    ]);
 
-        $df[] = ['a' => 10, 'b' => 11, 'c' => 12];
+    $ordered_df = DataFrame::fromArray([
+        ['a' => 1, 'x' => 'a'],
+        ['a' => 2, 'x' => 'c'],
+        ['a' => 3, 'x' => 'b'],
+        ['a' => 4, 'x' => 'd'],
+    ]);
 
-        $this->assertEquals([
-            ['a' => 1, 'b' => 2, 'c' => 3],
-            ['a' => 4, 'b' => 5, 'c' => 6],
-            ['a' => 7, 'b' => 8, 'c' => 9],
-            ['a' => 10, 'b' => 11, 'c' => 12],
-        ], $df->toArray());
-    }
+    $unordered_df->sortValues('a');
 
-    public function testAppend(): void
-    {
-        $df1 = $this->df;
-        $df2 = $this->df;
+    expect($ordered_df->toArray())->toBe($unordered_df->toArray());
 
-        // Test that appending an array with less than count of 1 will simply return the original DataFrame
-        $this->assertSame(
-            $df1,
-            $df1->append(DataFrame::fromArray([]))
-        );
+    // Single column descending
+    $unordered_df = DataFrame::fromArray([
+        ['a' => 1, 'x' => 'a'],
+        ['a' => 3, 'x' => 'b'],
+        ['a' => 2, 'x' => 'c'],
+        ['a' => 4, 'x' => 'd'],
+    ]);
 
-        $df1->append($df2);
+    $ordered_df = DataFrame::fromArray([
+        ['a' => 4, 'x' => 'd'],
+        ['a' => 3, 'x' => 'b'],
+        ['a' => 2, 'x' => 'c'],
+        ['a' => 1, 'x' => 'a'],
+    ]);
 
-        $this->assertEquals([
-            ['a' => 1, 'b' => 2, 'c' => 3],
-            ['a' => 4, 'b' => 5, 'c' => 6],
-            ['a' => 7, 'b' => 8, 'c' => 9],
-            ['a' => 1, 'b' => 2, 'c' => 3],
-            ['a' => 4, 'b' => 5, 'c' => 6],
-            ['a' => 7, 'b' => 8, 'c' => 9],
-        ], $df1->toArray());
-    }
+    $unordered_df->sortValues(by: 'a', ascending: false);
 
-    public function testPregReplace(): void
-    {
-        $df1 = $this->df;
+    expect($unordered_df->toArray())->toBe($ordered_df->toArray());
 
-        $df1->preg_replace('/[1-5]/', 'foo');
+    // Double column, first a than x
+    $unordered_df = DataFrame::fromArray([
+        ['a' => 1, 'b' => 5, 'x' => 'a'],
+        ['a' => 2, 'b' => 3, 'x' => 'd'],
+        ['a' => 2, 'b' => 2, 'x' => 'c'],
+        ['a' => 4, 'b' => 1, 'x' => 'b'],
+    ]);
 
-        $this->assertEquals([
-            ['a' => 'foo', 'b' => 'foo', 'c' => 'foo'],
-            ['a' => 'foo', 'b' => 'foo', 'c' => 6],
-            ['a' => 7, 'b' => 8, 'c' => 9],
-        ], $df1->toArray());
-    }
+    $ordered_df = DataFrame::fromArray([
+        ['a' => 1, 'b' => 5, 'x' => 'a'],
+        ['a' => 2, 'b' => 2, 'x' => 'c'],
+        ['a' => 2, 'b' => 3, 'x' => 'd'],
+        ['a' => 4, 'b' => 1, 'x' => 'b'],
+    ]);
 
-    public function testGroupBy(): void
-    {
-        $df = DataFrame::fromArray([
-            ['a' => 1, 'b' => 2, 'c' => 3],
-            ['a' => 1, 'b' => 3, 'c' => 4],
-            ['a' => 2, 'b' => 4, 'c' => 5],
-            ['a' => 2, 'b' => 4, 'c' => 6],
-            ['a' => 3, 'b' => 5, 'c' => 7],
-            ['a' => 3, 'b' => 5, 'c' => 8],
-        ]);
+    $unordered_df->sortValues(['a', 'x']);
 
-        $this->assertSame([
-            ['a' => 1],
-            ['a' => 2],
-            ['a' => 3],
-        ], $df->unique('a')->toArray());
+    expect($unordered_df->toArray())->toBe($ordered_df->toArray());
 
-        $this->assertSame([
-            ['a' => 1, 'b' => 2],
-            ['a' => 1, 'b' => 3],
-            ['a' => 2, 'b' => 4],
-            ['a' => 3, 'b' => 5],
-        ], $df->unique(['a', 'b'])->toArray());
+    // Double column, first b than a
+    $unordered_df = DataFrame::fromArray([
+        ['a' => 1, 'b' => 5, 'x' => 'a'],
+        ['a' => 2, 'b' => 3, 'x' => 'b'],
+        ['a' => 2, 'b' => 2, 'x' => 'c'],
+        ['a' => 4, 'b' => 5, 'x' => 'd'],
+    ]);
 
-        $this->assertSame([
-            ['a' => 1, 'b' => 2, 'c' => 3],
-            ['a' => 1, 'b' => 3, 'c' => 4],
-            ['a' => 2, 'b' => 4, 'c' => 5],
-            ['a' => 2, 'b' => 4, 'c' => 6],
-            ['a' => 3, 'b' => 5, 'c' => 7],
-            ['a' => 3, 'b' => 5, 'c' => 8],
-        ], $df->unique(['a', 'b', 'c'])->toArray());
-    }
+    $ordered_df = DataFrame::fromArray([
+        ['a' => 2, 'b' => 2, 'x' => 'c'],
+        ['a' => 2, 'b' => 3, 'x' => 'b'],
+        ['a' => 1, 'b' => 5, 'x' => 'a'],
+        ['a' => 4, 'b' => 5, 'x' => 'd'],
+    ]);
 
-    public function testRename(): void
-    {
-        $df = $this->df;
+    $unordered_df->sortValues(['b', 'a']);
 
-        $df->renameColumn('a', 'foo');
-
-        $this->assertSame([
-            ['foo' => 1, 'b' => 2, 'c' => 3],
-            ['foo' => 4, 'b' => 5, 'c' => 6],
-            ['foo' => 7, 'b' => 8, 'c' => 9],
-        ], $df->toArray());
-    }
-
-
-
-    public function testSortValues(): void
-    {
-
-        // Single column
-        $unordered_df = DataFrame::fromArray([
-            ['a' => 1, 'x' => 'a'],
-            ['a' => 3, 'x' => 'b'],
-            ['a' => 2, 'x' => 'c'],
-            ['a' => 4, 'x' => 'd'],
-        ]);
-
-        $ordered_df = DataFrame::fromArray([
-            ['a' => 1, 'x' => 'a'],
-            ['a' => 2, 'x' => 'c'],
-            ['a' => 3, 'x' => 'b'],
-            ['a' => 4, 'x' => 'd'],
-        ]);
-
-        $unordered_df->sortValues('a');
-
-        $this->assertSame($unordered_df->toArray(), $ordered_df->toArray());
-
-
-        // Single column descending
-        $unordered_df = DataFrame::fromArray([
-            ['a' => 1, 'x' => 'a'],
-            ['a' => 3, 'x' => 'b'],
-            ['a' => 2, 'x' => 'c'],
-            ['a' => 4, 'x' => 'd'],
-        ]);
-
-        $ordered_df = DataFrame::fromArray([
-            ['a' => 4, 'x' => 'd'],
-            ['a' => 3, 'x' => 'b'],
-            ['a' => 2, 'x' => 'c'],
-            ['a' => 1, 'x' => 'a'],
-        ]);
-
-        $unordered_df->sortValues(by: 'a', ascending: false);
-
-        $this->assertSame($ordered_df->toArray(), $unordered_df->toArray());
-
-        // Double column, first a than x
-        $unordered_df = DataFrame::fromArray([
-            ['a' => 1, 'b' => 5, 'x' => 'a'],
-            ['a' => 2, 'b' => 3, 'x' => 'd'],
-            ['a' => 2, 'b' => 2, 'x' => 'c'],
-            ['a' => 4, 'b' => 1, 'x' => 'b'],
-        ]);
-
-        $ordered_df = DataFrame::fromArray([
-            ['a' => 1, 'b' => 5, 'x' => 'a'],
-            ['a' => 2, 'b' => 2, 'x' => 'c'],
-            ['a' => 2, 'b' => 3, 'x' => 'd'],
-            ['a' => 4, 'b' => 1, 'x' => 'b'],
-        ]);
-
-        $unordered_df->sortValues(['a', 'x']);
-
-        $this->assertSame($ordered_df->toArray(), $unordered_df->toArray());
-
-
-        // Double column, first b than a
-        $unordered_df = DataFrame::fromArray([
-            ['a' => 1, 'b' => 5, 'x' => 'a'],
-            ['a' => 2, 'b' => 3, 'x' => 'b'],
-            ['a' => 2, 'b' => 2, 'x' => 'c'],
-            ['a' => 4, 'b' => 5, 'x' => 'd'],
-        ]);
-
-        $ordered_df = DataFrame::fromArray([
-            ['a' => 2, 'b' => 2, 'x' => 'c'],
-            ['a' => 2, 'b' => 3, 'x' => 'b'],
-            ['a' => 1, 'b' => 5, 'x' => 'a'],
-            ['a' => 4, 'b' => 5, 'x' => 'd'],
-        ]);
-
-        $unordered_df->sortValues(['b', 'a']);
-
-        $this->assertSame($ordered_df->toArray(), $unordered_df->toArray());
-    }
-
-}
+    expect($unordered_df->toArray())->toBe($ordered_df->toArray());
+});
