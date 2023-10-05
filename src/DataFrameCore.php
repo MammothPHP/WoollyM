@@ -7,14 +7,14 @@ declare(strict_types=1);
  * @package   DataFrame
  * @author    Howard Gehring <hwgehring@gmail.com>
  * @copyright 2015 Howard Gehring <hwgehring@gmail.com>
- * @license   https://github.com/HWGehring/Archon/blob/master/LICENSE BSD-3-Clause
- * @link      https://github.com/HWGehring/Archon
+ * @license   https://github.com/HWGehring/CondorcetPHP\Oliphant/blob/master/LICENSE BSD-3-Clause
+ * @link      https://github.com/HWGehring/CondorcetPHP\Oliphant
  * @since     0.1.0
  */
 
-namespace Archon;
+namespace CondorcetPHP\Oliphant;
 
-use Archon\Exceptions\{DataFrameException, InvalidColumnException};
+use CondorcetPHP\Oliphant\Exceptions\{DataFrameException, InvalidColumnException};
 use Closure;
 use Countable;
 use DateTime;
@@ -26,11 +26,11 @@ use RuntimeException;
 
 /**
  * The DataFrameCore class acts as the implementation for the various data manipulation features of the DataFrame class.
- * @package   Archon
+ * @package   CondorcetPHP\Oliphant
  * @author    Howard Gehring <hwgehring@gmail.com>
  * @copyright 2015 Howard Gehring <hwgehring@gmail.com>
- * @license   https://github.com/HWGehring/Archon/blob/master/LICENSE BSD-3-Clause
- * @link      https://github.com/HWGehring/Archon
+ * @license   https://github.com/HWGehring/CondorcetPHP\Oliphant/blob/master/LICENSE BSD-3-Clause
+ * @link      https://github.com/HWGehring/CondorcetPHP\Oliphant
  * @since     0.1.0
  */
 abstract class DataFrameCore implements ArrayAccess, Countable, Iterator

@@ -7,14 +7,14 @@ declare(strict_types=1);
  * @package   DataFrame
  * @author    Howard Gehring <hwgehring@gmail.com>
  * @copyright 2015 Howard Gehring <hwgehring@gmail.com>
- * @license   https://github.com/HWGehring/Archon/blob/master/LICENSE BSD-3-Clause
- * @link      https://github.com/HWGehring/Archon
+ * @license   https://github.com/HWGehring/CondorcetPHP\Oliphant/blob/master/LICENSE BSD-3-Clause
+ * @link      https://github.com/HWGehring/CondorcetPHP\Oliphant
  * @since     0.2.0
  */
 
-namespace Archon\IO;
+namespace CondorcetPHP\Oliphant\IO;
 
-use Archon\Exceptions\InvalidColumnException;
+use CondorcetPHP\Oliphant\Exceptions\InvalidColumnException;
 use PDO;
 use PDOException;
 use RecursiveArrayIterator;
@@ -23,11 +23,11 @@ use RuntimeException;
 
 /**
  * The SQL class contains implementation details for reading and writing data to and from relational databases.
- * @package   Archon\IO
+ * @package   CondorcetPHP\Oliphant\IO
  * @author    Howard Gehring <hwgehring@gmail.com>
  * @copyright 2015 Howard Gehring <hwgehring@gmail.com>
- * @license   https://github.com/HWGehring/Archon/blob/master/LICENSE BSD-3-Clause
- * @link      https://github.com/HWGehring/Archon
+ * @license   https://github.com/HWGehring/CondorcetPHP\Oliphant/blob/master/LICENSE BSD-3-Clause
+ * @link      https://github.com/HWGehring/CondorcetPHP\Oliphant
  * @since     0.2.0
  */
 final class SQL

@@ -1,7 +1,7 @@
 <?php
 
 declare(strict_types=1);
-use Archon\DataFrame;
+use CondorcetPHP\Oliphant\DataFrame;
 
 test('to s q l', function (): void {
     $df = DataFrame::fromArray([

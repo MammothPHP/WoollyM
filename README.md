@@ -27,10 +27,6 @@ composer require archon/dataframe
  - PHP 7.1 or higher
  - php_pdo_sqlite extension
  - php_mbstring extension
- 
-### Dependencies
- - [PHPOffice/PHPExcel](https://github.com/PHPOffice/PHPExcel): 1.8.1
- - [gajus/dindent](https://github.com/gajus/dindent): 2.0.2
 
 ### License
  - [BSD-3-Clause](http://opensource.org/licenses/BSD-3-Clause)

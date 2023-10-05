@@ -1,7 +1,7 @@
 <?php
 
 declare(strict_types=1);
-use Archon\DataFrame;
+use CondorcetPHP\Oliphant\DataFrame;
 
 test('rollback', function (): void {
     // This test is tricky. We want to assert that a failed commit will roll back the database.

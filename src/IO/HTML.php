@@ -7,23 +7,23 @@ declare(strict_types=1);
  * @package   DataFrame
  * @author    Howard Gehring <hwgehring@gmail.com>
  * @copyright 2015 Howard Gehring <hwgehring@gmail.com>
- * @license   https://github.com/HWGehring/Archon/blob/master/LICENSE BSD-3-Clause
- * @link      https://github.com/HWGehring/Archon
+ * @license   https://github.com/HWGehring/CondorcetPHP\Oliphant/blob/master/LICENSE BSD-3-Clause
+ * @link      https://github.com/HWGehring/CondorcetPHP\Oliphant
  * @since     0.1.0
  */
 
-namespace Archon\IO;
+namespace CondorcetPHP\Oliphant\IO;
 
-use Archon\Exceptions\NotYetImplementedException;
+use CondorcetPHP\Oliphant\Exceptions\NotYetImplementedException;
 use Gajus\Dindent\Indenter;
 
 /**
  * The HTML class contains implementation details for transforming two-dimensional arrays into HTML tables.
- * @package   Archon\IO
+ * @package   CondorcetPHP\Oliphant\IO
  * @author    Howard Gehring <hwgehring@gmail.com>
  * @copyright 2015 Howard Gehring <hwgehring@gmail.com>
- * @license   https://github.com/HWGehring/Archon/blob/master/LICENSE BSD-3-Clause
- * @link      https://github.com/HWGehring/Archon
+ * @license   https://github.com/HWGehring/CondorcetPHP\Oliphant/blob/master/LICENSE BSD-3-Clause
+ * @link      https://github.com/HWGehring/CondorcetPHP\Oliphant
  * @since     0.1.0
  */
 final class HTML
@@ -55,7 +55,7 @@ final class HTML
      * @param  array $options
      * @return string
      * @throws NotYetImplementedException
-     * @throws \Archon\Exceptions\UnknownOptionException
+     * @throws \CondorcetPHP\Oliphant\Exceptions\UnknownOptionException
      * @since  0.1.0
      */
     public function assembleTable(array $options): string

@@ -1,7 +1,7 @@
 <?php
 
 declare(strict_types=1);
-use Archon\{DataFrame, DataType};
+use CondorcetPHP\Oliphant\{DataFrame, DataType};
 
 test('convert numeric integer', function (): void {
     $df = DataFrame::fromArray([

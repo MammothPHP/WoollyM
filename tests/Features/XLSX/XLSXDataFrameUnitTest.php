@@ -1,7 +1,7 @@
 <?php
 
 declare(strict_types=1);
-use Archon\DataFrame;
+use CondorcetPHP\Oliphant\DataFrame;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 

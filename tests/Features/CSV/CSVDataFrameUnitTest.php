@@ -1,7 +1,7 @@
 <?php
 
 declare(strict_types=1);
-use Archon\DataFrame;
+use CondorcetPHP\Oliphant\DataFrame;
 
 test('from c s v', function (): void {
     $fileName = __DIR__.\DIRECTORY_SEPARATOR.'TestFiles'.\DIRECTORY_SEPARATOR.'testCSV.csv';

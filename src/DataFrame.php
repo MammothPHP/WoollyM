@@ -7,14 +7,14 @@ declare(strict_types=1);
  * @package   DataFrame
  * @author    Howard Gehring <hwgehring@gmail.com>
  * @copyright 2015 Howard Gehring <hwgehring@gmail.com>
- * @license   https://github.com/HWGehring/Archon/blob/master/LICENSE BSD-3-Clause
- * @link      https://github.com/HWGehring/Archon
+ * @license   https://github.com/HWGehring/CondorcetPHP\Oliphant/blob/master/LICENSE BSD-3-Clause
+ * @link      https://github.com/HWGehring/CondorcetPHP\Oliphant
  * @since     0.1.0
  */
 
-namespace Archon;
+namespace CondorcetPHP\Oliphant;
 
-use Archon\IO\{CSV, FWF, HTML, JSON, SQL, XLSX};
+use CondorcetPHP\Oliphant\IO\{CSV, FWF, HTML, JSON, SQL, XLSX};
 use PDO;
 use PHPExcel;
 use PHPExcel_Worksheet;
@@ -24,11 +24,11 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 /**
  * The DataFrame class acts as an interface to various underlying data structure, file format, and database
  * implementations.
- * @package   Archon
+ * @package   CondorcetPHP\Oliphant
  * @author    Howard Gehring <hwgehring@gmail.com>
  * @copyright 2015 Howard Gehring <hwgehring@gmail.com>
- * @license   https://github.com/HWGehring/Archon/blob/master/LICENSE BSD-3-Clause
- * @link      https://github.com/HWGehring/Archon
+ * @license   https://github.com/HWGehring/CondorcetPHP\Oliphant/blob/master/LICENSE BSD-3-Clause
+ * @link      https://github.com/HWGehring/CondorcetPHP\Oliphant
  * @since     0.1.0
  */
 final class DataFrame extends DataFrameCore
@@ -58,7 +58,7 @@ final class DataFrame extends DataFrameCore
      * @param  $fileName
      * @param  array $options
      * @return $this
-     * @throws \Archon\Exceptions\FileExistsException
+     * @throws \CondorcetPHP\Oliphant\Exceptions\FileExistsException
      * @since  0.1.0
      */
     public function toCSV($fileName, $options = []): self
@@ -172,7 +172,7 @@ final class DataFrame extends DataFrameCore
      * Outputs a DataFrame to an HTML string.
      * @param  array $options
      * @return string
-     * @throws \Archon\Exceptions\NotYetImplementedException
+     * @throws \CondorcetPHP\Oliphant\Exceptions\NotYetImplementedException
      * @since  0.1.0
      */
     public function toHTML($options = []): string

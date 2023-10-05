@@ -7,22 +7,22 @@ declare(strict_types=1);
  * @package   DataFrame
  * @author    Howard Gehring <hwgehring@gmail.com>
  * @copyright 2015 Howard Gehring <hwgehring@gmail.com>
- * @license   https://github.com/HWGehring/Archon/blob/master/LICENSE BSD-3-Clause
- * @link      https://github.com/HWGehring/Archon
+ * @license   https://github.com/HWGehring/CondorcetPHP\Oliphant/blob/master/LICENSE BSD-3-Clause
+ * @link      https://github.com/HWGehring/CondorcetPHP\Oliphant
  * @since     0.4.0
  */
 
-namespace Archon\IO;
+namespace CondorcetPHP\Oliphant\IO;
 
-use Archon\Exceptions\NotYetImplementedException;
+use CondorcetPHP\Oliphant\Exceptions\NotYetImplementedException;
 
 /**
  * The JSON class contains implementation details for encoding and decoding a DataFrame into and from a JSON string.
- * @package   Archon\IO
+ * @package   CondorcetPHP\Oliphant\IO
  * @author    Howard Gehring <hwgehring@gmail.com>
  * @copyright 2015 Howard Gehring <hwgehring@gmail.com>
- * @license   https://github.com/HWGehring/Archon/blob/master/LICENSE BSD-3-Clause
- * @link      https://github.com/HWGehring/Archon
+ * @license   https://github.com/HWGehring/CondorcetPHP\Oliphant/blob/master/LICENSE BSD-3-Clause
+ * @link      https://github.com/HWGehring/CondorcetPHP\Oliphant
  * @since     0.4.0
  */
 final class JSON
@@ -38,7 +38,7 @@ final class JSON
      * @param  array $options
      * @return string
      * @throws NotYetImplementedException
-     * @throws \Archon\Exceptions\UnknownOptionException
+     * @throws \CondorcetPHP\Oliphant\Exceptions\UnknownOptionException
      * @since  0.4.0
      */
     public function encodeJSON(array $data, array $options): string
@@ -58,7 +58,7 @@ final class JSON
      * @param  $jsonString
      * @param  array $options
      * @return mixed
-     * @throws \Archon\Exceptions\UnknownOptionException
+     * @throws \CondorcetPHP\Oliphant\Exceptions\UnknownOptionException
      * @since  0.4.0
      */
     public function decodeJSON($jsonString, array $options)

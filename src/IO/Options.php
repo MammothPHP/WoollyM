@@ -7,22 +7,22 @@ declare(strict_types=1);
  * @package   DataFrame
  * @author    Howard Gehring <hwgehring@gmail.com>
  * @copyright 2015 Howard Gehring <hwgehring@gmail.com>
- * @license   https://github.com/HWGehring/Archon/blob/master/LICENSE BSD-3-Clause
- * @link      https://github.com/HWGehring/Archon
+ * @license   https://github.com/HWGehring/CondorcetPHP\Oliphant/blob/master/LICENSE BSD-3-Clause
+ * @link      https://github.com/HWGehring/CondorcetPHP\Oliphant
  */
 
-namespace Archon\IO;
+namespace CondorcetPHP\Oliphant\IO;
 
-use Archon\Exceptions\UnknownOptionException;
+use CondorcetPHP\Oliphant\Exceptions\UnknownOptionException;
 
 /**
  * Options class provides basic common handling for array options which are passed to various data format
- * implementations in the Archon/IO package.
- * @package   Archon\IO
+ * implementations in the CondorcetPHP\Oliphant/IO package.
+ * @package   CondorcetPHP\Oliphant\IO
  * @author    Howard Gehring <hwgehring@gmail.com>
  * @copyright 2015 Howard Gehring <hwgehring@gmail.com>
- * @license   https://github.com/HWGehring/Archon/blob/master/LICENSE BSD-3-Clause
- * @link      https://github.com/HWGehring/Archon
+ * @license   https://github.com/HWGehring/CondorcetPHP\Oliphant/blob/master/LICENSE BSD-3-Clause
+ * @link      https://github.com/HWGehring/CondorcetPHP\Oliphant
  */
 final class Options
 {

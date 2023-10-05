@@ -8,7 +8,7 @@ declare(strict_types=1);
  * Time: 10:33 PM
  */
 
-namespace Archon;
+namespace CondorcetPHP\Oliphant;
 
 enum DataType
 {

@@ -7,20 +7,20 @@ declare(strict_types=1);
  * @package   DataFrame
  * @author    Howard Gehring <hwgehring@gmail.com>
  * @copyright 2015 Howard Gehring <hwgehring@gmail.com>
- * @license   https://github.com/HWGehring/Archon/blob/master/LICENSE BSD-3-Clause
- * @link      https://github.com/HWGehring/Archon
+ * @license   https://github.com/HWGehring/CondorcetPHP\Oliphant/blob/master/LICENSE BSD-3-Clause
+ * @link      https://github.com/HWGehring/CondorcetPHP\Oliphant
  * @since     0.1.0
  */
 
-namespace Archon\IO;
+namespace CondorcetPHP\Oliphant\IO;
 
 /**
  * The FWF class contains implementation details for reading and writing files in the fixed-width format.
- * @package   Archon\IO
+ * @package   CondorcetPHP\Oliphant\IO
  * @author    Howard Gehring <hwgehring@gmail.com>
  * @copyright 2015 Howard Gehring <hwgehring@gmail.com>
- * @license   https://github.com/HWGehring/Archon/blob/master/LICENSE BSD-3-Clause
- * @link      https://github.com/HWGehring/Archon
+ * @license   https://github.com/HWGehring/CondorcetPHP\Oliphant/blob/master/LICENSE BSD-3-Clause
+ * @link      https://github.com/HWGehring/CondorcetPHP\Oliphant
  * @since     0.1.0
  */
 final class FWF
@@ -42,7 +42,7 @@ final class FWF
      * @param  array $colSpecs Associative array mapping column names to start-end column positions.
      * @param  array $options
      * @return array
-     * @throws \Archon\Exceptions\UnknownOptionException
+     * @throws \CondorcetPHP\Oliphant\Exceptions\UnknownOptionException
      * @since  0.1.0
      */
     public function loadFile(array $colSpecs, array $options = [])

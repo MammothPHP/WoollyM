@@ -17,7 +17,7 @@
     "pestphp/pest": "^2.20"
   },
   "autoload": {
-    "psr-4": { "Archon\\": "src/"}
+    "psr-4": { "CondorcetPHP\\Oliphant\\": "src/"}
   },
   "autoload-dev" : {
     "psr-4": { "Tests\\": "tests/" }
