@@ -20,7 +20,7 @@
     "psr-4": { "Archon\\": "src/"}
   },
   "autoload-dev" : {
-    "psr-4": { "Archon\\Tests\\": "tests/" }
+    "psr-4": { "Tests\\": "tests/" }
   },
   "scripts": {
     "test": "pest",
