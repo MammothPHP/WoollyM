@@ -636,12 +636,14 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
         if (\count($df->columns()) !== 1) {
             $msg = 'Can only set a new column from a DataFrame with a single ';
             $msg .= 'column.';
+
             throw new DataFrameException($msg);
         }
 
         if (\count($df) != \count($this)) {
             $msg = 'Source and target DataFrames must have identical number ';
             $msg .= 'of rows.';
+
             throw new DataFrameException($msg);
         }
 

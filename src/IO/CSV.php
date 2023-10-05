@@ -134,6 +134,7 @@ final class CSV
         }
 
         $fileData = array_values($fileData);
+
         return $fileData;
     }
 

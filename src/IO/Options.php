@@ -45,6 +45,7 @@ final class Options
             // Check if user provided any invalid options.
             if (\array_key_exists($optionName, $defaultOptions) === false) {
                 $unknownOptions[] = $optionName;
+
                 continue;
             } else {
                 // Otherwise override the default value for that option.
@@ -54,6 +55,7 @@ final class Options
 
         if (\count($unknownOptions) > 0) {
             $unknownOptions = implode(', ', $unknownOptions);
+
             throw new UnknownOptionException('Unknown options: ['.$unknownOptions.']');
         }
 

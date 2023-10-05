@@ -77,6 +77,7 @@ class XLSX
                  */
                 if ($i === $colRowOpt) {
                     $columns[$column] = $sheet->getCell($column.$i)->__toString();
+
                     continue;
                 }
 
@@ -125,6 +126,7 @@ class XLSX
 
         $worksheet->fromArray($wsArray, null, 'A1', false);
         $excel->addSheet($worksheet);
+
         return $worksheet;
     }
 }

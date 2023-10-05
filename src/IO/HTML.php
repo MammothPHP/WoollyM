@@ -173,6 +173,7 @@ final class HTML
 
         $datatableID = $fnQuoted('#'.$idOpt);
         $jQueryFunction = $fnDocumentReady('$('.$datatableID.').DataTable('.$datatableOpt.');');
+
         return $fnScript($jQueryFunction);
     }
 
@@ -188,6 +189,7 @@ final class HTML
     {
         return function (array $data) use ($leftTag, $implodeTag, $rightTag) {
             $wrap = $this->fnWrapText($leftTag, $rightTag);
+
             return $wrap(implode($implodeTag, $data));
         };
     }

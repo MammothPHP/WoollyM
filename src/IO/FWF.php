@@ -67,6 +67,7 @@ final class FWF
         }
 
         $fileData = array_values($fileData);
+
         return $fileData;
     }
 
@@ -92,6 +93,7 @@ final class FWF
 
             $result[$colName] = trim(substr($data, $coords[0], $coords[1] - $coords[0]));
         }
+
         return $result;
     }
 }

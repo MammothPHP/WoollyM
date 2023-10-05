@@ -109,6 +109,7 @@ test('apply data frame', function (): void {
     $df->apply(static function ($row) {
         $row['b'] = $row['a'] + 2;
         $row['c'] = $row['b'] + 2;
+
         return $row;
     });
 
@@ -144,10 +145,12 @@ test('apply index map function', function (): void {
     $df->applyIndexMap([
         0 => static function ($row) {
             $row['a'] = 10;
+
             return $row;
         },
         2 => static function ($row) {
             $row['c'] = 20;
+
             return $row;
         },
     ]);

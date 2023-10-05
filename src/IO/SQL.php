@@ -56,6 +56,7 @@ final class SQL
     {
         $pdo = $this->pdo;
         $query = $pdo->query($sqlQuery);
+
         return $query->fetchAll(PDO::FETCH_ASSOC);
     }
 
@@ -91,11 +92,13 @@ final class SQL
         $chunksizeOpt = $options['chunksize'];
 
         $pdo->beginTransaction();
+
         try {
             $data = array_chunk($data, $chunksizeOpt);
             $affected = $this->insertChunkedData($pdo, $tableName, $columns, $data, $options);
         } catch (PDOException $e) {
             $pdo->rollBack();
+
             throw $e;
         }
         $pdo->commit();
@@ -202,6 +205,7 @@ final class SQL
         if (\count($missingColumns) !== 0) {
             $s = \count($missingColumns) > 1 ? 's' : '';
             $missingColumns = '`'.implode('`, `', $missingColumns).'`';
+
             throw new InvalidColumnException("Error: Table {$tableName} does not contain the column{$s}: {$missingColumns}.");
         }
     }
