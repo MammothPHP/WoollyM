@@ -13,6 +13,7 @@ test('to j s o n', function (): void {
     $expected = '[{"a":1,"b":2,"c":3},{"a":4,"b":5,"c":6},{"a":7,"b":8,"c":9}]';
     expect($df->toJSON())->toEqual($expected);
 });
+
 test('from j s o n', function (): void {
     $df = DataFrame::fromJSON('[{"a":1,"b":2,"c":3},{"a":4,"b":5,"c":6},{"a":7,"b":8,"c":9}]');
 
@@ -24,6 +25,7 @@ test('from j s o n', function (): void {
 
     expect($df->toArray())->toEqual($expected);
 });
+
 test('to pretty j s o n', function (): void {
     $df = DataFrame::fromArray([
         ['a' => 1, 'b' => 2, 'c' => 3],

@@ -32,6 +32,7 @@ test('convert numeric integer', function (): void {
         ['numeric' => -3.0,         'integer' => 3456789],
     ]);
 });
+
 test('convert date time', function (): void {
     $df = DataFrame::fromArray([
         ['datetime' => '12/03/1996'],
@@ -67,6 +68,7 @@ test('convert date time', function (): void {
         'datetime' => DataType::DATETIME,
     ], 'Y-m-d', 'Y-m-d');
 });
+
 test('convert currency a c c o u n t i n g', function (): void {
     $df = DataFrame::fromArray([
         ['currency' => '1',          'accounting' => '1'],

@@ -15,18 +15,21 @@ test('overwrite fail c s v', function (): void {
     $this->expectException('Archon\Exceptions\FileExistsException');
     $df->toCSV($fileName);
 });
+
 test('invalid option', function (): void {
     $fileName = __DIR__.\DIRECTORY_SEPARATOR.'TestFiles'.\DIRECTORY_SEPARATOR.'testCSVOverwrite.csv';
 
     $this->expectException('Archon\Exceptions\UnknownOptionException');
     DataFrame::fromCSV($fileName, ['invalid_option' => 0]);
 });
+
 test('unknown delimiter', function (): void {
     $fileName = __DIR__.\DIRECTORY_SEPARATOR.'TestFiles'.\DIRECTORY_SEPARATOR.'testCSVUnknownDelimiter.csv';
 
     $this->expectException('RuntimeException');
     DataFrame::fromCSV($fileName);
 });
+
 test('invalid column count', function (): void {
     $fileName = __DIR__.\DIRECTORY_SEPARATOR.'TestFiles'.\DIRECTORY_SEPARATOR.'testCSVInvalidColumnCount.csv';
 

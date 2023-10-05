@@ -18,6 +18,7 @@ test('to s q l', function (): void {
     expect($df->toArray())->toEqual($result);
     $pdo->exec('DROP TABLE testTable;');
 });
+
 test('from s q l', function (): void {
     $pdo = new PDO('sqlite::memory:');
     $pdo->exec('CREATE TABLE testFromSQL (x TEXT, y TEXT, z TEXT);');
@@ -35,6 +36,7 @@ test('from s q l', function (): void {
 
     expect($df->toArray())->toEqual($expected);
 });
+
 test('group by sq lite', function (): void {
     $df = DataFrame::fromArray([
         ['a' => 'foo', 'b' => 2],

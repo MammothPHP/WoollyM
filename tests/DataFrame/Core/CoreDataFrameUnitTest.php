@@ -12,12 +12,15 @@ beforeEach(function (): void {
 
     $this->df = DataFrame::fromArray($this->input);
 });
+
 test('from array', function (): void {
     expect($this->df->toArray())->toEqual($this->input);
 });
+
 test('columns', function (): void {
     expect($this->df->columns())->toEqual(['a', 'b', 'c']);
 });
+
 test('remove column', function (): void {
     $df = $this->df;
 
@@ -30,11 +33,13 @@ test('remove column', function (): void {
 
     expect($df->toArray())->toEqual($expected);
 });
+
 test('for each', function (): void {
     foreach ($this->df as $i => $row) {
         expect($this->input[$i])->toEqual($row);
     }
 });
+
 test('offset get', function (): void {
     $a = $this->df['a'];
     $b = $this->df['b'];
@@ -42,6 +47,7 @@ test('offset get', function (): void {
     expect($a->toArray())->toEqual([['a' => 1], ['a' => 4], ['a' => 7]]);
     expect($b->toArray())->toEqual([['b' => 2], ['b' => 5], ['b' => 8]]);
 });
+
 test('offset set value', function (): void {
     $df = $this->df;
     $df['a'] = 321;
@@ -54,6 +60,7 @@ test('offset set value', function (): void {
 
     expect($df->toArray())->toEqual($expected);
 });
+
 test('offset set closure', function (): void {
     $df = $this->df;
 
@@ -75,6 +82,7 @@ test('offset set closure', function (): void {
 
     expect($df->toArray())->toEqual($expected);
 });
+
 test('offset set dataframe', function (): void {
     $df = $this->df;
 
@@ -88,6 +96,7 @@ test('offset set dataframe', function (): void {
 
     expect($df->toArray())->toEqual($expected);
 });
+
 test('offset set new column', function (): void {
     $df = $this->df;
 
@@ -103,6 +112,7 @@ test('offset set new column', function (): void {
 
     expect($df->toArray())->toEqual($expected);
 });
+
 test('apply data frame', function (): void {
     $df = $this->df;
 
@@ -121,10 +131,12 @@ test('apply data frame', function (): void {
 
     expect($df->toArray())->toEqual($expected);
 });
+
 test('isset', function (): void {
     expect(isset($this->df['a']))->toBeTrue();
     expect(isset($this->df['foo']))->toBeFalse();
 });
+
 test('apply index map values', function (): void {
     $df = $this->df;
 
@@ -139,6 +151,7 @@ test('apply index map values', function (): void {
         ['a' => 0, 'b' => 8, 'c' => 9],
     ]);
 });
+
 test('apply index map function', function (): void {
     $df = $this->df;
 
@@ -161,6 +174,7 @@ test('apply index map function', function (): void {
         ['a' => 7, 'b' => 8, 'c' => 20],
     ]);
 });
+
 test('apply index map value function', function (): void {
     $df = $this->df;
 
@@ -185,6 +199,7 @@ test('apply index map value function', function (): void {
         ['a' => 1, 'b' => 8, 'c' => 9],
     ]);
 });
+
 test('apply index map array', function (): void {
     $df = $this->df;
 
@@ -198,6 +213,7 @@ test('apply index map array', function (): void {
         ['a' => 7, 'b' => 8, 'c' => 9],
     ]);
 });
+
 test('filter', function (): void {
     $df = $this->df;
 
@@ -210,6 +226,7 @@ test('filter', function (): void {
         ['a' => 7, 'b' => 8, 'c' => 9],
     ]);
 });
+
 test('offset set value array', function (): void {
     $df = $this->df;
 
@@ -222,6 +239,7 @@ test('offset set value array', function (): void {
         ['a' => 10, 'b' => 11, 'c' => 12],
     ]);
 });
+
 test('append', function (): void {
     $df1 = $this->df;
     $df2 = $this->df;
@@ -240,6 +258,7 @@ test('append', function (): void {
         ['a' => 7, 'b' => 8, 'c' => 9],
     ]);
 });
+
 test('preg replace', function (): void {
     $df1 = $this->df;
 
@@ -251,6 +270,7 @@ test('preg replace', function (): void {
         ['a' => 7, 'b' => 8, 'c' => 9],
     ]);
 });
+
 test('group by', function (): void {
     $df = DataFrame::fromArray([
         ['a' => 1, 'b' => 2, 'c' => 3],
@@ -283,6 +303,7 @@ test('group by', function (): void {
         ['a' => 3, 'b' => 5, 'c' => 8],
     ]);
 });
+
 test('rename', function (): void {
     $df = $this->df;
 
@@ -294,6 +315,7 @@ test('rename', function (): void {
         ['foo' => 7, 'b' => 8, 'c' => 9],
     ]);
 });
+
 test('sort values', function (): void {
     // Single column
     $unordered_df = DataFrame::fromArray([

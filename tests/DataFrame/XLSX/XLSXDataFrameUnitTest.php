@@ -49,6 +49,7 @@ test('load x l s x', function (): void {
 
     expect($xlsx)->toEqual($assertion_array);
 });
+
 test('to x l s x', function (): void {
     $fileName = __DIR__.\DIRECTORY_SEPARATOR.'TestFiles'.\DIRECTORY_SEPARATOR.'test_to.xlsx';
 

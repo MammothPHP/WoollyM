@@ -22,6 +22,7 @@ test('data frame select', function (): void {
 
     expect($df->toArray())->toEqual($expected);
 });
+
 test('data frame select update', function (): void {
     $df = DataFrame::fromArray([
         ['a' => 1, 'b' => 2, 'c' => 3],

@@ -12,10 +12,12 @@ beforeEach(function (): void {
 
     $this->df = DataFrame::fromArray($this->input);
 });
+
 test('invalid column', function (): void {
     $this->expectException('Archon\Exceptions\InvalidColumnException');
     $this->df['foo'];
 });
+
 test('remove non existent column', function (): void {
     $this->expectException('Archon\Exceptions\DataFrameException');
     $this->df->removeColumn('foo');
@@ -26,6 +28,7 @@ test('invalid offset set1', function (): void {
     $this->expectException('Archon\Exceptions\DataFrameException');
     $df['foo'] = $df;
 });
+
 test('invalid offset set2', function (): void {
     $df = $this->df;
     $df2 = DataFrame::fromArray([['a' => 1, 'b' => 2, 'c' => 3]]);

@@ -22,6 +22,7 @@ test('to h t m l', function (): void {
 
     expect($df->toHTML())->toEqual($expected);
 });
+
 test('limit', function (): void {
     $df = DataFrame::fromArray([
         ['a' => 1, 'b' => 2, 'c' => 3],
@@ -50,6 +51,7 @@ test('limit', function (): void {
     $expected .= '</table>';
     expect($df->toHTML(['offset' => 2, 'limit' => 2]))->toEqual($expected);
 });
+
 test('pretty to h t m l', function (): void {
     $df = DataFrame::fromArray([
         ['a' => 1, 'b' => 2, 'c' => 3],
@@ -93,6 +95,7 @@ test('pretty to h t m l', function (): void {
 
     expect($df->toHTML(['pretty' => true]))->toEqual($expected);
 });
+
 test('class i d options', function (): void {
     $df = DataFrame::fromArray([
         ['a' => 1, 'b' => 2, 'c' => 3],
@@ -134,6 +137,7 @@ test('class i d options', function (): void {
         'quote' => '"',
     ]))->toEqual($expected);
 });
+
 test('data table', function (): void {
     $df = DataFrame::fromArray([['a' => 1]]);
 
@@ -165,6 +169,7 @@ test('data table', function (): void {
 
     expect($actual)->toEqual($expected);
 });
+
 test('data table options', function (): void {
     $df = DataFrame::fromArray([['a' => 1]]);
 

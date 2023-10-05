@@ -13,6 +13,7 @@ test('from c s v', function (): void {
         ['a' => 4, 'b' => 5, 'c' => 6],
     ]);
 });
+
 test('from c s v dirty', function (): void {
     $fileName = __DIR__.\DIRECTORY_SEPARATOR.'TestFiles'.\DIRECTORY_SEPARATOR.'testCSVdirty.csv';
 
@@ -26,6 +27,7 @@ test('from c s v dirty', function (): void {
         ['a' => 4, 'b' => 5, 'c' => 6],
     ]);
 });
+
 test('from c s v no header', function (): void {
     $fileName = __DIR__.\DIRECTORY_SEPARATOR.'TestFiles'.\DIRECTORY_SEPARATOR.'testCSV.csv';
 
@@ -37,6 +39,7 @@ test('from c s v no header', function (): void {
         ['x' => 4, 'y' => 5, 'z' => 6],
     ]);
 });
+
 test('from c s vcol map', function (): void {
     $fileName = __DIR__.\DIRECTORY_SEPARATOR.'TestFiles'.\DIRECTORY_SEPARATOR.'testCSV.csv';
 
@@ -53,6 +56,7 @@ test('from c s vcol map', function (): void {
         ['x' => 4, 'y' => 5, 'z' => 6],
     ]);
 });
+
 test('c s v mapping alias', function (): void {
     $fileName = __DIR__.\DIRECTORY_SEPARATOR.'TestFiles'.\DIRECTORY_SEPARATOR.'testCSV.csv';
 
@@ -74,6 +78,7 @@ test('c s v mapping alias', function (): void {
 
     expect($df2->toArray())->toEqual($df1->toArray());
 });
+
 test('from c s vcol map to null', function (): void {
     $fileName = __DIR__.\DIRECTORY_SEPARATOR.'TestFiles'.\DIRECTORY_SEPARATOR.'testCSV.csv';
 
@@ -90,6 +95,7 @@ test('from c s vcol map to null', function (): void {
         ['x' => 4, 'z' => 6],
     ]);
 });
+
 test('from c s vcol map to null2', function (): void {
     $fileName = __DIR__.\DIRECTORY_SEPARATOR.'TestFiles'.\DIRECTORY_SEPARATOR.'testCSV.csv';
 
@@ -108,6 +114,7 @@ test('from c s vcol map to null2', function (): void {
         ['x' => 4, 'z' => 6],
     ]);
 });
+
 test('save c s v', function (): void {
     $fileName = __DIR__.\DIRECTORY_SEPARATOR.'TestFiles'.\DIRECTORY_SEPARATOR.'testCSVSave.csv';
     if (file_exists($fileName)) {
