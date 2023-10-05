@@ -30,11 +30,8 @@ final class FWF
         'exclude' => null,
     ];
 
-    public readonly string $fileName;
-
-    public function __construct($fileName)
+    public function __construct(public readonly string $fileName)
     {
-        $this->fileName = $fileName;
     }
 
     /**

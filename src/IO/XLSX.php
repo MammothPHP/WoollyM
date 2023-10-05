@@ -50,7 +50,7 @@ class XLSX
      * @throws \PhpOffice\PhpSpreadsheet\Exception
      * @since  0.3.0
      */
-    public function loadFile(array $options)
+    public function loadFile(array $options): array
     {
         $options = Options::setDefaultOptions($options, $this->defaultOptions);
         $colRowOpt = $options['colrow'];
@@ -98,7 +98,7 @@ class XLSX
      * @throws \PhpOffice\PhpSpreadsheet\Exception
      * @since  0.3.0
      */
-    public static function saveToWorksheet(Spreadsheet &$excel, $worksheetTitle, array $data, array $columns)
+    public static function saveToWorksheet(Spreadsheet &$excel, $worksheetTitle, array $data, array $columns): Worksheet
     {
         // Check if this is a brand new spreadsheet
         if ($excel->getSheetCount() === 1) {

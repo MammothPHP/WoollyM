@@ -52,7 +52,7 @@ final class SQL
      * @return array
      * @since  0.3.0
      */
-    public function select($sqlQuery)
+    public function select($sqlQuery): array
     {
         $pdo = $this->pdo;
         $query = $pdo->query($sqlQuery);
@@ -70,7 +70,7 @@ final class SQL
      * @throws InvalidColumnException
      * @since  0.2.0
      */
-    public function insertInto($tableName, array $columns, array $data, $options = [])
+    public function insertInto($tableName, array $columns, array $data, $options = []): int
     {
         if (\count($data) === 0) {
             return 0;
@@ -115,7 +115,7 @@ final class SQL
      * @return int
      * @since  0.2.0
      */
-    private function insertChunkedData(PDO $pdo, $tableName, array $columns, array $data, array $options)
+    private function insertChunkedData(PDO $pdo, $tableName, array $columns, array $data, array $options): int
     {
         $affected = 0;
         foreach ($data as $chunk) {
@@ -139,7 +139,7 @@ final class SQL
      * @return string
      * @since  0.2.0
      */
-    private function createPreparedStatement($tableName, array $columns, array $data, array $options)
+    private function createPreparedStatement($tableName, array $columns, array $data, array $options): string
     {
         $replaceOpt = $options['replace'];
         $ignoreOpt = $options['ignore'];
@@ -174,7 +174,7 @@ final class SQL
      * @return array
      * @since  0.2.0
      */
-    private function flattenArray(array $array)
+    private function flattenArray(array $array): array
     {
         $it = new RecursiveIteratorIterator(new RecursiveArrayIterator($array));
 

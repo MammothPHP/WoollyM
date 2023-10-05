@@ -36,12 +36,12 @@ final class JSON
      *      pretty: Will "prettify" the rendered JSON (default: false)
      * @param  array $data
      * @param  array $options
-     * @return array|string
+     * @return string
      * @throws NotYetImplementedException
      * @throws \Archon\Exceptions\UnknownOptionException
      * @since  0.4.0
      */
-    public function encodeJSON(array $data, array $options)
+    public function encodeJSON(array $data, array $options): string
     {
         $options = Options::setDefaultOptions($options, $this->defaultOptions);
 

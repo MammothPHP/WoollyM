@@ -19,6 +19,7 @@ use PDO;
 use PHPExcel;
 use PHPExcel_Worksheet;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 /**
  * The DataFrame class acts as an interface to various underlying data structure, file format, and database
@@ -44,10 +45,11 @@ final class DataFrame extends DataFrameCore
      * @return DataFrame
      * @since  0.1.0
      */
-    public static function fromCSV($fileName, $options = [])
+    public static function fromCSV($fileName, $options = []): self
     {
         $csv = new CSV($fileName);
         $data = $csv->loadFile($options);
+
         return new self($data);
     }
 
@@ -59,10 +61,11 @@ final class DataFrame extends DataFrameCore
      * @throws \Archon\Exceptions\FileExistsException
      * @since  0.1.0
      */
-    public function toCSV($fileName, $options = [])
+    public function toCSV($fileName, $options = []): self
     {
         $csv = new CSV($fileName);
         $csv->saveFile($this->data, $options);
+
         return $this;
     }
 
@@ -74,10 +77,11 @@ final class DataFrame extends DataFrameCore
      * @return DataFrame
      * @since  0.1.0
      */
-    public static function fromFWF($fileName, array $colSpecs, array $options = [])
+    public static function fromFWF($fileName, array $colSpecs, array $options = []): self
     {
         $fwf = new FWF($fileName);
         $data = $fwf->loadFile($colSpecs, $options);
+
         return new self($data);
     }
 
@@ -88,10 +92,11 @@ final class DataFrame extends DataFrameCore
      * @return DataFrame
      * @since  0.3.0
      */
-    public static function fromXLSX($fileName, array $options = [])
+    public static function fromXLSX($fileName, array $options = []): self
     {
         $xlsx = new XLSX($fileName);
         $data = $xlsx->loadFile($options);
+
         return new self($data);
     }
 
@@ -102,10 +107,9 @@ final class DataFrame extends DataFrameCore
      * @return PHPExcel_Worksheet
      * @since  0.3.0
      */
-    public function toXLSXWorksheet(Spreadsheet &$excel, $worksheetTitle)
+    public function toXLSXWorksheet(Spreadsheet &$excel, $worksheetTitle): Worksheet
     {
-        $worksheet = XLSX::saveToWorksheet($excel, $worksheetTitle, $this->data, $this->columns);
-        return $worksheet;
+        return XLSX::saveToWorksheet($excel, $worksheetTitle, $this->data, $this->columns);
     }
 
     /**
@@ -115,10 +119,11 @@ final class DataFrame extends DataFrameCore
      * @return DataFrame
      * @since  0.3.0
      */
-    public static function fromSQL($sqlQuery, PDO $pdo)
+    public static function fromSQL($sqlQuery, PDO $pdo): self
     {
         $sql = new SQL($pdo);
         $data = $sql->select($sqlQuery);
+
         return new self($data);
     }
 
@@ -142,10 +147,11 @@ final class DataFrame extends DataFrameCore
      * @return mixed
      * @since  0.4.0
      */
-    public static function fromJSON($jsonString, array $options = [])
+    public static function fromJSON($jsonString, array $options = []): self
     {
         $json = new JSON;
         $data = $json->decodeJSON($jsonString, $options);
+
         return new self($data);
     }
 
@@ -155,22 +161,24 @@ final class DataFrame extends DataFrameCore
      * @return string
      * @since  0.4.0
      */
-    public function toJSON(array $options = [])
+    public function toJSON(array $options = []): string
     {
         $json = new JSON;
+
         return $json->encodeJSON($this->data, $options);
     }
 
     /**
      * Outputs a DataFrame to an HTML string.
      * @param  array $options
-     * @return array
+     * @return string
      * @throws \Archon\Exceptions\NotYetImplementedException
      * @since  0.1.0
      */
-    public function toHTML($options = [])
+    public function toHTML($options = []): string
     {
         $html = new HTML($this->data);
+
         return $html->assembleTable($options);
     }
 
@@ -180,7 +188,7 @@ final class DataFrame extends DataFrameCore
      * @return DataFrame
      * @since  0.1.0
      */
-    public static function fromArray(array $data)
+    public static function fromArray(array $data): self
     {
         return new self($data);
     }
@@ -190,7 +198,7 @@ final class DataFrame extends DataFrameCore
      * @return array
      * @since 0.1.0
      */
-    public function toArray()
+    public function toArray(): array
     {
         return $this->data;
     }

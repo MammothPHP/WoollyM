@@ -28,8 +28,6 @@ use RuntimeException;
  */
 final class CSV
 {
-    public readonly string $fileName;
-
     private $defaultOptions = [
         'sep' => null,
         'nlsep' => "\n",
@@ -44,9 +42,8 @@ final class CSV
         'exclude' => null,
     ];
 
-    public function __construct($fileName)
+    public function __construct(public readonly string $fileName)
     {
-        $this->fileName = $fileName;
     }
 
     /**

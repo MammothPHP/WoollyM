@@ -39,11 +39,8 @@ final class HTML
         'offset' => 0,
     ];
 
-    public readonly array $data;
-
-    public function __construct(array $data)
+    public function __construct(public readonly array $data)
     {
-        $this->data = $data;
     }
 
     /**
@@ -56,12 +53,12 @@ final class HTML
      *      quote:     Specify the character to use for quoting table CSS class and/or CSS id (default: ')
      *      datatable: Options for rendering the table as a DataTable (@see: http://datatables.net) (default: null)
      * @param  array $options
-     * @return array
+     * @return string
      * @throws NotYetImplementedException
      * @throws \Archon\Exceptions\UnknownOptionException
      * @since  0.1.0
      */
-    public function assembleTable(array $options)
+    public function assembleTable(array $options): string
     {
         $data = $this->data;
         $options = Options::setDefaultOptions($options, $this->defaultOptions);

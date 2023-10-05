@@ -33,7 +33,7 @@ final class Options
      * @return array
      * @throws UnknownOptionException Exception when an option is unknown.
      */
-    public static function setDefaultOptions(array $userOptions, array $defaultOptions)
+    public static function setDefaultOptions(array $userOptions, array $defaultOptions): array
     {
         /*
          * First, override all default options with whatever ones have been

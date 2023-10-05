@@ -39,8 +39,8 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      *********************************************** Core Implementation ***********************************************
      ******************************************************************************************************************/
 
-    protected $data = [];
-    protected $columns = [];
+    protected array $data = [];
+    protected array $columns = [];
 
     protected function __construct(array $data)
     {
@@ -55,7 +55,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      * @return array
      * @since  0.1.0
      */
-    public function columns()
+    public function columns(): array
     {
         return $this->columns;
     }
@@ -66,7 +66,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      * @return array
      * @since  0.1.0
      */
-    public function getIndex($index)
+    public function getIndex(int $index): array
     {
         return $this->data[$index];
     }
@@ -79,7 +79,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      * @return DataFrameCore
      * @since  0.1.0
      */
-    public function apply(Closure $f)
+    public function apply(Closure $f): self
     {
         if (\count($this->columns()) > 1) {
             foreach ($this->data as $i => &$row) {
@@ -120,7 +120,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      * @return DataFrameCore
      * @since  0.1.0
      */
-    public function applyIndexMap(array $map, $column = null)
+    public function applyIndexMap(array $map, mixed $column = null)
     {
         return $this->apply(static function (&$row, $i) use ($map, $column) {
             if (isset($map[$i])) {
@@ -152,7 +152,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      * @return DataFrame
      * @since  0.1.0
      */
-    public function array_filter(Closure $f)
+    public function array_filter(Closure $f): self
     {
         return DataFrame::fromArray(array_filter($this->data, $f, \ARRAY_FILTER_USE_BOTH));
     }
@@ -167,7 +167,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      * @return DataFrame
      * @throws DataFrameException
      */
-    public function query($sql, ?PDO $pdo = null)
+    public function query(string $sql, ?PDO $pdo = null): self
     {
         $sql = trim($sql);
         $queryType = trim(strtoupper(strtok($sql, ' ')));
@@ -228,7 +228,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      * @return bool
      * @since  0.1.0
      */
-    public function hasColumn($columnName)
+    public function hasColumn(mixed $columnName): bool
     {
         if (array_search($columnName, $this->columns, true) === false) {
             return false;
@@ -309,7 +309,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      * @param $other
      * @return $this
      */
-    public function append(DataFrame $other)
+    public function append(DataFrame $other): self
     {
         if (\count($other) <= 0) {
             return $this;
@@ -337,7 +337,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      * @param $replacement
      * @return DataFrameCore
      */
-    public function preg_replace($pattern, $replacement)
+    public function preg_replace($pattern, $replacement): self
     {
         return $this->apply(static function ($row) use ($pattern, $replacement) {
             return preg_replace($pattern, $replacement, $row);
@@ -439,7 +439,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
         throw new RuntimeException("Error parsing date string '{$value}' with date format {$dateFormatSnapshot}");
     }
 
-    private function convertCurrency($value): string
+    private function convertCurrency(string $value): string
     {
         $value = explode('.', $value);
         $value[1] = $value[1] ?? '00';
@@ -460,7 +460,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
         return $dollars;
     }
 
-    private function convertAccounting($value): string
+    private function convertAccounting(string $value): string
     {
         $value = explode('.', $value);
         $value[1] = $value[1] ?? '00';
@@ -485,7 +485,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      * @param $columns
      * @return DataFrame
      */
-    public function unique($columns)
+    public function unique(array|string $columns): self
     {
         if (!\is_array($columns)) {
             $columns = [$columns];
@@ -554,7 +554,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      * @return bool
      * @since  0.1.0
      */
-    public function offsetExists($columnName): bool
+    public function offsetExists(mixed $columnName): bool
     {
         foreach ($this as $row) {
             if (!\array_key_exists($columnName, $row)) {
@@ -702,7 +702,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      * @throws InvalidColumnException
      * @since  0.1.0
      */
-    public function offsetUnset($offset): void
+    public function offsetUnset(mixed $offset): void
     {
         $this->mustHaveColumn($offset);
 
