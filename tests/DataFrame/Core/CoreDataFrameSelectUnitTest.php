@@ -1,12 +1,15 @@
-<?php namespace Archon\Tests\DataFrame\Core;
+<?php
+
+declare(strict_types=1);
+
+namespace Archon\Tests\DataFrame\Core;
 
 use Archon\DataFrame;
 use PHPUnit\Framework\TestCase;
 
 class CoreDataFrameSelectUnitTest extends TestCase
 {
-
-    public function testDataFrameSelect()
+    public function testDataFrameSelect(): void
     {
         $df = DataFrame::fromArray([
             ['a' => 1, 'b' => 2, 'c' => 3],
@@ -21,13 +24,13 @@ class CoreDataFrameSelectUnitTest extends TestCase
 
         $expected = [
             ['a' => 1, 'c' => 3],
-            ['a' => 4, 'c' => 6]
+            ['a' => 4, 'c' => 6],
         ];
 
         $this->assertEquals($expected, $df->toArray());
     }
 
-    public function testDataFrameSelectUpdate()
+    public function testDataFrameSelectUpdate(): void
     {
         $df = DataFrame::fromArray([
             ['a' => 1, 'b' => 2, 'c' => 3],
@@ -35,8 +38,8 @@ class CoreDataFrameSelectUnitTest extends TestCase
             ['a' => 7, 'b' => 8, 'c' => 9],
         ]);
 
-        $df = $df->query("UPDATE dataframe
-        SET a = c * 2;");
+        $df = $df->query('UPDATE dataframe
+        SET a = c * 2;');
 
         $expected = [
             ['a' => 6, 'b' => 2, 'c' => 3],

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Contains the JSON class.
  * @package   DataFrame
@@ -25,9 +27,8 @@ use Archon\Exceptions\NotYetImplementedException;
  */
 final class JSON
 {
-
     private $defaultOptions = [
-        'pretty' => false
+        'pretty' => false,
     ];
 
     /**
@@ -46,12 +47,10 @@ final class JSON
 
         $prettyOpt = $options['pretty'];
         if ($prettyOpt === true) {
-            $prettyOpt = JSON_PRETTY_PRINT;
+            $prettyOpt = \JSON_PRETTY_PRINT;
         }
 
-        $data = json_encode($data, $prettyOpt);
-
-        return $data;
+        return json_encode($data, (int) $prettyOpt);
     }
 
     /**
@@ -66,7 +65,6 @@ final class JSON
     {
         Options::setDefaultOptions($options, $this->defaultOptions);
 
-        $data = json_decode($jsonString, true);
-        return $data;
+        return json_decode($jsonString, true);
     }
 }

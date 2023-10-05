@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Contains the FWF class.
  * @package   DataFrame
@@ -23,10 +25,9 @@ namespace Archon\IO;
  */
 final class FWF
 {
-
     private $defaultOptions = [
         'include' => null,
-        'exclude' => null
+        'exclude' => null,
     ];
 
     public readonly string $fileName;
@@ -62,7 +63,7 @@ final class FWF
         $fileData = array_map('rtrim', $fileData);
 
         $fileData = $includeRegexOpt ? preg_grep($includeRegexOpt, $fileData) : $fileData;
-        $fileData = $excludeRegexOpt ? preg_grep($excludeRegexOpt, $fileData, PREG_GREP_INVERT) : $fileData;
+        $fileData = $excludeRegexOpt ? preg_grep($excludeRegexOpt, $fileData, \PREG_GREP_INVERT) : $fileData;
 
         foreach ($fileData as &$line) {
             $line = $this->applyColSpecs($line, $colSpecs);
@@ -89,7 +90,7 @@ final class FWF
             }
 
             if ($coords[1] === '*') {
-                $coords[1] = strlen($data);
+                $coords[1] = \strlen($data);
             }
 
             $result[$colName] = trim(substr($data, $coords[0], $coords[1] - $coords[0]));

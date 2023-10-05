@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Contains the Options class.
  * @package   DataFrame
@@ -24,8 +26,6 @@ use Archon\Exceptions\UnknownOptionException;
  */
 final class Options
 {
-
-
     /**
      * Will apply all default options to an associative array of user-provided options.
      * @param  array $userOptions    User-provided options.
@@ -43,7 +43,7 @@ final class Options
         $unknownOptions = [];
         foreach ($userOptions as $optionName => $optionValue) {
             // Check if user provided any invalid options.
-            if (array_key_exists($optionName, $defaultOptions) === false) {
+            if (\array_key_exists($optionName, $defaultOptions) === false) {
                 $unknownOptions[] = $optionName;
                 continue;
             } else {
@@ -52,7 +52,7 @@ final class Options
             }
         }
 
-        if (count($unknownOptions) > 0) {
+        if (\count($unknownOptions) > 0) {
             $unknownOptions = implode(', ', $unknownOptions);
             throw new UnknownOptionException('Unknown options: ['.$unknownOptions.']');
         }
@@ -65,7 +65,7 @@ final class Options
             /* This will add all our default option values to the user provided
              * array.
              */
-            if (array_key_exists($optionName, $userOptions) === false) {
+            if (\array_key_exists($optionName, $userOptions) === false) {
                 $userOptions[$optionName] = $optionValue;
             }
         }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Contains the XLSX class.
  * @package   DataFrame
@@ -13,8 +15,7 @@
 namespace Archon\IO;
 
 use PHPExcel;
-use PhpOffice\PhpSpreadsheet\IOFactory;
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\{IOFactory, Spreadsheet};
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 /**
@@ -29,14 +30,14 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
  */
 class XLSX
 {
-
     private $defaultOptions = [
         'colrow' => 1,
-        'sheetname' => null
+        'sheetname' => null,
     ];
 
     public function __construct(public readonly string $fileName)
-    {}
+    {
+    }
 
     /**
      * Loads the file which the CSV class was instantiated with.
@@ -84,8 +85,7 @@ class XLSX
             }
         }
 
-        $data = array_values($data);
-        return $data;
+        return array_values($data);
     }
 
     /**
@@ -111,7 +111,7 @@ class XLSX
             $cell = $sheet->getCell('A1')->getValue();
 
             // If this is a brand new spreadsheet then remove the first worksheet
-            if ($sheetName === 'Worksheet' and $colCount === 'A' and $rowCount === 1 and $cell === null) {
+            if ($sheetName === 'Worksheet' && $colCount === 'A' && $rowCount === 1 && $cell === null) {
                 $excel->removeSheetByIndex(0);
             }
         }

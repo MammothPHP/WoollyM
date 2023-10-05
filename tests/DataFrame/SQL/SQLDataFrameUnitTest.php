@@ -1,4 +1,8 @@
-<?php namespace Archon\Tests\DataFrame\SQL;
+<?php
+
+declare(strict_types=1);
+
+namespace Archon\Tests\DataFrame\SQL;
 
 use Archon\DataFrame;
 use PDO;
@@ -6,8 +10,7 @@ use PHPUnit\Framework\TestCase;
 
 class SQLDataFrameUnitTest extends TestCase
 {
-
-    public function testToSQL()
+    public function testToSQL(): void
     {
         $df = DataFrame::fromArray([
             ['a' => 1, 'b' => 2, 'c' => 3],
@@ -17,22 +20,22 @@ class SQLDataFrameUnitTest extends TestCase
 
         $pdo = new PDO('sqlite::memory:');
 
-        $pdo->exec("CREATE TABLE testTable (a TEXT, b TEXT, c TEXT);");
+        $pdo->exec('CREATE TABLE testTable (a TEXT, b TEXT, c TEXT);');
         $df->toSQL('testTable', $pdo);
-        $result = $pdo->query("SELECT * FROM testTable;")->fetchAll(PDO::FETCH_ASSOC);
+        $result = $pdo->query('SELECT * FROM testTable;')->fetchAll(PDO::FETCH_ASSOC);
         $this->assertEquals($result, $df->toArray());
-        $pdo->exec("DROP TABLE testTable;");
+        $pdo->exec('DROP TABLE testTable;');
     }
 
-    public function testFromSQL()
+    public function testFromSQL(): void
     {
         $pdo = new PDO('sqlite::memory:');
-        $pdo->exec("CREATE TABLE testFromSQL (x TEXT, y TEXT, z TEXT);");
-        $pdo->exec("INSERT INTO testFromSQL (x, y, z) VALUES (1, 2, 3), (4, 5, 6), (7, 8, 9);");
+        $pdo->exec('CREATE TABLE testFromSQL (x TEXT, y TEXT, z TEXT);');
+        $pdo->exec('INSERT INTO testFromSQL (x, y, z) VALUES (1, 2, 3), (4, 5, 6), (7, 8, 9);');
 
-        $df = DataFrame::fromSQL("SELECT * FROM testFromSQL;", $pdo);
+        $df = DataFrame::fromSQL('SELECT * FROM testFromSQL;', $pdo);
 
-        $pdo->exec("DROP TABLE testFromSQL;");
+        $pdo->exec('DROP TABLE testFromSQL;');
 
         $expected = [
             ['x' => 1, 'y' => 2, 'z' => 3],
@@ -43,24 +46,25 @@ class SQLDataFrameUnitTest extends TestCase
         $this->assertEquals($expected, $df->toArray());
     }
 
-    public function testGroupBySqLite() {
+    public function testGroupBySqLite(): void
+    {
 
-        $df = DataFrame::fromArray(array(
-            array( 'a' => 'foo', 'b' => 2 ),
-            array( 'a' => 'foo', 'b' => 2 ),
-            array( 'a' => 'bar', 'b' => 2 ),
-            array( 'a' => 'bar', 'b' => 2 ),
-            array( 'a' => 'baz', 'b' => 2 ),
-            array( 'a' => 'baz', 'b' => 2 ),
-        ));
+        $df = DataFrame::fromArray([
+            ['a' => 'foo', 'b' => 2],
+            ['a' => 'foo', 'b' => 2],
+            ['a' => 'bar', 'b' => 2],
+            ['a' => 'bar', 'b' => 2],
+            ['a' => 'baz', 'b' => 2],
+            ['a' => 'baz', 'b' => 2],
+        ]);
 
-        $expected = array(
-            array( 'a' => 'bar', 'b' => 4 ),
-            array( 'a' => 'baz', 'b' => 4 ),
-            array( 'a' => 'foo', 'b' => 4 ),
-        );
+        $expected = [
+            ['a' => 'bar', 'b' => 4],
+            ['a' => 'baz', 'b' => 4],
+            ['a' => 'foo', 'b' => 4],
+        ];
 
-        $actual = $df->query("SELECT a, sum(b) AS b FROM dataframe GROUP BY 1 ORDER BY 1 ASC")->toArray();
+        $actual = $df->query('SELECT a, sum(b) AS b FROM dataframe GROUP BY 1 ORDER BY 1 ASC')->toArray();
 
         $this->assertSame($expected, $actual);
     }

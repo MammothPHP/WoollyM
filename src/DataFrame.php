@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Contains the DataFrame class.
  * @package   DataFrame
@@ -12,12 +14,7 @@
 
 namespace Archon;
 
-use Archon\IO\CSV;
-use Archon\IO\FWF;
-use Archon\IO\HTML;
-use Archon\IO\JSON;
-use Archon\IO\SQL;
-use Archon\IO\XLSX;
+use Archon\IO\{CSV, FWF, HTML, JSON, SQL, XLSX};
 use PDO;
 use PHPExcel;
 use PHPExcel_Worksheet;
@@ -35,7 +32,6 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
  */
 final class DataFrame extends DataFrameCore
 {
-
     protected function __construct(array $data)
     {
         parent::__construct($data);
@@ -52,7 +48,7 @@ final class DataFrame extends DataFrameCore
     {
         $csv = new CSV($fileName);
         $data = $csv->loadFile($options);
-        return new DataFrame($data);
+        return new self($data);
     }
 
     /**
@@ -82,7 +78,7 @@ final class DataFrame extends DataFrameCore
     {
         $fwf = new FWF($fileName);
         $data = $fwf->loadFile($colSpecs, $options);
-        return new DataFrame($data);
+        return new self($data);
     }
 
     /**
@@ -96,7 +92,7 @@ final class DataFrame extends DataFrameCore
     {
         $xlsx = new XLSX($fileName);
         $data = $xlsx->loadFile($options);
-        return new DataFrame($data);
+        return new self($data);
     }
 
     /**
@@ -123,7 +119,7 @@ final class DataFrame extends DataFrameCore
     {
         $sql = new SQL($pdo);
         $data = $sql->select($sqlQuery);
-        return new DataFrame($data);
+        return new self($data);
     }
 
     /**
@@ -133,7 +129,7 @@ final class DataFrame extends DataFrameCore
      * @param array $options
      * @since 0.2.0
      */
-    public function toSQL($tableName, PDO $pdo, array $options = [])
+    public function toSQL($tableName, PDO $pdo, array $options = []): void
     {
         $sql = new SQL($pdo);
         $sql->insertInto($tableName, $this->columns, $this->data, $options);
@@ -148,9 +144,9 @@ final class DataFrame extends DataFrameCore
      */
     public static function fromJSON($jsonString, array $options = [])
     {
-        $json = new JSON();
+        $json = new JSON;
         $data = $json->decodeJSON($jsonString, $options);
-        return new DataFrame($data);
+        return new self($data);
     }
 
     /**
@@ -161,9 +157,8 @@ final class DataFrame extends DataFrameCore
      */
     public function toJSON(array $options = [])
     {
-        $json = new JSON();
-        $data = $json->encodeJSON($this->data, $options);
-        return $data;
+        $json = new JSON;
+        return $json->encodeJSON($this->data, $options);
     }
 
     /**
@@ -176,8 +171,7 @@ final class DataFrame extends DataFrameCore
     public function toHTML($options = [])
     {
         $html = new HTML($this->data);
-        $output = $html->assembleTable($options);
-        return $output;
+        return $html->assembleTable($options);
     }
 
     /**
@@ -188,7 +182,7 @@ final class DataFrame extends DataFrameCore
      */
     public static function fromArray(array $data)
     {
-        return new DataFrame($data);
+        return new self($data);
     }
 
     /**

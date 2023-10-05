@@ -1,15 +1,17 @@
-<?php namespace Archon\Tests\DataFrame\CSV;
+<?php
+
+declare(strict_types=1);
+
+namespace Archon\Tests\DataFrame\CSV;
 
 use Archon\DataFrame;
-use PHPUnit_Framework_TestCase;
 use PHPUnit\Framework\TestCase;
 
 class CSVDataFrameExceptionsTest extends TestCase
 {
-
-    public function testOverwriteFailCSV()
+    public function testOverwriteFailCSV(): void
     {
-        $fileName = __DIR__.DIRECTORY_SEPARATOR.'TestFiles'.DIRECTORY_SEPARATOR.'testCSVOverwrite.csv';
+        $fileName = __DIR__.\DIRECTORY_SEPARATOR.'TestFiles'.\DIRECTORY_SEPARATOR.'testCSVOverwrite.csv';
 
         $df = DataFrame::fromArray([
             ['a' => 1, 'b' => 2, 'c' => 3],
@@ -21,26 +23,26 @@ class CSVDataFrameExceptionsTest extends TestCase
         $df->toCSV($fileName);
     }
 
-    public function testInvalidOption()
+    public function testInvalidOption(): void
     {
-        $fileName = __DIR__.DIRECTORY_SEPARATOR.'TestFiles'.DIRECTORY_SEPARATOR.'testCSVOverwrite.csv';
+        $fileName = __DIR__.\DIRECTORY_SEPARATOR.'TestFiles'.\DIRECTORY_SEPARATOR.'testCSVOverwrite.csv';
 
         $this->expectException('Archon\Exceptions\UnknownOptionException');
         DataFrame::fromCSV($fileName, ['invalid_option' => 0]);
 
     }
 
-    public function testUnknownDelimiter()
+    public function testUnknownDelimiter(): void
     {
-        $fileName = __DIR__.DIRECTORY_SEPARATOR.'TestFiles'.DIRECTORY_SEPARATOR.'testCSVUnknownDelimiter.csv';
+        $fileName = __DIR__.\DIRECTORY_SEPARATOR.'TestFiles'.\DIRECTORY_SEPARATOR.'testCSVUnknownDelimiter.csv';
 
         $this->expectException('RuntimeException');
         DataFrame::fromCSV($fileName);
     }
 
-    public function testInvalidColumnCount()
+    public function testInvalidColumnCount(): void
     {
-        $fileName = __DIR__.DIRECTORY_SEPARATOR.'TestFiles'.DIRECTORY_SEPARATOR.'testCSVInvalidColumnCount.csv';
+        $fileName = __DIR__.\DIRECTORY_SEPARATOR.'TestFiles'.\DIRECTORY_SEPARATOR.'testCSVInvalidColumnCount.csv';
 
         $this->expectException('Archon\Exceptions\InvalidColumnException');
         DataFrame::fromCSV($fileName);

@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * Created by PhpStorm.
  * User: hgehring
@@ -8,11 +10,11 @@
 
 namespace Archon;
 
-class DataType {
-
-    const NUMERIC    = 0x001;
-    const INTEGER    = 0x010;
-    const DATETIME   = 0x011;
-    const CURRENCY   = 0x100;
-    const ACCOUNTING = 0x101;
+class DataType
+{
+    public const NUMERIC    = 0x001;
+    public const INTEGER    = 0x010;
+    public const DATETIME   = 0x011;
+    public const CURRENCY   = 0x100;
+    public const ACCOUNTING = 0x101;
 }

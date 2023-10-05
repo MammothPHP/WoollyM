@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Contains the FileExistsException.
  * @package   DataFrame
@@ -26,5 +28,4 @@ namespace Archon\Exceptions;
  */
 class FileExistsException extends DataFrameException
 {
-
 }

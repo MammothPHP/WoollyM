@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Contains the UnknownOptionException.
  * @package   DataFrame
@@ -28,5 +30,4 @@ namespace Archon\Exceptions;
  */
 class UnknownOptionException extends DataFrameException
 {
-
 }

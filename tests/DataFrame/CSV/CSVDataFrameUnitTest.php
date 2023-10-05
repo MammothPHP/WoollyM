@@ -1,14 +1,17 @@
-<?php namespace Archon\Tests\DataFrame\CSV;
+<?php
+
+declare(strict_types=1);
+
+namespace Archon\Tests\DataFrame\CSV;
 
 use Archon\DataFrame;
 use PHPUnit\Framework\TestCase;
 
 class CSVDataFrameUnitTest extends TestCase
 {
-
-    public function testFromCSV()
+    public function testFromCSV(): void
     {
-        $fileName = __DIR__.DIRECTORY_SEPARATOR.'TestFiles'.DIRECTORY_SEPARATOR.'testCSV.csv';
+        $fileName = __DIR__.\DIRECTORY_SEPARATOR.'TestFiles'.\DIRECTORY_SEPARATOR.'testCSV.csv';
 
         $df = DataFrame::fromCSV($fileName);
 
@@ -18,13 +21,13 @@ class CSVDataFrameUnitTest extends TestCase
         ], $df->toArray());
     }
 
-    public function testFromCSVDirty()
+    public function testFromCSVDirty(): void
     {
-        $fileName = __DIR__.DIRECTORY_SEPARATOR.'TestFiles'.DIRECTORY_SEPARATOR.'testCSVdirty.csv';
+        $fileName = __DIR__.\DIRECTORY_SEPARATOR.'TestFiles'.\DIRECTORY_SEPARATOR.'testCSVdirty.csv';
 
         $df = DataFrame::fromCSV($fileName, [
             'include' => '/^([1-9]|a)/',
-            'exclude' => '/^([7]|junk)/'
+            'exclude' => '/^([7]|junk)/',
         ]);
 
         $this->assertEquals([
@@ -33,9 +36,9 @@ class CSVDataFrameUnitTest extends TestCase
         ], $df->toArray());
     }
 
-    public function testFromCSVNoHeader()
+    public function testFromCSVNoHeader(): void
     {
-        $fileName = __DIR__.DIRECTORY_SEPARATOR.'TestFiles'.DIRECTORY_SEPARATOR.'testCSV.csv';
+        $fileName = __DIR__.\DIRECTORY_SEPARATOR.'TestFiles'.\DIRECTORY_SEPARATOR.'testCSV.csv';
 
         $df = DataFrame::fromCSV($fileName, ['columns' => ['x', 'y', 'z']]);
 
@@ -46,16 +49,16 @@ class CSVDataFrameUnitTest extends TestCase
         ], $df->toArray());
     }
 
-    public function testFromCSVcolMap()
+    public function testFromCSVcolMap(): void
     {
-        $fileName = __DIR__.DIRECTORY_SEPARATOR.'TestFiles'.DIRECTORY_SEPARATOR.'testCSV.csv';
+        $fileName = __DIR__.\DIRECTORY_SEPARATOR.'TestFiles'.\DIRECTORY_SEPARATOR.'testCSV.csv';
 
         $df = DataFrame::fromCSV($fileName, [
             'colmap' => [
                 'a' => 'x',
                 'b' => 'y',
-                'c' => 'z'
-            ]
+                'c' => 'z',
+            ],
         ]);
 
         $this->assertEquals([
@@ -64,39 +67,39 @@ class CSVDataFrameUnitTest extends TestCase
         ], $df->toArray());
     }
 
-    public function testCSVMappingAlias()
+    public function testCSVMappingAlias(): void
     {
-        $fileName = __DIR__.DIRECTORY_SEPARATOR.'TestFiles'.DIRECTORY_SEPARATOR.'testCSV.csv';
+        $fileName = __DIR__.\DIRECTORY_SEPARATOR.'TestFiles'.\DIRECTORY_SEPARATOR.'testCSV.csv';
 
         $df1 = DataFrame::fromCSV($fileName, [
             'colmap' => [
                 'a' => 'x',
                 'b' => 'y',
-                'c' => 'z'
-            ]
+                'c' => 'z',
+            ],
         ]);
 
         $df2 = DataFrame::fromCSV($fileName, [
             'mapping' => [
                 'a' => 'x',
                 'b' => 'y',
-                'c' => 'z'
-            ]
+                'c' => 'z',
+            ],
         ]);
 
         $this->assertEquals($df1->toArray(), $df2->toArray());
     }
 
-    public function testFromCSVcolMapToNull()
+    public function testFromCSVcolMapToNull(): void
     {
-        $fileName = __DIR__.DIRECTORY_SEPARATOR.'TestFiles'.DIRECTORY_SEPARATOR.'testCSV.csv';
+        $fileName = __DIR__.\DIRECTORY_SEPARATOR.'TestFiles'.\DIRECTORY_SEPARATOR.'testCSV.csv';
 
         $df = DataFrame::fromCSV($fileName, [
             'colmap' => [
                 'a' => 'x',
                 'b' => null,
-                'c' => 'z'
-            ]
+                'c' => 'z',
+            ],
         ]);
 
         $this->assertEquals([
@@ -105,9 +108,9 @@ class CSVDataFrameUnitTest extends TestCase
         ], $df->toArray());
     }
 
-    public function testFromCSVcolMapToNull2()
+    public function testFromCSVcolMapToNull2(): void
     {
-        $fileName = __DIR__.DIRECTORY_SEPARATOR.'TestFiles'.DIRECTORY_SEPARATOR.'testCSV.csv';
+        $fileName = __DIR__.\DIRECTORY_SEPARATOR.'TestFiles'.\DIRECTORY_SEPARATOR.'testCSV.csv';
 
         $df = DataFrame::fromCSV($fileName, [
             'colmap' => [
@@ -116,7 +119,7 @@ class CSVDataFrameUnitTest extends TestCase
                 'c' => 'z',
                 'doesnt_exist' => 'b',
                 'doesnt_exist_either' => null,
-            ]
+            ],
         ]);
 
         $this->assertEquals([
@@ -125,9 +128,9 @@ class CSVDataFrameUnitTest extends TestCase
         ], $df->toArray());
     }
 
-    public function testSaveCSV()
+    public function testSaveCSV(): void
     {
-        $fileName = __DIR__.DIRECTORY_SEPARATOR.'TestFiles'.DIRECTORY_SEPARATOR.'testCSVSave.csv';
+        $fileName = __DIR__.\DIRECTORY_SEPARATOR.'TestFiles'.\DIRECTORY_SEPARATOR.'testCSVSave.csv';
         if (file_exists($fileName)) {
             unlink($fileName);
         }
@@ -138,7 +141,7 @@ class CSVDataFrameUnitTest extends TestCase
             ['a' => 7, 'b' => 8, 'c' => 9],
         ]);
 
-        $q = "\"";
+        $q = '"';
         $df->toCSV($fileName, ['quote' => $q]);
 
         $data = file_get_contents($fileName);

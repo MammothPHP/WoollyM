@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Contains the SQL class.
  * @package   DataFrame
@@ -30,11 +32,10 @@ use RuntimeException;
  */
 final class SQL
 {
-
     private $defaultOptions = [
         'chunksize' => 5000,
         'replace' => false,
-        'ignore' => false
+        'ignore' => false,
     ];
 
     protected PDO $pdo;
@@ -55,8 +56,7 @@ final class SQL
     {
         $pdo = $this->pdo;
         $query = $pdo->query($sqlQuery);
-        $result = $query->fetchAll(PDO::FETCH_ASSOC);
-        return $result;
+        return $query->fetchAll(PDO::FETCH_ASSOC);
     }
 
     /**
@@ -72,7 +72,7 @@ final class SQL
      */
     public function insertInto($tableName, array $columns, array $data, $options = [])
     {
-        if (count($data) === 0) {
+        if (\count($data) === 0) {
             return 0;
         }
 
@@ -144,21 +144,21 @@ final class SQL
         $replaceOpt = $options['replace'];
         $ignoreOpt = $options['ignore'];
 
-        if ($replaceOpt === true and $ignoreOpt === true) {
-            throw new RuntimeException("REPLACE and INSERT IGNORE are mutually exclusive. Please choose only one.");
+        if ($replaceOpt === true && $ignoreOpt === true) {
+            throw new RuntimeException('REPLACE and INSERT IGNORE are mutually exclusive. Please choose only one.');
         }
 
         $columns = '('.implode(', ', $columns).')';
 
         foreach ($data as &$row) {
-            $row = array_fill(0, count($row), '?');
+            $row = array_fill(0, \count($row), '?');
             $row = '('.implode(', ', $row).')';
         }
         $data = implode(', ', $data);
 
         if ($replaceOpt === true) {
             $insert = 'REPLACE';
-        } else if ($ignoreOpt === true) {
+        } elseif ($ignoreOpt === true) {
             $insert = 'INSERT IGNORE';
         } else {
             $insert = 'INSERT';
@@ -193,14 +193,15 @@ final class SQL
      * @param $tableName
      * @throws InvalidColumnException
      */
-    private function identifyAnyMissingColumns(array $columns, $tableName) {
+    private function identifyAnyMissingColumns(array $columns, $tableName): void
+    {
         $db_columns = array_column($this->pdo->query("SHOW COLUMNS FROM {$tableName};")->fetchAll(), 'Field');
 
         $missingColumns = array_diff($columns, $db_columns);
 
-        if (count($missingColumns) !== 0) {
-            $s = count($missingColumns) > 1 ? 's' : '';
-            $missingColumns = "`".implode("`, `", $missingColumns)."`";
+        if (\count($missingColumns) !== 0) {
+            $s = \count($missingColumns) > 1 ? 's' : '';
+            $missingColumns = '`'.implode('`, `', $missingColumns).'`';
             throw new InvalidColumnException("Error: Table {$tableName} does not contain the column{$s}: {$missingColumns}.");
         }
     }

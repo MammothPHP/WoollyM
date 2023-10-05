@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Contains the NotYetImplementedException.
  * @package   DataFrame
@@ -25,5 +27,4 @@ namespace Archon\Exceptions;
  */
 class NotYetImplementedException extends DataFrameException
 {
-
 }

@@ -1,12 +1,15 @@
-<?php namespace Archon\Tests\DataFrame\HTML;
+<?php
+
+declare(strict_types=1);
+
+namespace Archon\Tests\DataFrame\HTML;
 
 use Archon\DataFrame;
 use PHPUnit\Framework\TestCase;
 
 class JSONDataFrameUnitTest extends TestCase
 {
-
-    public function testToJSON()
+    public function testToJSON(): void
     {
         $df = DataFrame::fromArray([
             ['a' => 1, 'b' => 2, 'c' => 3],
@@ -18,7 +21,7 @@ class JSONDataFrameUnitTest extends TestCase
         $this->assertEquals($expected, $df->toJSON());
     }
 
-    public function testFromJSON()
+    public function testFromJSON(): void
     {
         $df = DataFrame::fromJSON('[{"a":1,"b":2,"c":3},{"a":4,"b":5,"c":6},{"a":7,"b":8,"c":9}]');
 
@@ -31,7 +34,7 @@ class JSONDataFrameUnitTest extends TestCase
         $this->assertEquals($expected, $df->toArray());
     }
 
-    public function testToPrettyJSON()
+    public function testToPrettyJSON(): void
     {
         $df = DataFrame::fromArray([
             ['a' => 1, 'b' => 2, 'c' => 3],

@@ -1,4 +1,8 @@
-<?php namespace Archon\Tests\DataFrame\SQL;
+<?php
+
+declare(strict_types=1);
+
+namespace Archon\Tests\DataFrame\SQL;
 
 use Archon\DataFrame;
 use PDO;
@@ -7,14 +11,13 @@ use PHPUnit\Framework\TestCase;
 
 class SQLDataFrameExceptionTest extends TestCase
 {
-
-    public function testRollback()
+    public function testRollback(): void
     {
         // This test is tricky. We want to assert that a failed commit will roll back the database.
 
         $pdo = new PDO('sqlite::memory:');
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $pdo->exec("CREATE TABLE testTable (a TEXT NOT NULL, b TEXT, c TEXT);");
+        $pdo->exec('CREATE TABLE testTable (a TEXT NOT NULL, b TEXT, c TEXT);');
 
         // The NOT NULL constraint on column a is what we'll be using to trigger a rollback.
 
@@ -27,7 +30,7 @@ class SQLDataFrameExceptionTest extends TestCase
         $good->toSQL('testTable', $pdo);
 
         // and make sure the output exactly matches the input.
-        $result = $pdo->query("SELECT * FROM testTable;")->fetchAll(PDO::FETCH_ASSOC);
+        $result = $pdo->query('SELECT * FROM testTable;')->fetchAll(PDO::FETCH_ASSOC);
         $this->assertEquals($result, $good->toArray());
 
         /*
@@ -60,11 +63,11 @@ class SQLDataFrameExceptionTest extends TestCase
              * the database still matches what we originally committed from the
              * first valid dataframe.
              */
-            $query = $pdo->query("SELECT * FROM testTable;");
+            $query = $pdo->query('SELECT * FROM testTable;');
             $result = $query->fetchAll(PDO::FETCH_ASSOC);
             $this->assertEquals($result, $good->toArray());
 
-            $pdo->exec("DROP TABLE testTable;");
+            $pdo->exec('DROP TABLE testTable;');
         }
     }
 }

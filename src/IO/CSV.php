@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Contains the CSV class.
  * @package   DataFrame
@@ -12,8 +14,7 @@
 
 namespace Archon\IO;
 
-use Archon\Exceptions\FileExistsException;
-use Archon\Exceptions\InvalidColumnException;
+use Archon\Exceptions\{FileExistsException, InvalidColumnException};
 use RuntimeException;
 
 /**
@@ -36,11 +37,11 @@ final class CSV
         'colline' => 0,
         'colmap' => null,
         'mapping' => null,
-        'quote' => "\"",
-        'escape' => "\\",
+        'quote' => '"',
+        'escape' => '\\',
         'overwrite' => false,
         'include' => null,
-        'exclude' => null
+        'exclude' => null,
     ];
 
     public function __construct($fileName)
@@ -105,7 +106,7 @@ final class CSV
              */
             if ($colmapOpt !== null) {
                 foreach ($columns as &$column) {
-                    if (array_search($column, array_keys($colmapOpt)) !== false) {
+                    if (array_search($column, array_keys($colmapOpt), true) !== false) {
                         $column = $colmapOpt[$column];
                     }
                 }
@@ -117,7 +118,7 @@ final class CSV
         }
 
         $fileData = $includeRegexOpt ? preg_grep($includeRegexOpt, $fileData) : $fileData;
-        $fileData = $excludeRegexOpt ? preg_grep($excludeRegexOpt, $fileData, PREG_GREP_INVERT) : $fileData;
+        $fileData = $excludeRegexOpt ? preg_grep($excludeRegexOpt, $fileData, \PREG_GREP_INVERT) : $fileData;
 
         /**
          * Parses each trimmed line with str_getcsv as an associative array
@@ -128,7 +129,7 @@ final class CSV
 
             $line = str_getcsv($line, $sepOpt, $quoteOpt, $escapeOpt);
 
-            if (count($columns) != count($line)) {
+            if (\count($columns) != \count($line)) {
                 throw new InvalidColumnException("Column count of line {$i} does not match column count of header.");
             }
 
@@ -167,14 +168,15 @@ final class CSV
         return $newRow;
     }
 
-    private function scrubRawData($fileData, $options) {
+    private function scrubRawData($fileData, $options)
+    {
         $options = Options::setDefaultOptions($options, $this->defaultOptions);
         $nlsepOpt = $options['nlsep'];
 
         $fileData = trim($fileData);
 
         // Remove non-ASCII characters from each line of the file
-        $fileData = preg_replace("/[^[:ascii:]]/", "", $fileData);
+        $fileData = preg_replace('/[^[:ascii:]]/', '', $fileData);
         $fileData = str_replace("\f", '', $fileData); // remove form feed
 
         $fileData = preg_split("/\r\n|\n|\r|{$nlsepOpt}/", $fileData);
@@ -182,14 +184,14 @@ final class CSV
         foreach ($fileData as $i => &$line) {
             try {
                 $inputEncoding = mb_detect_encoding($line, mb_detect_order(), true);
-                $line = iconv($inputEncoding, "UTF-8", $line);
+                $line = iconv($inputEncoding, 'UTF-8', $line);
             } catch (\Exception $e) {
                 throw new \Exception("Detected illegal character {$i}: {$line}");
             }
         }
 
         // Remove whitespace/empty lines
-        $fileData = preg_grep('/^\s*$/', $fileData, PREG_GREP_INVERT);
+        $fileData = preg_grep('/^\s*$/', $fileData, \PREG_GREP_INVERT);
 
         return $fileData;
     }
@@ -200,13 +202,14 @@ final class CSV
      * @param array $data
      * @return int|mixed|null|string
      */
-    private function autoDetectDelimiter(array $data) {
+    private function autoDetectDelimiter(array $data)
+    {
         $delimiters = [
             ',',
             '\t',
             ';',
             '|',
-            ':'
+            ':',
         ];
 
         $results = [];
@@ -218,13 +221,15 @@ final class CSV
             foreach ($delimiters as $delimiter) {
                 $fields = preg_split('/['.$delimiter.']/', $row);
 
-                if (count($fields) > 1) {
+                if (\count($fields) > 1) {
                     $results[$delimiter] = $results[$delimiter] ?? 0;
                     $results[$delimiter] += 1;
                 }
             }
 
-            if ($rowCount === 5) break;
+            if ($rowCount === 5) {
+                break;
+            }
         }
 
         $delimiter = null;
@@ -255,7 +260,7 @@ final class CSV
      * @throws \Archon\Exceptions\UnknownOptionException
      * @since  0.1.0
      */
-    public function saveFile(array $data, array $options = [])
+    public function saveFile(array $data, array $options = []): void
     {
         $fileName = $this->fileName;
         $options = Options::setDefaultOptions($options, $this->defaultOptions);
@@ -265,7 +270,7 @@ final class CSV
         $quoteOpt = $options['quote'];
         $escapeOpt = $options['escape'];
 
-        if (file_exists($fileName) and $overwriteOpt === false) {
+        if (file_exists($fileName) && $overwriteOpt === false) {
             throw new FileExistsException("Write failed. File {$fileName} exists.");
         }
 
@@ -274,7 +279,7 @@ final class CSV
         $columns = array_keys($data[0]);
         fputcsv($file, $columns, $sepOpt, $quoteOpt, $escapeOpt);
 
-        foreach($data as $row) {
+        foreach ($data as $row) {
             fputcsv($file, $row);
         }
 

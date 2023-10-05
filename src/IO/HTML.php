@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Contains the HTML class.
  * @package   DataFrame
@@ -26,7 +28,6 @@ use Gajus\Dindent\Indenter;
  */
 final class HTML
 {
-
     private $defaultOptions = [
         'pretty' => false,
         'class' => null,
@@ -78,7 +79,7 @@ final class HTML
         $columns = array_keys($columns);
 
         // Create a uuid HTML id if user wants a datatable but hasn't provided an HTML id
-        if ($datatableOpt !== null and $idOpt === null) {
+        if ($datatableOpt !== null && $idOpt === null) {
             $idOpt = uniqid();
         }
 
@@ -93,12 +94,12 @@ final class HTML
 
         $columns = $fnTRTH($columns);
 
-        if ($offsetOpt > 0 and $offsetOpt < count($data)) {
-            $data = array_slice($data, $offsetOpt);
+        if ($offsetOpt > 0 && $offsetOpt < \count($data)) {
+            $data = \array_slice($data, $offsetOpt);
         }
 
-        if ($limitOpt > 0 and $limitOpt < count($data)) {
-            $data = array_slice($data, 0, $limitOpt);
+        if ($limitOpt > 0 && $limitOpt < \count($data)) {
+            $data = \array_slice($data, 0, $limitOpt);
         }
 
         foreach ($data as &$row) {
@@ -116,12 +117,12 @@ final class HTML
             $fnTBody($data)
         );
 
-        if ($datatableOpt !== null and $datatableOpt !== false) {
+        if ($datatableOpt !== null && $datatableOpt !== false) {
             $data .= $this->assembleDataTableScript($datatableOpt, $idOpt, $quoteOpt);
         }
 
         if ($prettyOpt === true) {
-            $indenter = new Indenter();
+            $indenter = new Indenter;
             $data = $indenter->indent($data);
         }
 
@@ -144,16 +145,14 @@ final class HTML
         $fnQuoted = $this->fnWrapText($quote, $quote);
 
         if ($class !== null) {
-            $class = " class=".$fnQuoted($class);
+            $class = ' class='.$fnQuoted($class);
         }
 
         if ($id !== null) {
-            $id = " id=".$fnQuoted($id);
+            $id = ' id='.$fnQuoted($id);
         }
 
-        $table = '<table'.$class.$id.'>';
-
-        return $table;
+        return '<table'.$class.$id.'>';
     }
 
     /**
@@ -176,10 +175,8 @@ final class HTML
         $fnQuoted = $this->fnWrapText($quoteOpt, $quoteOpt);
 
         $datatableID = $fnQuoted('#'.$idOpt);
-        $jQueryFunction = $fnDocumentReady("$(".$datatableID.").DataTable(".$datatableOpt.");");
-        $datatableScript = $fnScript($jQueryFunction);
-
-        return $datatableScript;
+        $jQueryFunction = $fnDocumentReady('$('.$datatableID.').DataTable('.$datatableOpt.');');
+        return $fnScript($jQueryFunction);
     }
 
     /**
@@ -207,8 +204,8 @@ final class HTML
      */
     private function fnWrapText($leftTag, $rightTag)
     {
-        return function ($data) use ($leftTag, $rightTag) {
-            if (is_array($data) === true) {
+        return static function ($data) use ($leftTag, $rightTag) {
+            if (\is_array($data) === true) {
                 $data = implode('', $data);
             }
 

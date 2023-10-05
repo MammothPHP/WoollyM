@@ -1,12 +1,15 @@
-<?php namespace Archon\Tests\DataFrame\Core;
+<?php
+
+declare(strict_types=1);
+
+namespace Archon\Tests\DataFrame\Core;
 
 use Archon\DataFrame;
 use PHPUnit\Framework\TestCase;
 
 class CoreDataFrameExceptionsTest extends TestCase
 {
-
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->input = [
             ['a' => 1, 'b' => 2, 'c' => 3],
@@ -17,19 +20,19 @@ class CoreDataFrameExceptionsTest extends TestCase
         $this->df = DataFrame::fromArray($this->input);
     }
 
-    public function testInvalidColumn()
+    public function testInvalidColumn(): void
     {
         $this->expectException('Archon\Exceptions\InvalidColumnException');
         $this->df['foo'];
     }
 
-    public function testRemoveNonExistentColumn()
+    public function testRemoveNonExistentColumn(): void
     {
         $this->expectException('Archon\Exceptions\DataFrameException');
         $this->df->removeColumn('foo');
     }
 
-    public function testInvalidOffsetSet1()
+    public function testInvalidOffsetSet1(): void
     {
         $df = $this->df;
 
@@ -37,7 +40,7 @@ class CoreDataFrameExceptionsTest extends TestCase
         $df['foo'] = $df;
     }
 
-    public function testInvalidOffsetSet2()
+    public function testInvalidOffsetSet2(): void
     {
         $df = $this->df;
         $df2 = DataFrame::fromArray([['a' => 1, 'b' => 2, 'c' => 3]]);

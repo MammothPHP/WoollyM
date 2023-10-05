@@ -1,11 +1,14 @@
-<?php namespace Archon\Tests\DataFrame\Core;
+<?php
+
+declare(strict_types=1);
+
+namespace Archon\Tests\DataFrame\Core;
 
 use Archon\DataFrame;
 use PHPUnit\Framework\TestCase;
 
 class CoreDataFrameUnitTest extends TestCase
 {
-
     /** @var DataFrame */
     private $df;
 
@@ -15,22 +18,22 @@ class CoreDataFrameUnitTest extends TestCase
         ['a' => 7, 'b' => 8, 'c' => 9],
     ];
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->df = DataFrame::fromArray($this->input);
     }
 
-    public function testFromArray()
+    public function testFromArray(): void
     {
         $this->assertEquals($this->input, $this->df->toArray());
     }
 
-    public function testColumns()
+    public function testColumns(): void
     {
         $this->assertEquals(['a', 'b', 'c'], $this->df->columns());
     }
 
-    public function testRemoveColumn()
+    public function testRemoveColumn(): void
     {
         $df = $this->df;
 
@@ -44,14 +47,14 @@ class CoreDataFrameUnitTest extends TestCase
         $this->assertEquals($expected, $df->toArray());
     }
 
-    public function testForEach()
+    public function testForEach(): void
     {
         foreach ($this->df as $i => $row) {
             $this->assertEquals($row, $this->input[$i]);
         }
     }
 
-    public function testOffsetGet()
+    public function testOffsetGet(): void
     {
         $a = $this->df['a'];
         $b = $this->df['b'];
@@ -60,7 +63,7 @@ class CoreDataFrameUnitTest extends TestCase
         $this->assertEquals([['b' => 2], ['b' => 5], ['b' => 8]], $b->toArray());
     }
 
-    public function testOffsetSetValue()
+    public function testOffsetSetValue(): void
     {
         $df = $this->df;
         $df['a'] = 321;
@@ -74,12 +77,12 @@ class CoreDataFrameUnitTest extends TestCase
         $this->assertEquals($expected, $df->toArray());
     }
 
-    public function testOffsetSetClosure()
+    public function testOffsetSetClosure(): void
     {
         $df = $this->df;
 
-        $add = function ($x) {
-            return function ($y) use ($x) {
+        $add = static function ($x) {
+            return static function ($y) use ($x) {
                 return $x + $y;
             };
         };
@@ -97,7 +100,7 @@ class CoreDataFrameUnitTest extends TestCase
         $this->assertEquals($expected, $df->toArray());
     }
 
-    public function testOffsetSetDataframe()
+    public function testOffsetSetDataframe(): void
     {
         $df = $this->df;
 
@@ -112,11 +115,11 @@ class CoreDataFrameUnitTest extends TestCase
         $this->assertEquals($expected, $df->toArray());
     }
 
-    public function testOffsetSetNewColumn()
+    public function testOffsetSetNewColumn(): void
     {
         $df = $this->df;
 
-        $df['d'] = $df['c']->apply(function ($el) {
+        $df['d'] = $df['c']->apply(static function ($el) {
             return $el + 1;
         });
 
@@ -129,11 +132,11 @@ class CoreDataFrameUnitTest extends TestCase
         $this->assertEquals($expected, $df->toArray());
     }
 
-    public function testApplyDataFrame()
+    public function testApplyDataFrame(): void
     {
         $df = $this->df;
 
-        $df->apply(function ($row) {
+        $df->apply(static function ($row) {
             $row['b'] = $row['a'] + 2;
             $row['c'] = $row['b'] + 2;
             return $row;
@@ -148,13 +151,13 @@ class CoreDataFrameUnitTest extends TestCase
         $this->assertEquals($expected, $df->toArray());
     }
 
-    public function testIsset()
+    public function testIsset(): void
     {
-        $this->assertEquals(true, isset($this->df['a']));
-        $this->assertEquals(false, isset($this->df['foo']));
+        $this->assertTrue(isset($this->df['a']));
+        $this->assertFalse(isset($this->df['foo']));
     }
 
-    public function testApplyIndexMapValues()
+    public function testApplyIndexMapValues(): void
     {
         $df = $this->df;
 
@@ -170,16 +173,16 @@ class CoreDataFrameUnitTest extends TestCase
         ], $df->toArray());
     }
 
-    public function testApplyIndexMapFunction()
+    public function testApplyIndexMapFunction(): void
     {
         $df = $this->df;
 
         $df->applyIndexMap([
-            0 => function($row) {
+            0 => static function ($row) {
                 $row['a'] = 10;
                 return $row;
             },
-            2 => function($row) {
+            2 => static function ($row) {
                 $row['c'] = 20;
                 return $row;
             },
@@ -192,14 +195,14 @@ class CoreDataFrameUnitTest extends TestCase
         ], $df->toArray());
     }
 
-    public function testApplyIndexMapValueFunction()
+    public function testApplyIndexMapValueFunction(): void
     {
         $df = $this->df;
 
-        $my_function = function($value) {
+        $my_function = static function ($value) {
             if ($value < 4) {
                 return 0;
-            } else if ($value > 4) {
+            } elseif ($value > 4) {
                 return 1;
             } else {
                 return $value;
@@ -218,12 +221,12 @@ class CoreDataFrameUnitTest extends TestCase
         ], $df->toArray());
     }
 
-    public function testApplyIndexMapArray()
+    public function testApplyIndexMapArray(): void
     {
         $df = $this->df;
 
         $df->applyIndexMap([
-            1 => [ 'a' => 301, 'b' => 404, 'c' => 500 ],
+            1 => ['a' => 301, 'b' => 404, 'c' => 500],
         ]);
 
         $this->assertEquals([
@@ -233,35 +236,35 @@ class CoreDataFrameUnitTest extends TestCase
         ], $df->toArray());
     }
 
-    public function testFilter()
+    public function testFilter(): void
     {
         $df = $this->df;
 
-        $df = $df->array_filter(function($row) {
+        $df = $df->array_filter(static function ($row) {
             return $row['a'] > 4 || $row['a'] < 4;
         });
 
         $this->assertEquals([
-            [ 'a' => 1, 'b' => 2, 'c' => 3 ],
-            [ 'a' => 7, 'b' => 8, 'c' => 9 ],
+            ['a' => 1, 'b' => 2, 'c' => 3],
+            ['a' => 7, 'b' => 8, 'c' => 9],
         ], $df->toArray());
     }
 
-    public function testOffsetSetValueArray()
+    public function testOffsetSetValueArray(): void
     {
         $df = $this->df;
 
-        $df[] = [ 'a' => 10, 'b' => 11, 'c' => 12 ];
+        $df[] = ['a' => 10, 'b' => 11, 'c' => 12];
 
         $this->assertEquals([
-            [ 'a' => 1, 'b' => 2, 'c' => 3 ],
-            [ 'a' => 4, 'b' => 5, 'c' => 6 ],
-            [ 'a' => 7, 'b' => 8, 'c' => 9 ],
-            [ 'a' => 10, 'b' => 11, 'c' => 12 ],
+            ['a' => 1, 'b' => 2, 'c' => 3],
+            ['a' => 4, 'b' => 5, 'c' => 6],
+            ['a' => 7, 'b' => 8, 'c' => 9],
+            ['a' => 10, 'b' => 11, 'c' => 12],
         ], $df->toArray());
     }
 
-    public function testAppend()
+    public function testAppend(): void
     {
         $df1 = $this->df;
         $df2 = $this->df;
@@ -269,68 +272,70 @@ class CoreDataFrameUnitTest extends TestCase
         // Test that appending an array with less than count of 1 will simply return the original DataFrame
         $this->assertSame(
             $df1,
-            $df1->append(DataFrame::fromArray(array()))
+            $df1->append(DataFrame::fromArray([]))
         );
 
         $df1->append($df2);
 
         $this->assertEquals([
-            [ 'a' => 1, 'b' => 2, 'c' => 3 ],
-            [ 'a' => 4, 'b' => 5, 'c' => 6 ],
-            [ 'a' => 7, 'b' => 8, 'c' => 9 ],
-            [ 'a' => 1, 'b' => 2, 'c' => 3 ],
-            [ 'a' => 4, 'b' => 5, 'c' => 6 ],
-            [ 'a' => 7, 'b' => 8, 'c' => 9 ],
+            ['a' => 1, 'b' => 2, 'c' => 3],
+            ['a' => 4, 'b' => 5, 'c' => 6],
+            ['a' => 7, 'b' => 8, 'c' => 9],
+            ['a' => 1, 'b' => 2, 'c' => 3],
+            ['a' => 4, 'b' => 5, 'c' => 6],
+            ['a' => 7, 'b' => 8, 'c' => 9],
         ], $df1->toArray());
     }
 
-    public function testPregReplace()
+    public function testPregReplace(): void
     {
         $df1 = $this->df;
 
         $df1->preg_replace('/[1-5]/', 'foo');
 
         $this->assertEquals([
-            [ 'a' => 'foo', 'b' => 'foo', 'c' => 'foo' ],
-            [ 'a' => 'foo', 'b' => 'foo', 'c' => 6 ],
-            [ 'a' => 7, 'b' => 8, 'c' => 9 ],
+            ['a' => 'foo', 'b' => 'foo', 'c' => 'foo'],
+            ['a' => 'foo', 'b' => 'foo', 'c' => 6],
+            ['a' => 7, 'b' => 8, 'c' => 9],
         ], $df1->toArray());
     }
 
-    public function testGroupBy() {
+    public function testGroupBy(): void
+    {
         $df = DataFrame::fromArray([
-            [ 'a' => 1, 'b' => 2, 'c' => 3 ],
-            [ 'a' => 1, 'b' => 3, 'c' => 4 ],
-            [ 'a' => 2, 'b' => 4, 'c' => 5 ],
-            [ 'a' => 2, 'b' => 4, 'c' => 6 ],
-            [ 'a' => 3, 'b' => 5, 'c' => 7 ],
-            [ 'a' => 3, 'b' => 5, 'c' => 8 ],
+            ['a' => 1, 'b' => 2, 'c' => 3],
+            ['a' => 1, 'b' => 3, 'c' => 4],
+            ['a' => 2, 'b' => 4, 'c' => 5],
+            ['a' => 2, 'b' => 4, 'c' => 6],
+            ['a' => 3, 'b' => 5, 'c' => 7],
+            ['a' => 3, 'b' => 5, 'c' => 8],
         ]);
 
         $this->assertSame([
-            [ 'a' => 1 ],
-            [ 'a' => 2 ],
-            [ 'a' => 3 ],
+            ['a' => 1],
+            ['a' => 2],
+            ['a' => 3],
         ], $df->unique('a')->toArray());
 
         $this->assertSame([
-            [ 'a' => 1, 'b' => 2 ],
-            [ 'a' => 1, 'b' => 3 ],
-            [ 'a' => 2, 'b' => 4 ],
-            [ 'a' => 3, 'b' => 5 ],
+            ['a' => 1, 'b' => 2],
+            ['a' => 1, 'b' => 3],
+            ['a' => 2, 'b' => 4],
+            ['a' => 3, 'b' => 5],
         ], $df->unique(['a', 'b'])->toArray());
 
         $this->assertSame([
-            [ 'a' => 1, 'b' => 2, 'c' => 3 ],
-            [ 'a' => 1, 'b' => 3, 'c' => 4 ],
-            [ 'a' => 2, 'b' => 4, 'c' => 5 ],
-            [ 'a' => 2, 'b' => 4, 'c' => 6 ],
-            [ 'a' => 3, 'b' => 5, 'c' => 7 ],
-            [ 'a' => 3, 'b' => 5, 'c' => 8 ],
+            ['a' => 1, 'b' => 2, 'c' => 3],
+            ['a' => 1, 'b' => 3, 'c' => 4],
+            ['a' => 2, 'b' => 4, 'c' => 5],
+            ['a' => 2, 'b' => 4, 'c' => 6],
+            ['a' => 3, 'b' => 5, 'c' => 7],
+            ['a' => 3, 'b' => 5, 'c' => 8],
         ], $df->unique(['a', 'b', 'c'])->toArray());
     }
 
-    public function testRename() {
+    public function testRename(): void
+    {
         $df = $this->df;
 
         $df->renameColumn('a', 'foo');
@@ -344,21 +349,22 @@ class CoreDataFrameUnitTest extends TestCase
 
 
 
-    public function testSortValues() {
+    public function testSortValues(): void
+    {
 
         // Single column
         $unordered_df = DataFrame::fromArray([
-            ['a' => 1, 'x'=> 'a'],
-            ['a' => 3, 'x'=> 'b'],
-            ['a' => 2, 'x'=> 'c'],
-            ['a' => 4, 'x'=> 'd'],
+            ['a' => 1, 'x' => 'a'],
+            ['a' => 3, 'x' => 'b'],
+            ['a' => 2, 'x' => 'c'],
+            ['a' => 4, 'x' => 'd'],
         ]);
 
         $ordered_df = DataFrame::fromArray([
-            ['a' => 1, 'x'=> 'a'],
-            ['a' => 2, 'x'=> 'c'],
-            ['a' => 3, 'x'=> 'b'],
-            ['a' => 4, 'x'=> 'd'],
+            ['a' => 1, 'x' => 'a'],
+            ['a' => 2, 'x' => 'c'],
+            ['a' => 3, 'x' => 'b'],
+            ['a' => 4, 'x' => 'd'],
         ]);
 
         $unordered_df->sortValues('a');
@@ -368,17 +374,17 @@ class CoreDataFrameUnitTest extends TestCase
 
         // Single column descending
         $unordered_df = DataFrame::fromArray([
-            ['a' => 1, 'x'=> 'a'],
-            ['a' => 3, 'x'=> 'b'],
-            ['a' => 2, 'x'=> 'c'],
-            ['a' => 4, 'x'=> 'd'],
+            ['a' => 1, 'x' => 'a'],
+            ['a' => 3, 'x' => 'b'],
+            ['a' => 2, 'x' => 'c'],
+            ['a' => 4, 'x' => 'd'],
         ]);
 
         $ordered_df = DataFrame::fromArray([
-            ['a' => 4, 'x'=> 'd'],
-            ['a' => 3, 'x'=> 'b'],
-            ['a' => 2, 'x'=> 'c'],
-            ['a' => 1, 'x'=> 'a'],
+            ['a' => 4, 'x' => 'd'],
+            ['a' => 3, 'x' => 'b'],
+            ['a' => 2, 'x' => 'c'],
+            ['a' => 1, 'x' => 'a'],
         ]);
 
         $unordered_df->sortValues(by: 'a', ascending: false);
@@ -387,17 +393,17 @@ class CoreDataFrameUnitTest extends TestCase
 
         // Double column, first a than x
         $unordered_df = DataFrame::fromArray([
-            ['a' => 1, 'b' => 5, 'x'=> 'a'],
-            ['a' => 2, 'b' => 3, 'x'=> 'd'],
-            ['a' => 2, 'b' => 2, 'x'=> 'c'],
-            ['a' => 4, 'b' => 1, 'x'=> 'b'],
+            ['a' => 1, 'b' => 5, 'x' => 'a'],
+            ['a' => 2, 'b' => 3, 'x' => 'd'],
+            ['a' => 2, 'b' => 2, 'x' => 'c'],
+            ['a' => 4, 'b' => 1, 'x' => 'b'],
         ]);
 
         $ordered_df = DataFrame::fromArray([
-            ['a' => 1, 'b' => 5, 'x'=> 'a'],
-            ['a' => 2, 'b' => 2, 'x'=> 'c'],
-            ['a' => 2, 'b' => 3, 'x'=> 'd'],
-            ['a' => 4, 'b' => 1, 'x'=> 'b'],
+            ['a' => 1, 'b' => 5, 'x' => 'a'],
+            ['a' => 2, 'b' => 2, 'x' => 'c'],
+            ['a' => 2, 'b' => 3, 'x' => 'd'],
+            ['a' => 4, 'b' => 1, 'x' => 'b'],
         ]);
 
         $unordered_df->sortValues(['a', 'x']);
@@ -407,17 +413,17 @@ class CoreDataFrameUnitTest extends TestCase
 
         // Double column, first b than a
         $unordered_df = DataFrame::fromArray([
-            ['a' => 1, 'b' => 5, 'x'=> 'a'],
-            ['a' => 2, 'b' => 3, 'x'=> 'b'],
-            ['a' => 2, 'b' => 2, 'x'=> 'c'],
-            ['a' => 4, 'b' => 5, 'x'=> 'd'],
+            ['a' => 1, 'b' => 5, 'x' => 'a'],
+            ['a' => 2, 'b' => 3, 'x' => 'b'],
+            ['a' => 2, 'b' => 2, 'x' => 'c'],
+            ['a' => 4, 'b' => 5, 'x' => 'd'],
         ]);
 
         $ordered_df = DataFrame::fromArray([
-            ['a' => 2, 'b' => 2, 'x'=> 'c'],
-            ['a' => 2, 'b' => 3, 'x'=> 'b'],
-            ['a' => 1, 'b' => 5, 'x'=> 'a'],
-            ['a' => 4, 'b' => 5, 'x'=> 'd'],
+            ['a' => 2, 'b' => 2, 'x' => 'c'],
+            ['a' => 2, 'b' => 3, 'x' => 'b'],
+            ['a' => 1, 'b' => 5, 'x' => 'a'],
+            ['a' => 4, 'b' => 5, 'x' => 'd'],
         ]);
 
         $unordered_df->sortValues(['b', 'a']);

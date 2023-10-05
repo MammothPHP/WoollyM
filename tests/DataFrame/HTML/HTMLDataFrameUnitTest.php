@@ -1,12 +1,15 @@
-<?php namespace Archon\Tests\DataFrame\HTML;
+<?php
+
+declare(strict_types=1);
+
+namespace Archon\Tests\DataFrame\HTML;
 
 use Archon\DataFrame;
 use PHPUnit\Framework\TestCase;
 
 class HTMLDataFrameUnitTest extends TestCase
 {
-
-    public function testToHTML()
+    public function testToHTML(): void
     {
         $df = DataFrame::fromArray([
             ['a' => 1, 'b' => 2, 'c' => 3],
@@ -14,20 +17,20 @@ class HTMLDataFrameUnitTest extends TestCase
             ['a' => 7, 'b' => 8, 'c' => 9],
         ]);
 
-        $expected = "<table>";
-        $expected .= "<thead><tr><th>a</th><th>b</th><th>c</th></tr></thead>";
-        $expected .= "<tfoot><tr><th>a</th><th>b</th><th>c</th></tr></tfoot>";
-        $expected .= "<tbody>";
-        $expected .= "<tr><td>1</td><td>2</td><td>3</td></tr>";
-        $expected .= "<tr><td>4</td><td>5</td><td>6</td></tr>";
-        $expected .= "<tr><td>7</td><td>8</td><td>9</td></tr>";
-        $expected .= "</tbody>";
-        $expected .= "</table>";
+        $expected = '<table>';
+        $expected .= '<thead><tr><th>a</th><th>b</th><th>c</th></tr></thead>';
+        $expected .= '<tfoot><tr><th>a</th><th>b</th><th>c</th></tr></tfoot>';
+        $expected .= '<tbody>';
+        $expected .= '<tr><td>1</td><td>2</td><td>3</td></tr>';
+        $expected .= '<tr><td>4</td><td>5</td><td>6</td></tr>';
+        $expected .= '<tr><td>7</td><td>8</td><td>9</td></tr>';
+        $expected .= '</tbody>';
+        $expected .= '</table>';
 
         $this->assertEquals($expected, $df->toHTML());
     }
 
-    public function testLimit()
+    public function testLimit(): void
     {
         $df = DataFrame::fromArray([
             ['a' => 1, 'b' => 2, 'c' => 3],
@@ -36,30 +39,30 @@ class HTMLDataFrameUnitTest extends TestCase
             ['a' => 10, 'b' => 11, 'c' => 12],
         ]);
 
-        $expected = "<table>";
-        $expected .= "<thead><tr><th>a</th><th>b</th><th>c</th></tr></thead>";
-        $expected .= "<tfoot><tr><th>a</th><th>b</th><th>c</th></tr></tfoot>";
-        $expected .= "<tbody>";
-        $expected .= "<tr><td>1</td><td>2</td><td>3</td></tr>";
-        $expected .= "<tr><td>4</td><td>5</td><td>6</td></tr>";
-        $expected .= "</tbody>";
-        $expected .= "</table>";
-        $this->assertEquals($expected, $df->toHTML([ 'limit' => 2 ]));
+        $expected = '<table>';
+        $expected .= '<thead><tr><th>a</th><th>b</th><th>c</th></tr></thead>';
+        $expected .= '<tfoot><tr><th>a</th><th>b</th><th>c</th></tr></tfoot>';
+        $expected .= '<tbody>';
+        $expected .= '<tr><td>1</td><td>2</td><td>3</td></tr>';
+        $expected .= '<tr><td>4</td><td>5</td><td>6</td></tr>';
+        $expected .= '</tbody>';
+        $expected .= '</table>';
+        $this->assertEquals($expected, $df->toHTML(['limit' => 2]));
 
-        $expected = "<table>";
-        $expected .= "<thead><tr><th>a</th><th>b</th><th>c</th></tr></thead>";
-        $expected .= "<tfoot><tr><th>a</th><th>b</th><th>c</th></tr></tfoot>";
-        $expected .= "<tbody>";
-        $expected .= "<tr><td>7</td><td>8</td><td>9</td></tr>";
-        $expected .= "<tr><td>10</td><td>11</td><td>12</td></tr>";
-        $expected .= "</tbody>";
-        $expected .= "</table>";
-        $this->assertEquals($expected, $df->toHTML([ 'offset' => 2, 'limit' => 2 ]));
+        $expected = '<table>';
+        $expected .= '<thead><tr><th>a</th><th>b</th><th>c</th></tr></thead>';
+        $expected .= '<tfoot><tr><th>a</th><th>b</th><th>c</th></tr></tfoot>';
+        $expected .= '<tbody>';
+        $expected .= '<tr><td>7</td><td>8</td><td>9</td></tr>';
+        $expected .= '<tr><td>10</td><td>11</td><td>12</td></tr>';
+        $expected .= '</tbody>';
+        $expected .= '</table>';
+        $this->assertEquals($expected, $df->toHTML(['offset' => 2, 'limit' => 2]));
 
 
     }
 
-    public function testPrettyToHTML()
+    public function testPrettyToHTML(): void
     {
         $df = DataFrame::fromArray([
             ['a' => 1, 'b' => 2, 'c' => 3],
@@ -99,12 +102,12 @@ class HTMLDataFrameUnitTest extends TestCase
         $expected .= "            <td>9</td>\n";
         $expected .= "        </tr>\n";
         $expected .= "    </tbody>\n";
-        $expected .= "</table>";
+        $expected .= '</table>';
 
         $this->assertEquals($expected, $df->toHTML(['pretty' => true]));
     }
 
-    public function testClassIDOptions()
+    public function testClassIDOptions(): void
     {
         $df = DataFrame::fromArray([
             ['a' => 1, 'b' => 2, 'c' => 3],
@@ -112,43 +115,43 @@ class HTMLDataFrameUnitTest extends TestCase
             ['a' => 7, 'b' => 8, 'c' => 9],
         ]);
 
-        $fnExpected = function ($tableString) {
-            return $tableString."<thead><tr><th>a</th><th>b</th><th>c</th></tr></thead>"
-                ."<tfoot><tr><th>a</th><th>b</th><th>c</th></tr></tfoot>"
-                ."<tbody>"
-                ."<tr><td>1</td><td>2</td><td>3</td></tr>"
-                ."<tr><td>4</td><td>5</td><td>6</td></tr>"
-                ."<tr><td>7</td><td>8</td><td>9</td></tr>"
-                ."</tbody>"
-                ."</table>";
+        $fnExpected = static function ($tableString) {
+            return $tableString.'<thead><tr><th>a</th><th>b</th><th>c</th></tr></thead>'
+                .'<tfoot><tr><th>a</th><th>b</th><th>c</th></tr></tfoot>'
+                .'<tbody>'
+                .'<tr><td>1</td><td>2</td><td>3</td></tr>'
+                .'<tr><td>4</td><td>5</td><td>6</td></tr>'
+                .'<tr><td>7</td><td>8</td><td>9</td></tr>'
+                .'</tbody>'
+                .'</table>';
         };
 
         $expected = $fnExpected("<table class='classname'>");
         $this->assertEquals($expected, $df->toHTML([
-            'class' => 'classname'
+            'class' => 'classname',
         ]));
 
         $expected = $fnExpected("<table id='idname'>");
         $this->assertEquals($expected, $df->toHTML([
-            'id' => 'idname'
+            'id' => 'idname',
         ]));
 
         $expected = $fnExpected("<table class='classname' id='idname'>");
         $this->assertEquals($expected, $df->toHTML([
             'class' => 'classname',
-            'id' => 'idname'
+            'id' => 'idname',
         ]));
 
         $expected = $fnExpected('<table class="classname" id="idname">');
         $this->assertEquals($expected, $df->toHTML([
             'class' => 'classname',
             'id' => 'idname',
-            'quote' => '"'
+            'quote' => '"',
         ]));
 
     }
 
-    public function testDataTable()
+    public function testDataTable(): void
     {
         $df = DataFrame::fromArray([['a' => 1]]);
 
@@ -161,16 +164,16 @@ class HTMLDataFrameUnitTest extends TestCase
 
         $uuid = substr($matches[0], 1);
         $expected = "<table id='".$uuid."'>";
-        $expected .= "<thead><tr><th>a</th></tr></thead>";
-        $expected .= "<tfoot><tr><th>a</th></tr></tfoot>";
-        $expected .= "<tbody>";
-        $expected .= "<tr><td>1</td></tr>";
-        $expected .= "</tbody>";
-        $expected .= "</table>";
+        $expected .= '<thead><tr><th>a</th></tr></thead>';
+        $expected .= '<tfoot><tr><th>a</th></tr></tfoot>';
+        $expected .= '<tbody>';
+        $expected .= '<tr><td>1</td></tr>';
+        $expected .= '</tbody>';
+        $expected .= '</table>';
 
         // Defining this wrapper function because PHPStorm goes apeshit trying to interpret the generated JavaScript.
-        $wrap = function ($openTag, $closingTag) {
-            return function ($data) use ($openTag, $closingTag) {
+        $wrap = static function ($openTag, $closingTag) {
+            return static function ($data) use ($openTag, $closingTag) {
                 return $openTag . $data . $closingTag;
             };
         };
@@ -181,7 +184,7 @@ class HTMLDataFrameUnitTest extends TestCase
         $this->assertEquals($expected, $actual);
     }
 
-    public function testDataTableOptions()
+    public function testDataTableOptions(): void
     {
         $df = DataFrame::fromArray([['a' => 1]]);
 
@@ -191,16 +194,16 @@ class HTMLDataFrameUnitTest extends TestCase
         ]);
 
         $expected = "<table id='myid'>";
-        $expected .= "<thead><tr><th>a</th></tr></thead>";
-        $expected .= "<tfoot><tr><th>a</th></tr></tfoot>";
-        $expected .= "<tbody>";
-        $expected .= "<tr><td>1</td></tr>";
-        $expected .= "</tbody>";
-        $expected .= "</table>";
+        $expected .= '<thead><tr><th>a</th></tr></thead>';
+        $expected .= '<tfoot><tr><th>a</th></tr></tfoot>';
+        $expected .= '<tbody>';
+        $expected .= '<tr><td>1</td></tr>';
+        $expected .= '</tbody>';
+        $expected .= '</table>';
 
         // Defining this wrapper function because PHPStorm goes apeshit trying to interpret the generated JavaScript.
-        $wrap = function ($openTag, $closingTag) {
-            return function ($data) use ($openTag, $closingTag) {
+        $wrap = static function ($openTag, $closingTag) {
+            return static function ($data) use ($openTag, $closingTag) {
                 return $openTag . $data . $closingTag;
             };
         };
