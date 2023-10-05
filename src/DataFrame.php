@@ -21,6 +21,7 @@ use Archon\IO\XLSX;
 use PDO;
 use PHPExcel;
 use PHPExcel_Worksheet;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
 
 /**
  * The DataFrame class acts as an interface to various underlying data structure, file format, and database
@@ -105,7 +106,7 @@ final class DataFrame extends DataFrameCore
      * @return PHPExcel_Worksheet
      * @since  0.3.0
      */
-    public function toXLSXWorksheet(PHPExcel &$excel, $worksheetTitle)
+    public function toXLSXWorksheet(Spreadsheet &$excel, $worksheetTitle)
     {
         $worksheet = XLSX::saveToWorksheet($excel, $worksheetTitle, $this->data, $this->columns);
         return $worksheet;

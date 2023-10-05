@@ -1,12 +1,10 @@
 <?php namespace Archon\Tests\DataFrame\XLSX;
 
 use Archon\DataFrame;
-use PHPExcel;
-use PHPExcel_Writer_Excel2007;
-use PHPUnit\Framework\Attributes\RequiresPhp;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PHPUnit\Framework\TestCase;
 
-#[RequiresPhp('12')]
 class XLSXDataFrameUnitTest extends TestCase
 {
 
@@ -107,7 +105,8 @@ class XLSXDataFrameUnitTest extends TestCase
         $b = DataFrame::fromArray($sheetB);
         $c = DataFrame::fromArray($sheetC);
 
-        $xlsx = new PHPExcel();
+        $xlsx = new Spreadsheet();
+
         $a->toXLSXWorksheet($xlsx, 'A');
         $b->toXLSXWorksheet($xlsx, 'B');
         $c->toXLSXWorksheet($xlsx, 'C');
@@ -116,10 +115,10 @@ class XLSXDataFrameUnitTest extends TestCase
         $this->assertEquals($b->toArray(), $sheetB);
         $this->assertEquals($c->toArray(), $sheetC);
 
-        $writer = new PHPExcel_Writer_Excel2007($xlsx);
-        @$writer->save($fileName); // Suppress warning coming from PHPExcel date/time nonsense
+        $writer = new Xlsx($xlsx);
+        @$writer->save($fileName); // Suppress warning coming from PhpSpreadsheet  date/time nonsense
 
-        // Suppress warning coming from PHPExcel date/time nonsense
+        // Suppress warning coming from PhpSpreadsheet  date/time nonsense
         @$a = DataFrame::fromXLSX($fileName, ['sheetname' => 'A']);
         @$b = DataFrame::fromXLSX($fileName, ['sheetname' => 'B']);
         @$c = DataFrame::fromXLSX($fileName, ['sheetname' => 'C']);

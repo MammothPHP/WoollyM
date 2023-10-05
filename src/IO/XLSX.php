@@ -13,12 +13,13 @@
 namespace Archon\IO;
 
 use PHPExcel;
-use PHPExcel_IOFactory;
-use PHPExcel_Worksheet;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 /**
  * The XLSX class contains implementation details for reading and writing data to and from instances of PHPExcel,
- * PHPExcel_Worksheet, and the XLSX file format in general.
+ * Worksheet, and the XLSX file format in general.
  * @package   Archon\IO
  * @author    Howard Gehring <hwgehring@gmail.com>
  * @copyright 2015 Howard Gehring <hwgehring@gmail.com>
@@ -34,10 +35,8 @@ class XLSX
         'sheetname' => null
     ];
 
-    public function __construct($fileName)
-    {
-        $this->fileName = $fileName;
-    }
+    public function __construct(public readonly string $fileName)
+    {}
 
     /**
      * Loads the file which the CSV class was instantiated with.
@@ -47,18 +46,16 @@ class XLSX
      * @param  array $options
      * @return array
      * @throws \Archon\Exceptions\UnknownOptionException
-     * @throws \PHPExcel_Exception
+     * @throws \PhpOffice\PhpSpreadsheet\Exception
      * @since  0.3.0
      */
     public function loadFile(array $options)
     {
-        $fileName = $this->fileName;
-
         $options = Options::setDefaultOptions($options, $this->defaultOptions);
         $colRowOpt = $options['colrow'];
         $sheetNameOpt = $options['sheetname'];
 
-        $xlsx = PHPExcel_IOFactory::load($fileName);
+        $xlsx = IOFactory::load($this->fileName);
 
         if ($sheetNameOpt === null) {
             $sheet = $xlsx->getActiveSheet();
@@ -97,11 +94,11 @@ class XLSX
      * @param  $worksheetTitle
      * @param  array $data
      * @param  array $columns
-     * @return PHPExcel_Worksheet
-     * @throws \PHPExcel_Exception
+     * @return PhpOffice\PhpSpreadsheet\Worksheet\Worksheet
+     * @throws \PhpOffice\PhpSpreadsheet\Exception
      * @since  0.3.0
      */
-    public static function saveToWorksheet(PHPExcel &$excel, $worksheetTitle, array $data, array $columns)
+    public static function saveToWorksheet(Spreadsheet &$excel, $worksheetTitle, array $data, array $columns)
     {
         // Check if this is a brand new spreadsheet
         if ($excel->getSheetCount() === 1) {
@@ -119,14 +116,14 @@ class XLSX
             }
         }
 
-        $worksheet = new PHPExcel_Worksheet($excel, $worksheetTitle);
+        $worksheet = new Worksheet($excel, $worksheetTitle);
 
         $wsArray = [$columns];
         foreach ($data as $row) {
             $wsArray[] = array_values($row);
         }
 
-        $worksheet->fromArray($wsArray);
+        $worksheet->fromArray($wsArray, null, 'A1', false);
         $excel->addSheet($worksheet);
         return $worksheet;
     }
