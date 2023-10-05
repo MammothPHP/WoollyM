@@ -15,7 +15,7 @@ class CoreDataFrameUnitTest extends TestCase
         ['a' => 7, 'b' => 8, 'c' => 9],
     ];
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->df = DataFrame::fromArray($this->input);
     }
@@ -375,34 +375,34 @@ class CoreDataFrameUnitTest extends TestCase
         ]);
 
         $ordered_df = DataFrame::fromArray([
-            ['a' => 1, 'x'=> 'a'],
+            ['a' => 4, 'x'=> 'd'],
             ['a' => 3, 'x'=> 'b'],
             ['a' => 2, 'x'=> 'c'],
-            ['a' => 4, 'x'=> 'd'],
+            ['a' => 1, 'x'=> 'a'],
         ]);
 
-        $unordered_df->sortValues('a', false);
+        $unordered_df->sortValues(by: 'a', ascending: false);
 
-        $this->assertSame($unordered_df->toArray(), $ordered_df->toArray());
+        $this->assertSame($ordered_df->toArray(), $unordered_df->toArray());
 
-        // Double column, first a than b
+        // Double column, first a than x
         $unordered_df = DataFrame::fromArray([
             ['a' => 1, 'b' => 5, 'x'=> 'a'],
-            ['a' => 2, 'b' => 3, 'x'=> 'b'],
+            ['a' => 2, 'b' => 3, 'x'=> 'd'],
             ['a' => 2, 'b' => 2, 'x'=> 'c'],
-            ['a' => 4, 'b' => 1, 'x'=> 'd'],
+            ['a' => 4, 'b' => 1, 'x'=> 'b'],
         ]);
 
         $ordered_df = DataFrame::fromArray([
             ['a' => 1, 'b' => 5, 'x'=> 'a'],
             ['a' => 2, 'b' => 2, 'x'=> 'c'],
-            ['a' => 2, 'b' => 3, 'x'=> 'b'],
-            ['a' => 4, 'b' => 1, 'x'=> 'd'],
+            ['a' => 2, 'b' => 3, 'x'=> 'd'],
+            ['a' => 4, 'b' => 1, 'x'=> 'b'],
         ]);
 
-        $unordered_df->sortValues(['a', 'b']);
+        $unordered_df->sortValues(['a', 'x']);
 
-        $this->assertSame($unordered_df->toArray(), $ordered_df->toArray());
+        $this->assertSame($ordered_df->toArray(), $unordered_df->toArray());
 
 
         // Double column, first b than a
@@ -422,7 +422,7 @@ class CoreDataFrameUnitTest extends TestCase
 
         $unordered_df->sortValues(['b', 'a']);
 
-        $this->assertSame($unordered_df->toArray(), $ordered_df->toArray());
+        $this->assertSame($ordered_df->toArray(), $unordered_df->toArray());
     }
 
 }

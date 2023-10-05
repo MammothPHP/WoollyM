@@ -3,8 +3,10 @@
 use Archon\DataFrame;
 use PHPExcel;
 use PHPExcel_Writer_Excel2007;
+use PHPUnit\Framework\Attributes\RequiresPhp;
 use PHPUnit\Framework\TestCase;
 
+#[RequiresPhp('12')]
 class XLSXDataFrameUnitTest extends TestCase
 {
 

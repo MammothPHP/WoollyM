@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 class CoreDataFrameExceptionsTest extends TestCase
 {
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->input = [
             ['a' => 1, 'b' => 2, 'c' => 3],

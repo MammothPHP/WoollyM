@@ -156,7 +156,7 @@ abstract class DataFrameCore implements ArrayAccess, Iterator, Countable
     {
         return DataFrame::fromArray(array_filter($this->data, $f, ARRAY_FILTER_USE_BOTH));
     }
-    
+
     /**
      * Allows SQL to be used to perform operations on the DataFrame
      *
@@ -214,7 +214,7 @@ abstract class DataFrameCore implements ArrayAccess, Iterator, Countable
      * @throws InvalidColumnException
      * @since  0.1.0
      */
-    public function mustHaveColumn($columnName)
+    public function mustHaveColumn(mixed $columnName)
     {
         if ($this->hasColumn($columnName) === false) {
             throw new InvalidColumnException("{$columnName} doesn't exist in DataFrame");
@@ -517,23 +517,23 @@ abstract class DataFrameCore implements ArrayAccess, Iterator, Countable
      * @param $ascending bool Sort the values ascending (or if `false` descending)
      * @return void
      */
-    public function sortValues($by, $ascending=true)
+    public function sortValues(array|string $by, bool $ascending = true): void
     {
         if (!is_array($by)) {
             $by = [ $by ];
         }
 
-        usort($this->data, function($row_a, $row_b) use ($by, $ascending){
-            foreach($by as $col){
-                $value_a = $row_a[$col];
-                $value_b = $row_b[$col];
-                if($value_a != $value_b){
-                    return ($value_a > $value_b) * $ascending;
+        usort($this->data, function($row_a, $row_b) use ($by, $ascending): int {
+            foreach($by as $col) {
+                if ($row_a[$col] > $row_b[$col]) {
+                    return $ascending ? 1 : -1;
+                } elseif ($row_a[$col] < $row_b[$col]) {
+                    return $ascending ? -1 : 1;
                 }
             }
-            return true;
-        });
 
+            return 0;
+        });
     }
 
     /* *****************************************************************************************************************
@@ -548,7 +548,7 @@ abstract class DataFrameCore implements ArrayAccess, Iterator, Countable
      * @return bool
      * @since  0.1.0
      */
-    public function offsetExists($columnName)
+    public function offsetExists($columnName): bool
     {
         foreach ($this as $row) {
             if (!array_key_exists($columnName, $row)) {
@@ -570,7 +570,7 @@ abstract class DataFrameCore implements ArrayAccess, Iterator, Countable
      * @throws InvalidColumnException
      * @since  0.1.0
      */
-    public function offsetGet($columnName)
+    public function offsetGet(mixed $columnName): mixed
     {
         $this->mustHaveColumn($columnName);
 
@@ -603,7 +603,7 @@ abstract class DataFrameCore implements ArrayAccess, Iterator, Countable
      * @throws DataFrameException
      * @since  0.1.0
      */
-    public function offsetSet($targetColumn, $rightHandSide)
+    public function offsetSet($targetColumn, $rightHandSide): void
     {
         if ($rightHandSide instanceof DataFrame) {
             $this->offsetSetDataFrame($targetColumn, $rightHandSide);
@@ -696,7 +696,7 @@ abstract class DataFrameCore implements ArrayAccess, Iterator, Countable
      * @throws InvalidColumnException
      * @since  0.1.0
      */
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         $this->mustHaveColumn($offset);
 
@@ -722,7 +722,7 @@ abstract class DataFrameCore implements ArrayAccess, Iterator, Countable
      * @return mixed Can return any type.
      * @since  0.1.0
      */
-    public function current()
+    public function current(): mixed
     {
         return $this->data[$this->key()];
     }
@@ -734,7 +734,7 @@ abstract class DataFrameCore implements ArrayAccess, Iterator, Countable
      * @return void Any returned value is ignored.
      * @since  0.1.0
      */
-    public function next()
+    public function next(): void
     {
         $this->pointer++;
     }
@@ -746,7 +746,7 @@ abstract class DataFrameCore implements ArrayAccess, Iterator, Countable
      * @return mixed scalar on success, or null on failure.
      * @since  0.1.0
      */
-    public function key()
+    public function key(): mixed
     {
         return $this->pointer;
     }
@@ -759,7 +759,7 @@ abstract class DataFrameCore implements ArrayAccess, Iterator, Countable
      *                 Returns true on success or false on failure.
      * @since  0.1.0
      */
-    public function valid()
+    public function valid(): bool
     {
         return isset($this->data[$this->key()]);
     }
@@ -771,7 +771,7 @@ abstract class DataFrameCore implements ArrayAccess, Iterator, Countable
      * @return void Any returned value is ignored.
      * @since  0.1.0
      */
-    public function rewind()
+    public function rewind(): void
     {
         $this->pointer = 0;
     }
@@ -788,7 +788,7 @@ abstract class DataFrameCore implements ArrayAccess, Iterator, Countable
      *             The return value is cast to an integer.
      * @since  0.1.0
      */
-    public function count()
+    public function count(): int
     {
         return count($this->data);
     }

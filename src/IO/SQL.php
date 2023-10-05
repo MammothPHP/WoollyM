@@ -37,6 +37,8 @@ final class SQL
         'ignore' => false
     ];
 
+    protected PDO $pdo;
+
     public function __construct(PDO $pdo)
     {
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);

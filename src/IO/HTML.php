@@ -38,6 +38,8 @@ final class HTML
         'offset' => 0,
     ];
 
+    public readonly array $data;
+
     public function __construct(array $data)
     {
         $this->data = $data;

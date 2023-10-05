@@ -27,6 +27,7 @@ use RuntimeException;
  */
 final class CSV
 {
+    public readonly string $fileName;
 
     private $defaultOptions = [
         'sep' => null,

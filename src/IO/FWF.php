@@ -29,6 +29,8 @@ final class FWF
         'exclude' => null
     ];
 
+    public readonly string $fileName;
+
     public function __construct($fileName)
     {
         $this->fileName = $fileName;

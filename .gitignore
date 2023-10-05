@@ -1,5 +1,19 @@
-.idea/
-./composer.lock
-./composer.phar
-docs/
-vendor/
+
+*.sqlite
+*.clover
+
+# composer
+/vendor/
+/composer.lock
+composer.phar
+
+# phpunit, phpstan
+.phpunit.result.cache
+phpstan.neon
+.phpunit.cache/test-results
+
+
+# IDE
+*.idea
+*.code-workspace
+.vscode

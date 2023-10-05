@@ -55,12 +55,12 @@ class SQLDataFrameUnitTest extends TestCase
         ));
 
         $expected = array(
-            array( 'a' => 'bar', 'b' => '4' ),
-            array( 'a' => 'baz', 'b' => '4' ),
-            array( 'a' => 'foo', 'b' => '4' ),
+            array( 'a' => 'bar', 'b' => 4 ),
+            array( 'a' => 'baz', 'b' => 4 ),
+            array( 'a' => 'foo', 'b' => 4 ),
         );
 
-        $actual = $df->query("SELECT a, sum(b) AS b FROM dataframe GROUP BY 1 ORDER BY 2 DESC")->toArray();
+        $actual = $df->query("SELECT a, sum(b) AS b FROM dataframe GROUP BY 1 ORDER BY 1 ASC")->toArray();
 
         $this->assertSame($expected, $actual);
     }
