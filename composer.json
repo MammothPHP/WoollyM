@@ -9,7 +9,7 @@
     "php": "^8.2",
     "ext-mbstring": "*",
     "ext-pdo_sqlite": "*",
-    "gajus/dindent": "2.0.2",
+    "gajus/dindent": "dev-master",
     "phpoffice/phpspreadsheet": "^1.29"
   },
   "require-dev": {
