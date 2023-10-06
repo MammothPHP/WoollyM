@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace CondorcetPHP\Oliphant\IO;
 
-use PHPExcel;
 use PhpOffice\PhpSpreadsheet\{IOFactory, Spreadsheet};
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
@@ -91,11 +90,9 @@ class XLSX
 
     /**
      * Converts the columns and data passed to an XLSX worksheet and adds that worksheet to an instance of PHPExcel
-     * @param  PHPExcel $excel
-     * @param  $worksheetTitle
      * @param  array $data
      * @param  array $columns
-     * @return PhpOffice\PhpSpreadsheet\Worksheet\Worksheet
+     * @return \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet
      * @throws \PhpOffice\PhpSpreadsheet\Exception
      * @since  0.3.0
      */
