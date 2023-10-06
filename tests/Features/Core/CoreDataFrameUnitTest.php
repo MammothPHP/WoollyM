@@ -242,7 +242,7 @@ test('offset set value array', function (): void {
 
 test('append', function (): void {
     $df1 = $this->df;
-    $df2 = $this->df;
+    $df2 = clone $this->df;
 
     // Test that appending an array with less than count of 1 will simply return the original DataFrame
     expect($df1->append(DataFrame::fromArray([])))->toBe($df1);

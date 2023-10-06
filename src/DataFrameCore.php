@@ -326,25 +326,12 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
     /**
      * Allows user to "array_merge" two DataFrames so that the rows of one are appended to the rows of another.
      *
-     * @param $other
      * @return $this
      */
-    public function append(DataFrame $other): self
+    public function append(DataFrame $df): self
     {
-        if (\count($other) <= 0) {
-            return $this;
-        }
-
-        $columns = $this->columns;
-
-        // TODO: Strange bug occurs when $other is used as an Iterator here, have to use toArray() to bypass
-        foreach ($other->toArray() as $row) {
-            $newRow = [];
-            foreach ($columns as $column) {
-                $newRow[$column] = $row[$column];
-            }
-
-            $this->data[] = $newRow;
+        foreach ($df as $dfEntry) {
+            $this->addEntry($dfEntry);
         }
 
         return $this;
@@ -359,7 +346,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      */
     public function preg_replace($pattern, $replacement): self
     {
-        return $this->apply(static function ($row) use ($pattern, $replacement) {
+        return $this->apply(static function (array $row) use ($pattern, $replacement) {
             return preg_replace($pattern, $replacement, $row);
         });
     }
