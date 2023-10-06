@@ -1,0 +1,39 @@
+name: Execute All Tests
+on: [push, pull_request]
+
+jobs:
+  run:
+    runs-on: ${{ matrix.operating-system }}
+    strategy:
+      matrix:
+        operating-system: [ubuntu-latest, windows-latest]
+        php-versions: ['8.2']
+        php-extensions: ['pdo,pdo_sqlite,mbstring,json,zip']
+      fail-fast: false
+
+    name: PHP ${{ matrix.php-versions }} on ${{ matrix.operating-system }} with ${{ matrix.php-extensions }} - Execute All Tests Without coverage
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php-versions }}
+        extensions: ${{ matrix.php-extensions }}
+
+    - name: Check PHP Version
+      run: php -v
+
+    - name: Check PHP extensions
+      run: php -r "print_r(get_loaded_extensions());"
+
+    - name: Validate composer.json and composer.lock
+      run: composer validate
+
+    - name: Install dependencies
+      run: composer install --prefer-dist --no-progress --ignore-platform-reqs
+
+    - name: Run test suite
+      run: composer run-script test
