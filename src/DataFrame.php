@@ -38,7 +38,7 @@ final class DataFrame extends DataFrameCore
      * @return DataFrame
      * @since  0.1.0
      */
-    public static function fromCSV($fileName, $options = []): self
+    public static function fromCSV(string $fileName, array $options = []): self
     {
         $csv = new CSV($fileName);
         $data = $csv->loadFile($options);
@@ -54,7 +54,7 @@ final class DataFrame extends DataFrameCore
      * @throws \CondorcetPHP\Oliphant\Exceptions\FileExistsException
      * @since  0.1.0
      */
-    public function toCSV($fileName, $options = []): self
+    public function toCSV(string $fileName, array $options = []): self
     {
         $csv = new CSV($fileName);
         $csv->saveFile($this->data, $options);
@@ -70,7 +70,7 @@ final class DataFrame extends DataFrameCore
      * @return DataFrame
      * @since  0.1.0
      */
-    public static function fromFWF($fileName, array $colSpecs, array $options = []): self
+    public static function fromFWF(string $fileName, array $colSpecs, array $options = []): self
     {
         $fwf = new FWF($fileName);
         $data = $fwf->loadFile($colSpecs, $options);
@@ -98,7 +98,7 @@ final class DataFrame extends DataFrameCore
      * @param $worksheetTitle
      * @since  0.3.0
      */
-    public function toXLSXWorksheet(Spreadsheet &$excel, $worksheetTitle): Worksheet
+    public function toXLSXWorksheet(Spreadsheet &$excel, string $worksheetTitle): Worksheet
     {
         return XLSX::saveToWorksheet($excel, $worksheetTitle, $this->data, $this->columns);
     }
@@ -110,7 +110,7 @@ final class DataFrame extends DataFrameCore
      * @return DataFrame
      * @since  0.3.0
      */
-    public static function fromSQL($sqlQuery, PDO $pdo): self
+    public static function fromSQL(string $sqlQuery, PDO $pdo): self
     {
         $sql = new SQL($pdo);
         $data = $sql->select($sqlQuery);

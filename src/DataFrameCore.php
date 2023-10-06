@@ -42,7 +42,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
     protected array $data = [];
     protected array $columns = [];
 
-    protected function __construct(array $data)
+    public function __construct(array $data)
     {
         if (\count($data) > 0) {
             $this->data = array_values($data);
@@ -120,7 +120,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      * @return DataFrameCore
      * @since  0.1.0
      */
-    public function applyIndexMap(array $map, mixed $column = null)
+    public function applyIndexMap(array $map, ?string $column = null)
     {
         return $this->apply(static function (&$row, $i) use ($map, $column) {
             if (isset($map[$i])) {
@@ -214,7 +214,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      * @throws InvalidColumnException
      * @since  0.1.0
      */
-    public function mustHaveColumn(mixed $columnName): void
+    public function mustHaveColumn(string $columnName): void
     {
         if ($this->hasColumn($columnName) === false) {
             throw new InvalidColumnException("{$columnName} doesn't exist in DataFrame");
@@ -228,7 +228,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      * @return bool
      * @since  0.1.0
      */
-    public function hasColumn(mixed $columnName): bool
+    public function hasColumn(string $columnName): bool
     {
         if (array_search($columnName, $this->columns, true) === false) {
             return false;
@@ -244,7 +244,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      * @param $columnName
      * @since 0.1.0
      */
-    private function addColumn($columnName): void
+    private function addColumn(string $columnName): void
     {
         if (!$this->hasColumn($columnName)) {
             $this->columns[] = $columnName;
@@ -274,7 +274,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      * @param $from
      * @param $to
      */
-    public function renameColumn($from, $to): void
+    public function renameColumn(string $from, string $to): void
     {
         $this->mustHaveColumn($from);
 
@@ -298,7 +298,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      * @param $columnName
      * @since 0.1.0
      */
-    public function removeColumn($columnName): void
+    public function removeColumn(string $columnName): void
     {
         unset($this[$columnName]);
     }
@@ -360,7 +360,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      * @param null|string $toDateFormat The date format of the output.
      * @throws Exception
      */
-    public function convertTypes(array $typeMap, $fromDateFormat = null, $toDateFormat = null): void
+    public function convertTypes(array $typeMap, array|string|null $fromDateFormat = null, ?string $toDateFormat = null): void
     {
         foreach ($this as $i => $row) {
             foreach ($typeMap as $column => $type) {
@@ -379,7 +379,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
         }
     }
 
-    private function convertNumeric($value): int|float
+    private function convertNumeric(mixed $value): int|float
     {
         if (is_numeric($value)) {
             return $value;
@@ -396,7 +396,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
         return (\is_int($value / 1)) ? \intval($value) : $value;
     }
 
-    private function convertInt($value): int
+    private function convertInt(mixed $value): int
     {
         if (empty($value)) {
             return 0;
@@ -413,7 +413,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
         return \intval(str_replace(',', '', $value));
     }
 
-    private function convertDatetime($value, $fromFormat, $toFormat): string
+    private function convertDatetime(mixed $value, array|string|null $fromFormat, string $toFormat): string
     {
         if (empty($value)) {
             return DateTime::createFromFormat('Y-m-d', '0001-01-01')->format($toFormat);
@@ -529,7 +529,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
             $by = [$by];
         }
 
-        usort($this->data, static function ($row_a, $row_b) use ($by, $ascending): int {
+        usort($this->data, static function (array $row_a, array $row_b) use ($by, $ascending): int {
             foreach ($by as $col) {
                 if ($row_a[$col] > $row_b[$col]) {
                     return $ascending ? 1 : -1;
@@ -609,7 +609,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      * @throws DataFrameException
      * @since  0.1.0
      */
-    public function offsetSet($targetColumn, $rightHandSide): void
+    public function offsetSet(mixed $targetColumn, mixed $rightHandSide): void
     {
         if ($rightHandSide instanceof DataFrame) {
             $this->offsetSetDataFrame($targetColumn, $rightHandSide);
@@ -631,7 +631,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      * @throws DataFrameException
      * @since  0.1.0
      */
-    private function offsetSetDataFrame($targetColumn, DataFrame $df): void
+    private function offsetSetDataFrame(string $targetColumn, DataFrame $df): void
     {
         if (\count($df->columns()) !== 1) {
             $msg = 'Can only set a new column from a DataFrame with a single ';
@@ -664,7 +664,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      * @param Closure $f
      * @since 0.1.0
      */
-    private function offsetSetClosure($targetColumn, Closure $f): void
+    private function offsetSetClosure(string $targetColumn, Closure $f): void
     {
         foreach ($this as $i => $row) {
             $this->data[$i][$targetColumn] = $f($row[$targetColumn]);
@@ -691,7 +691,6 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
                 $this->data[$i][$targetColumn] = $value;
             }
         } elseif (\is_array($value)) {
-            $this->addColumns(array_keys($value));
             $this->data[] = $value;
         }
     }
