@@ -16,8 +16,6 @@ namespace CondorcetPHP\Oliphant;
 
 use CondorcetPHP\Oliphant\IO\{CSV, FWF, HTML, JSON, SQL, XLSX};
 use PDO;
-use PHPExcel;
-use PHPExcel_Worksheet;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
@@ -33,11 +31,6 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
  */
 final class DataFrame extends DataFrameCore
 {
-    protected function __construct(array $data)
-    {
-        parent::__construct($data);
-    }
-
     /**
      * Factory method for creating a DataFrame from a CSV file.
      * @param  $fileName
@@ -102,9 +95,7 @@ final class DataFrame extends DataFrameCore
 
     /**
      * Output a DataFrame as a PHPExcel worksheet.
-     * @param PHPExcel $excel
      * @param $worksheetTitle
-     * @return PHPExcel_Worksheet
      * @since  0.3.0
      */
     public function toXLSXWorksheet(Spreadsheet &$excel, $worksheetTitle): Worksheet
