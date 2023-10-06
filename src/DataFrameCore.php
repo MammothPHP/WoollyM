@@ -42,12 +42,32 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
     protected array $data = [];
     protected array $columns = [];
 
-    public function __construct(array $data)
+    public function __construct(array $data = [])
     {
-        if (\count($data) > 0) {
-            $this->data = array_values($data);
-            $this->columns = array_keys(current($data));
+        $this->addEntries($data);
+    }
+
+    public function addEntry(array $entry): self
+    {
+        if (\count($entry) > 0) {
+
+            foreach(array_keys($entry) as $entryOneKey) {
+                $this->addColumn($entryOneKey);
+            }
+
+            $this->data[] = $entry;
         }
+
+        return $this;
+    }
+
+    public function addEntries(array $entries): self
+    {
+        foreach ($entries as $oneEntry) {
+            $this->addEntry($oneEntry);
+        }
+
+        return $this;
     }
 
     /**
@@ -691,7 +711,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
                 $this->data[$i][$targetColumn] = $value;
             }
         } elseif (\is_array($value)) {
-            $this->data[] = $value;
+            $this->addEntry($value);
         }
     }
 
