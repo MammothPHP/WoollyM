@@ -381,17 +381,13 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
     {
         foreach ($this as $i => $row) {
             foreach ($typeMap as $column => $type) {
-                if ($type === DataType::NUMERIC) {
-                    $this->data[$i][$column] = $this->convertNumeric($row[$column]);
-                } elseif ($type === DataType::INTEGER) {
-                    $this->data[$i][$column] = $this->convertInt($row[$column]);
-                } elseif ($type === DataType::DATETIME) {
-                    $this->data[$i][$column] = $this->convertDatetime($row[$column], $fromDateFormat, $toDateFormat);
-                } elseif ($type == DataType::CURRENCY) {
-                    $this->data[$i][$column] = $this->convertCurrency($row[$column]);
-                } elseif ($type == DataType::ACCOUNTING) {
-                    $this->data[$i][$column] = $this->convertAccounting($row[$column]);
-                }
+                $this->data[$i][$column] = match($type) {
+                    DataType::NUMERIC => $this->convertNumeric($row[$column]),
+                    DataType::INTEGER => $this->convertInt($row[$column]),
+                    DataType::DATETIME => $this->convertDatetime($row[$column], $fromDateFormat, $toDateFormat),
+                    DataType::CURRENCY => $this->convertCurrency($row[$column]),
+                    DataType::ACCOUNTING => $this->convertAccounting($row[$column]),
+                };
             }
         }
     }
