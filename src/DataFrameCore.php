@@ -318,9 +318,19 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      * @param $columnName
      * @since 0.1.0
      */
-    public function removeColumn(string $columnName): void
+    public function removeColumn(string $columnName): self
     {
-        unset($this[$columnName]);
+        $this->mustHaveColumn($columnName);
+
+        foreach ($this as $i => $row) {
+            unset($this->data[$i][$columnName]);
+        }
+
+        if (($key = array_search($columnName, $this->columns, true)) !== false) {
+            unset($this->columns[$key]);
+        }
+
+        return $this;
     }
 
     /**
@@ -712,15 +722,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      */
     public function offsetUnset(mixed $offset): void
     {
-        $this->mustHaveColumn($offset);
-
-        foreach ($this as $i => $row) {
-            unset($this->data[$i][$offset]);
-        }
-
-        if (($key = array_search($offset, $this->columns, true)) !== false) {
-            unset($this->columns[$key]);
-        }
+        $this->removeColumn($offset);
     }
 
     /* *****************************************************************************************************************
