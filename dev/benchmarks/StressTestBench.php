@@ -20,10 +20,10 @@ class IntensiveUsageBench
             'columnName4' => 3,
         ]]);
 
-        for ($i = 0 ; $i < 5_000_000 ; $i++) {
+        for ($i = 0; $i < 5_000_000; $i++) {
             $df[] = $model;
         }
 
-        count($df);
+        \count($df);
     }
 }

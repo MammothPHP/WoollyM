@@ -17,12 +17,10 @@ namespace CondorcetPHP\Oliphant;
 use CondorcetPHP\Oliphant\Exceptions\{DataFrameException, InvalidColumnException};
 use Closure;
 use Countable;
-use DateTime;
 use Exception;
 use Iterator;
 use ArrayAccess;
 use PDO;
-use RuntimeException;
 
 /**
  * The DataFrameCore class acts as the implementation for the various data manipulation features of the DataFrame class.
@@ -51,7 +49,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
     {
         if (\count($entry) > 0) {
 
-            foreach(array_keys($entry) as $entryOneKey) {
+            foreach (array_keys($entry) as $entryOneKey) {
                 $this->addColumn($entryOneKey);
             }
 
@@ -314,7 +312,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
         $key = array_search($from, $this->columns);
 
         if (($key) !== false) {
-            $this->columns[$key]->name = $to;;
+            $this->columns[$key]->name = $to;
         }
 
         return $this;
@@ -389,115 +387,15 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
     {
         foreach ($this as $i => $row) {
             foreach ($typeMap as $column => $type) {
-                $this->data[$i][$column] = match($type) {
-                    DataType::NUMERIC => $this->convertNumeric($row[$column]),
-                    DataType::INTEGER => $this->convertInt($row[$column]),
-                    DataType::DATETIME => $this->convertDatetime($row[$column], $fromDateFormat, $toDateFormat),
-                    DataType::CURRENCY => $this->convertCurrency($row[$column]),
-                    DataType::ACCOUNTING => $this->convertAccounting($row[$column]),
+                $this->data[$i][$column] = match ($type) {
+                    DataType::NUMERIC => DataType::convertNumeric($row[$column]),
+                    DataType::INTEGER => DataType::convertInt($row[$column]),
+                    DataType::DATETIME => DataType::convertDatetime($row[$column], $fromDateFormat, $toDateFormat),
+                    DataType::CURRENCY => DataType::convertCurrency($row[$column]),
+                    DataType::ACCOUNTING => DataType::convertAccounting($row[$column]),
                 };
             }
         }
-    }
-
-    private function convertNumeric(mixed $value): int|float
-    {
-        if (is_numeric($value)) {
-            return $value;
-        }
-
-        $value = str_replace(['$', ',', ' '], '', $value);
-
-        if (substr($value, -1) == '-') {
-            $value = '-'.substr($value, 0, -1);
-        }
-
-        $value = \floatval($value);
-
-        return (\is_int($value / 1)) ? \intval($value) : $value;
-    }
-
-    private function convertInt(mixed $value): int
-    {
-        if (empty($value)) {
-            return 0;
-        }
-
-        $value = (string) $value;
-
-        if (substr($value, -1) === '-') {
-            $value = '-'.substr($value, 0, -1);
-        }
-
-        $value = str_replace(['$', ',', ' '], '', $value);
-
-        return \intval(str_replace(',', '', $value));
-    }
-
-    private function convertDatetime(mixed $value, array|string|null $fromFormat, string $toFormat): string
-    {
-        if (empty($value)) {
-            return DateTime::createFromFormat('Y-m-d', '0001-01-01')->format($toFormat);
-        }
-
-        if (!\is_array($fromFormat)) {
-            $fromFormat = [$fromFormat];
-        }
-
-        $dateFormatSnapshot = null;
-
-        foreach ($fromFormat as $dateFormat) {
-            $dateFormatSnapshot = $dateFormat;
-
-            $oldDateTime = DateTime::createFromFormat($dateFormat, $value);
-            if ($oldDateTime === false) {
-                continue;
-            } else {
-                return $oldDateTime->format($toFormat);
-            }
-        }
-
-        throw new RuntimeException("Error parsing date string '{$value}' with date format {$dateFormatSnapshot}");
-    }
-
-    private function convertCurrency(string $value): string
-    {
-        $value = explode('.', $value);
-        $value[1] = $value[1] ?? '00';
-        $value[0] = ($value[0] == '' || $value[0] == '-') ? '0' : $value[0];
-        $value[1] = ($value[1] == '' || $value[1] == '0') ? '00' : $value[1];
-
-        $value[0] = \floatval($value[0]);
-        $dollars = number_format($value[0]).'.'.$value[1];
-
-        if (substr($dollars, 0, 1) == '-') {
-            $dollars = '-$' . ltrim($dollars, '-');
-        } elseif (substr($dollars, -1) == '-') {
-            $dollars = '-$' . rtrim($dollars, '-');
-        } else {
-            $dollars = '$'.$dollars;
-        }
-
-        return $dollars;
-    }
-
-    private function convertAccounting(string $value): string
-    {
-        $value = explode('.', $value);
-        $value[1] = $value[1] ?? '00';
-        $value[0] = ($value[0] == '' || $value[0] == '-') ? '0' : $value[0];
-        $value[1] = ($value[1] == '' || $value[1] == '0') ? '00' : $value[1];
-
-        $value[0] = \floatval($value[0]);
-        $dollars = number_format($value[0]) . '.' . $value[1];
-
-        if (substr($dollars, 0, 1) == '-') {
-            $dollars = '('.ltrim($dollars, '-').')';
-        } elseif (substr($dollars, -1) == '-') {
-            $dollars = '('.rtrim($dollars, '-').')';
-        }
-
-        return '$'.$dollars;
     }
 
     /**
