@@ -21,6 +21,7 @@ use Exception;
 use Iterator;
 use ArrayAccess;
 use PDO;
+use WeakMap;
 
 /**
  * The DataFrameCore class acts as the implementation for the various data manipulation features of the DataFrame class.
@@ -48,15 +49,23 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
     public function addEntry(array $entry): self
     {
         if (\count($entry) > 0) {
-
-            foreach (array_keys($entry) as $entryOneKey) {
-                $this->addColumn($entryOneKey);
-            }
-
-            $this->data[] = $entry;
+            $this->data[] = $this->convertEntryToWeakmap($entry);
         }
 
         return $this;
+    }
+
+    protected function convertEntryToWeakmap(array $entry): WeakMap
+    {
+        $newEntry = new WeakMap;
+
+        foreach ($entry as $entryKey => $entryValue) {
+            $this->addColumn($entryKey);
+
+            $newEntry[$this->getColumnObject($entryKey)] = $entryValue;
+        }
+
+        return $newEntry;
     }
 
     public function addEntries(array $entries): self
@@ -78,6 +87,17 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
         return $this->columns;
     }
 
+    public function getColumnObject(string $columnName): ?Column
+    {
+        foreach ($this->columns() as $column) {
+            if ($column->name === $columnName) {
+                return $column;
+            }
+        }
+
+        return null;
+    }
+
     /**
      * Returns a specific row index of the DataFrame.
      * @param  $index
@@ -86,7 +106,18 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      */
     public function getIndex(int $index): array
     {
-        return $this->data[$index];
+        return self::convertAbstractEntryToArray($this->data[$index]);
+    }
+
+    public static function convertAbstractEntryToArray(WeakMap $entry): array
+    {
+        $r = [];
+
+        foreach ($entry as $k => $v) {
+            $r[$k->name] = $v;
+        }
+
+        return $r;
     }
 
     /**
@@ -100,14 +131,12 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
     public function apply(Closure $f): self
     {
         if (\count($this->columns()) > 1) {
-            foreach ($this->data as $i => &$row) {
-                $row = $f($row, $i);
+            foreach ($this as $i => $row) {
+                $this->data[$i] = $this->convertEntryToWeakmap($f($row, $i));
             }
-        }
-
-        if (\count($this->columns()) === 1) {
-            foreach ($this->data as $i => &$row) {
-                $row[key($row)] = $f($row[key($row)], $i);
+        } elseif (\count($this->columns()) === 1) {
+            foreach ($this as $i => $row) {
+                $this->data[$i][$this->getColumnObject(key($row))] = $f($row[key($row)], $i);
             }
         }
 
@@ -172,7 +201,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      */
     public function array_filter(Closure $f): self
     {
-        return DataFrame::fromArray(array_filter($this->data, $f, \ARRAY_FILTER_USE_BOTH));
+        return DataFrame::fromArray(array_filter($this->toArray(), $f, \ARRAY_FILTER_USE_BOTH));
     }
 
     /**
@@ -208,7 +237,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
         $pdo->exec('DROP TABLE IF EXISTS dataframe;');
         $pdo->exec("CREATE TABLE IF NOT EXISTS dataframe ({$sqlColumns});");
 
-        $df = DataFrame::fromArray($this->data);
+        $df = DataFrame::fromArray($this->toArray());
         $df->toSQL('dataframe', $pdo);
 
         if ($queryType === 'SELECT') {
@@ -302,18 +331,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
     {
         $this->mustHaveColumn($from);
 
-        foreach ($this as $i => $row) {
-            $keys = array_keys($row);
-            $index = array_search($from, $keys, true);
-            $keys[$index] = $to;
-            $this->data[$i] = array_combine($keys, $row);
-        }
-
-        $key = array_search($from, $this->columns);
-
-        if (($key) !== false) {
-            $this->columns[$key]->name = $to;
-        }
+        $this->getColumnObject($from)->name = $to;
 
         return $this;
     }
@@ -328,12 +346,10 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
     {
         $this->mustHaveColumn($columnName);
 
-        foreach ($this as $i => $row) {
-            unset($this->data[$i][$columnName]);
-        }
-
         if (($key = array_search($columnName, $this->columns)) !== false) {
             unset($this->columns[$key]);
+
+            $this->columns = array_values($this->columns()); // Reindex columns
         }
 
         return $this;
@@ -387,7 +403,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
     {
         foreach ($this as $i => $row) {
             foreach ($typeMap as $column => $type) {
-                $this->data[$i][$column] = match ($type) {
+                $this->data[$i][$this->getColumnObject($column)] = match ($type) {
                     DataType::NUMERIC => DataType::convertNumeric($row[$column]),
                     DataType::INTEGER => DataType::convertInt($row[$column]),
                     DataType::DATETIME => DataType::convertDatetime($row[$column], $fromDateFormat, $toDateFormat),
@@ -412,7 +428,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
 
         $groupedData = [];
         $uniqueColumns = [];
-        foreach ($this->data as $row) {
+        foreach ($this as $row) {
             $uniqueKey = null;
             foreach ($columns as $column) {
                 $uniqueKey .= $row[$column];
@@ -436,6 +452,22 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
     }
 
     /**
+     * Outputs a DataFrame as a two-dimensional associative array.
+     * @return array
+     * @since 0.1.0
+     */
+    public function toArray(): array
+    {
+        $r = [];
+
+        foreach ($this as $key => $entry) {
+            $r[$key] = $entry;
+        }
+
+        return $r;
+    }
+
+    /**
      * Sort the rows by its values
      *
      * @param $by string|string[] Columns to sort the values by
@@ -448,8 +480,10 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
             $by = [$by];
         }
 
-        usort($this->data, static function (array $row_a, array $row_b) use ($by, $ascending): int {
+        usort($this->data, function (Weakmap $row_a, Weakmap $row_b) use ($by, $ascending): int {
             foreach ($by as $col) {
+                $col = $this->getColumnObject($col);
+
                 if ($row_a[$col] > $row_b[$col]) {
                     return $ascending ? 1 : -1;
                 } elseif ($row_a[$col] < $row_b[$col]) {
@@ -499,14 +533,10 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
     {
         $this->mustHaveColumn($columnName);
 
-        $getColumn = static function ($el) use ($columnName) {
-            return $el[$columnName];
-        };
+        $data = [];
 
-        $data = array_map($getColumn, $this->data);
-
-        foreach ($data as &$row) {
-            $row = [$columnName => $row];
+        foreach ($this as $entry) {
+            $data[] = [$columnName => $entry[$columnName]];
         }
 
         return new DataFrame($data);
@@ -569,7 +599,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
         $this->addColumn($targetColumn);
 
         foreach ($this as $i => $row) {
-            $this->data[$i][$targetColumn] = current($df->getIndex($i));
+            $this->data[$i][$this->getColumnObject($targetColumn)] = current($df->getIndex($i));
         }
     }
 
@@ -586,7 +616,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
     private function offsetSetClosure(string $targetColumn, Closure $f): void
     {
         foreach ($this as $i => $row) {
-            $this->data[$i][$targetColumn] = $f($row[$targetColumn]);
+            $this->data[$i][$this->getColumnObject($targetColumn)] = $f($row[$targetColumn]);
         }
     }
 
@@ -607,7 +637,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
         if (!empty($targetColumn)) {
             $this->addColumn($targetColumn);
             foreach ($this as $i => $row) {
-                $this->data[$i][$targetColumn] = $value;
+                $this->data[$i][$this->getColumnObject($targetColumn)] = $value;
             }
         } elseif (\is_array($value)) {
             $this->addEntry($value);
@@ -631,7 +661,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      ********************************************* Iterator Implementation *********************************************
      ******************************************************************************************************************/
 
-    private $pointer = 0;
+    private int $pointer = 0;
 
     /**
      * Return the current element
@@ -642,7 +672,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      */
     public function current(): mixed
     {
-        return $this->data[$this->key()];
+        return $this->getIndex($this->key());
     }
 
     /**

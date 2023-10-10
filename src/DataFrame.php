@@ -57,7 +57,7 @@ final class DataFrame extends DataFrameCore
     public function toCSV(string $fileName, array $options = []): self
     {
         $csv = new CSV($fileName);
-        $csv->saveFile($this->data, $options);
+        $csv->saveFile($this->toArray(), $options);
 
         return $this;
     }
@@ -100,7 +100,7 @@ final class DataFrame extends DataFrameCore
      */
     public function toXLSXWorksheet(Spreadsheet &$excel, string $worksheetTitle): Worksheet
     {
-        return XLSX::saveToWorksheet($excel, $worksheetTitle, $this->data, $this->columns);
+        return XLSX::saveToWorksheet($excel, $worksheetTitle, $this->toArray(), $this->columns);
     }
 
     /**
@@ -128,7 +128,7 @@ final class DataFrame extends DataFrameCore
     public function toSQL($tableName, PDO $pdo, array $options = []): void
     {
         $sql = new SQL($pdo);
-        $sql->insertInto($tableName, $this->columns, $this->data, $options);
+        $sql->insertInto($tableName, $this->columns, $this->toArray(), $options);
     }
 
     /**
@@ -156,7 +156,7 @@ final class DataFrame extends DataFrameCore
     {
         $json = new JSON;
 
-        return $json->encodeJSON($this->data, $options);
+        return $json->encodeJSON($this->toArray(), $options);
     }
 
     /**
@@ -168,7 +168,7 @@ final class DataFrame extends DataFrameCore
      */
     public function toHTML($options = []): string
     {
-        $html = new HTML($this->data);
+        $html = new HTML($this->toArray());
 
         return $html->assembleTable($options);
     }
@@ -182,15 +182,5 @@ final class DataFrame extends DataFrameCore
     public static function fromArray(array $data): self
     {
         return new self($data);
-    }
-
-    /**
-     * Outputs a DataFrame as a two-dimensional associative array.
-     * @return array
-     * @since 0.1.0
-     */
-    public function toArray(): array
-    {
-        return $this->data;
     }
 }
