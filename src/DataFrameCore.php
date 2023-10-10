@@ -266,11 +266,13 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      * @param $columnName
      * @since 0.1.0
      */
-    private function addColumn(string $column): void
+    private function addColumn(string $column): self
     {
         if (!$this->hasColumn($column)) {
             $this->columns[] = new Column($column);
         }
+
+        return $this;
     }
 
     /**
@@ -280,11 +282,13 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      * @param array $columnNames
      * @since 1.0.1
      */
-    private function addColumns(array $columnNames): void
+    private function addColumns(array $columnNames): self
     {
         foreach ($columnNames as $columnName) {
             $this->addColumn($columnName);
         }
+
+        return $this;
     }
 
     /**
@@ -296,7 +300,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      * @param $from
      * @param $to
      */
-    public function renameColumn(string $from, string $to): void
+    public function renameColumn(string $from, string $to): self
     {
         $this->mustHaveColumn($from);
 
@@ -312,6 +316,8 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
         if (($key) !== false) {
             $this->columns[$key]->name = $to;;
         }
+
+        return $this;
     }
 
     /**
