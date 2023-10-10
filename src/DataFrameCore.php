@@ -234,11 +234,13 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      * @throws InvalidColumnException
      * @since  0.1.0
      */
-    public function mustHaveColumn(string $columnName): void
+    public function mustHaveColumn(string $columnName): self
     {
         if ($this->hasColumn($columnName) === false) {
             throw new InvalidColumnException("{$columnName} doesn't exist in DataFrame");
         }
+
+        return $this;
     }
 
     /**
@@ -248,9 +250,9 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      * @return bool
      * @since  0.1.0
      */
-    public function hasColumn(string $columnName): bool
+    public function hasColumn(Column|string $column): bool
     {
-        if (array_search($columnName, $this->columns, true) === false) {
+        if (array_search($column, $this->columns) === false) {
             return false;
         } else {
             return true;
@@ -264,10 +266,10 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      * @param $columnName
      * @since 0.1.0
      */
-    private function addColumn(string $columnName): void
+    private function addColumn(string $column): void
     {
-        if (!$this->hasColumn($columnName)) {
-            $this->columns[] = $columnName;
+        if (!$this->hasColumn($column)) {
+            $this->columns[] = new Column($column);
         }
     }
 
@@ -305,10 +307,10 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
             $this->data[$i] = array_combine($keys, $row);
         }
 
-        $key = array_search($from, $this->columns, true);
+        $key = array_search($from, $this->columns);
 
         if (($key) !== false) {
-            $this->columns[$key] = $to;
+            $this->columns[$key]->name = $to;;
         }
     }
 
@@ -326,7 +328,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
             unset($this->data[$i][$columnName]);
         }
 
-        if (($key = array_search($columnName, $this->columns, true)) !== false) {
+        if (($key = array_search($columnName, $this->columns)) !== false) {
             unset($this->columns[$key]);
         }
 
