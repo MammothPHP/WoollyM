@@ -109,6 +109,20 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
         return self::convertAbstractEntryToArray($this->data[$index]);
     }
 
+    public function setIndex(int $index, mixed $entry): self
+    {
+        $this->data[$index] = $this->convertEntryToWeakmap($entry);
+
+        return $this;
+    }
+
+    public function removeIndex(int $index): self
+    {
+        unset($this->data[$index]);
+
+        return $this;
+    }
+
     public static function convertAbstractEntryToArray(WeakMap $entry): array
     {
         $r = [];
@@ -293,7 +307,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      * @param $columnName
      * @since 0.1.0
      */
-    private function addColumn(string $column): self
+    public function addColumn(string $column): self
     {
         if (!$this->hasColumn($column)) {
             $this->columns[] = new Column($column);
@@ -507,15 +521,9 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      * @return bool
      * @since  0.1.0
      */
-    public function offsetExists(mixed $columnName): bool
+    public function offsetExists(mixed $index): bool
     {
-        foreach ($this as $row) {
-            if (!\array_key_exists($columnName, $row)) {
-                return false;
-            }
-        }
-
-        return true;
+        return array_key_exists($index, $this->data);
     }
 
     /**
@@ -529,7 +537,22 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      * @throws InvalidColumnException
      * @since  0.1.0
      */
-    public function offsetGet(mixed $columnName): mixed
+    public function offsetGet(mixed $index): mixed
+    {
+        return $this->data[$index];
+
+        // $this->mustHaveColumn($columnName);
+
+        // $data = [];
+
+        // foreach ($this as $entry) {
+        //     $data[] = [$columnName => $entry[$columnName]];
+        // }
+
+        // return new DataFrame($data);
+    }
+
+    public function getColumn(mixed $columnName): mixed
     {
         $this->mustHaveColumn($columnName);
 
@@ -542,31 +565,17 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
         return new DataFrame($data);
     }
 
-    /**
-     * Allows user set DataFrame columns from a Closure, value, array, or another single-column DataFrame.
-     *      ie:
-     *          $df[$targetColumn] = $rightHandSide
-     *          $df['bar'] = $df['foo'];
-     *          $df['bar'] = $df->foo;
-     *          $df['foo'] = function ($foo) { return $foo + 1; };
-     *          $df['foo'] = 'bar';
-     *          $df[] = [['gender'=>'Female','name'=>'Luy'],['title'=>'Mr','name'=>'Noah']];
-     *
-     * @internal
-     * @param  mixed $targetColumn
-     * @param  mixed $rightHandSide
-     * @throws DataFrameException
-     * @since  0.1.0
-     */
-    public function offsetSet(mixed $targetColumn, mixed $rightHandSide): void
+    public function setColumn(string $targetColumn, mixed  $rightHandSide): self
     {
         if ($rightHandSide instanceof DataFrame) {
-            $this->offsetSetDataFrame($targetColumn, $rightHandSide);
+            $this->columnSetDataFrame($targetColumn, $rightHandSide);
         } elseif ($rightHandSide instanceof Closure) {
-            $this->offsetSetClosure($targetColumn, $rightHandSide);
+            $this->columnSetClosure($targetColumn, $rightHandSide);
         } else {
-            $this->offsetSetValue($targetColumn, $rightHandSide);
+            $this->setColumnValue($targetColumn, $rightHandSide);
         }
+
+        return $this;
     }
 
     /**
@@ -580,7 +589,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      * @throws DataFrameException
      * @since  0.1.0
      */
-    private function offsetSetDataFrame(string $targetColumn, DataFrame $df): void
+    private function columnSetDataFrame(string $targetColumn, DataFrame $df): void
     {
         if (\count($df->columns()) !== 1) {
             $msg = 'Can only set a new column from a DataFrame with a single ';
@@ -613,7 +622,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      * @param Closure $f
      * @since 0.1.0
      */
-    private function offsetSetClosure(string $targetColumn, Closure $f): void
+    public function columnSetClosure(string $targetColumn, Closure $f): void
     {
         foreach ($this as $i => $row) {
             $this->data[$i][$this->getColumnObject($targetColumn)] = $f($row[$targetColumn]);
@@ -632,16 +641,34 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      * @param $value
      * @since 0.1.0
      */
-    private function offsetSetValue(?string $targetColumn, mixed $value): void
+    public function setColumnValue(string $targetColumn, mixed $value): void
     {
-        if (!empty($targetColumn)) {
-            $this->addColumn($targetColumn);
-            foreach ($this as $i => $row) {
-                $this->data[$i][$this->getColumnObject($targetColumn)] = $value;
-            }
-        } elseif (\is_array($value)) {
-            $this->addEntry($value);
+        $this->addColumn($targetColumn);
+
+        foreach ($this as $i => $row) {
+            $this->data[$i][$this->getColumnObject($targetColumn)] = $value;
         }
+    }
+
+    /**
+     * Allows user set DataFrame columns from a Closure, value, array, or another single-column DataFrame.
+     *      ie:
+     *          $df[$targetColumn] = $rightHandSide
+     *          $df['bar'] = $df['foo'];
+     *          $df['bar'] = $df->foo;
+     *          $df['foo'] = function ($foo) { return $foo + 1; };
+     *          $df['foo'] = 'bar';
+     *          $df[] = [['gender'=>'Female','name'=>'Luy'],['title'=>'Mr','name'=>'Noah']];
+     *
+     * @internal
+     * @param  mixed $targetColumn
+     * @param  mixed $rightHandSide
+     * @throws DataFrameException
+     * @since  0.1.0
+     */
+    public function offsetSet(mixed $index, mixed $entry): void
+    {
+        empty($index) ? $this->addEntry($entry) : $this->setIndex($index, $entry);
     }
 
     /**
@@ -654,7 +681,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      */
     public function offsetUnset(mixed $offset): void
     {
-        $this->removeColumn($offset);
+        $this->removeIndex($offset);
     }
 
     /* *****************************************************************************************************************

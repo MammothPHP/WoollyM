@@ -40,17 +40,17 @@ test('for each', function (): void {
     }
 });
 
-test('offset get', function (): void {
-    $a = $this->df['a'];
-    $b = $this->df['b'];
+test('column get', function (): void {
+    $a = $this->df->getColumn('a');
+    $b = $this->df->getColumn('b');
 
     expect($a->toArray())->toEqual([['a' => 1], ['a' => 4], ['a' => 7]]);
     expect($b->toArray())->toEqual([['b' => 2], ['b' => 5], ['b' => 8]]);
 });
 
-test('offset set value', function (): void {
+test('column set value', function (): void {
     $df = $this->df;
-    $df['a'] = 321;
+    $df->setColumnValue('a', 321);
 
     $expected = [
         ['a' => 321, 'b' => 2, 'c' => 3],
@@ -61,7 +61,7 @@ test('offset set value', function (): void {
     expect($df->toArray())->toEqual($expected);
 });
 
-test('offset set closure', function (): void {
+test('column set closure', function (): void {
     $df = $this->df;
 
     $add = static function ($x) {
@@ -70,9 +70,9 @@ test('offset set closure', function (): void {
         };
     };
 
-    $df['a'] = $add(10);
-    $df['b'] = $add(20);
-    $df['c'] = $add(30);
+    $df->setColumn('a', $add(10));
+    $df->setColumn('b', $add(20));
+    $df->setColumn('c', $add(30));
 
     $expected = [
         ['a' => 11, 'b' => 22, 'c' => 33],
@@ -83,10 +83,10 @@ test('offset set closure', function (): void {
     expect($df->toArray())->toEqual($expected);
 });
 
-test('offset set dataframe', function (): void {
+test('column set dataframe', function (): void {
     $df = $this->df;
 
-    $df['a'] = $df['b'];
+    $df->setColumn('a', $df->getColumn('b'));
 
     $expected = [
         ['a' => 2, 'b' => 2, 'c' => 3],
@@ -97,12 +97,14 @@ test('offset set dataframe', function (): void {
     expect($df->toArray())->toEqual($expected);
 });
 
-test('offset set new column', function (): void {
-    $df = $this->df;
+test('set new column', function (): void {
+    $this->df
+        ->addColumn('d')
+        ->setColumn('d', $this->df->getColumn('c')->apply(static function ($el) {
+            return $el + 1;
+        }));
+    ;
 
-    $df['d'] = $df['c']->apply(static function ($el) {
-        return $el + 1;
-    });
 
     $expected = [
         ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4],
@@ -110,7 +112,7 @@ test('offset set new column', function (): void {
         ['a' => 7, 'b' => 8, 'c' => 9, 'd' => 10],
     ];
 
-    expect($df->toArray())->toEqual($expected);
+    expect($this->df->toArray())->toEqual($expected);
 });
 
 test('apply data frame', function (): void {
@@ -132,9 +134,22 @@ test('apply data frame', function (): void {
     expect($df->toArray())->toEqual($expected);
 });
 
-test('isset', function (): void {
-    expect(isset($this->df['a']))->toBeTrue();
-    expect(isset($this->df['foo']))->toBeFalse();
+test('has column', function (): void {
+    expect($this->df->hasColumn('a'))->toBeTrue();
+    expect($this->df->hasColumn('foo'))->toBeFalse();
+});
+
+test('isset and unset', function (): void {
+    expect(isset($this->df[0]))->toBeTrue();
+    expect(isset($this->df[1]))->toBeTrue();
+    expect(isset($this->df[2]))->toBeTrue();
+    expect(isset($this->df[42]))->toBeFalse();
+
+    unset($this->df[1]);
+
+    expect(isset($this->df[0]))->toBeTrue();
+    expect(isset($this->df[1]))->toBeFalse();
+    expect(isset($this->df[2]))->toBeTrue();
 });
 
 test('apply index map values', function (): void {

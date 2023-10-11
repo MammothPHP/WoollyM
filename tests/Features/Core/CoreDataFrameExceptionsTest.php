@@ -15,7 +15,7 @@ beforeEach(function (): void {
 
 test('invalid column', function (): void {
     $this->expectException('CondorcetPHP\Oliphant\Exceptions\InvalidColumnException');
-    $this->df['foo'];
+    $this->df->getColumn('foo');
 });
 
 test('remove non existent column', function (): void {
@@ -26,7 +26,7 @@ test('invalid offset set1', function (): void {
     $df = $this->df;
 
     $this->expectException('CondorcetPHP\Oliphant\Exceptions\DataFrameException');
-    $df['foo'] = $df;
+    $df->setColumn('foo', $df);
 });
 
 test('invalid offset set2', function (): void {
@@ -34,5 +34,5 @@ test('invalid offset set2', function (): void {
     $df2 = DataFrame::fromArray([['a' => 1, 'b' => 2, 'c' => 3]]);
 
     $this->expectException('CondorcetPHP\Oliphant\Exceptions\DataFrameException');
-    $df['a'] = $df2['a'];
+    $df->setColumn('a', $df2->getColumn('a'));
 });
