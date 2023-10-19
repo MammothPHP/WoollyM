@@ -61,7 +61,7 @@ it('remove him self', function (): void {
 });
 
 it('has dynamic properties', fn(string $prop) => expect(isset($this->df->col('c')->$prop))->toBeTrue())
-    ->with(['sum']);
+    ->with(['average', 'count', 'sum']);
 
 test('sum column', function (): void {
     $expected = 18;

@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace CondorcetPHP\Oliphant;
 
-use CondorcetPHP\Oliphant\Exceptions\{InvalidColumnException, PropertyNotExistException};
+use CondorcetPHP\Oliphant\Exceptions\{InvalidColumnException, MethodNotExistException, PropertyNotExistException};
+use CondorcetPHP\Oliphant\Stats\Modules;
 use Stringable;
 use WeakReference;
 
@@ -26,8 +27,10 @@ class ColumnRepresentation implements Stringable
         return true;
     }
 
-    // Implement property overloading
+    // Implement property & methods overloading
     public function __set(string $name, mixed $value): void {
+        $this->isAliveorThrowInvalidColumnException();
+
         if ($name === 'values') {
             $this->setValues($value);
             return;
@@ -37,19 +40,38 @@ class ColumnRepresentation implements Stringable
     }
 
     public function __get(string $name): mixed {
-        if ($name === 'sum') {
-            return $this->sum();
+        $this->isAliveorThrowInvalidColumnException();
+
+        if ($name === 'name') {
+            return $this->getName();
+        }
+
+        if ($module = Modules::getColumnStatsPropertyModule($name)) {
+            return $module->executeProperty($this);
         }
 
         throw new PropertyNotExistException;
     }
 
     public function __isset(string $name): bool {
-        if ($name === 'sum') {
+        $this->isAliveorThrowInvalidColumnException();
+
+        if ($name === 'name') {
             return true;
         }
 
-        return false;
+        return Modules::getColumnStatsPropertyModule($name) ? true : false;
+    }
+
+    public function __call(string $name, array $arguments): mixed
+    {
+        $this->isAliveorThrowInvalidColumnException();
+
+        if ($module = Modules::getColumnStatsMethodModule($name)) {
+            return $module->executeMethod($this, $arguments);
+        }
+
+        throw new MethodNotExistException();
     }
 
     protected function isAliveorThrowInvalidColumnException(): void
@@ -71,6 +93,8 @@ class ColumnRepresentation implements Stringable
 
     public function getDataFrame(): DataFrame
     {
+        $this->isAliveorThrowInvalidColumnException();
+
         return $this->columnIndex->get()->df->get();
     }
 
@@ -86,17 +110,5 @@ class ColumnRepresentation implements Stringable
         $this->getDataFrame()->setColumn($this->getName(), $value);
 
         return $this;
-    }
-
-    public function sum(): int|float
-    {
-        $r = 0;
-        $columnName = $this->getName();
-
-        foreach ($this->getDataFrame()->getColumn($columnName) as $value) {
-            $r += $value[$columnName];
-        }
-
-        return $r;
     }
 }
