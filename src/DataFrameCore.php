@@ -43,35 +43,35 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
 
     public function __construct(array $data = [])
     {
-        $this->addEntries($data);
+        $this->addRows($data);
     }
 
-    public function addEntry(array $entry): self
+    public function addRow(array $row): self
     {
-        if (\count($entry) > 0) {
-            $this->data[] = $this->convertEntryToWeakmap($entry);
+        if (\count($row) > 0) {
+            $this->data[] = $this->convertRowToWeakmap($row);
         }
 
         return $this;
     }
 
-    protected function convertEntryToWeakmap(array $entry): WeakMap
+    protected function convertRowToWeakmap(array $row): WeakMap
     {
-        $newEntry = new WeakMap;
+        $newRow = new WeakMap;
 
-        foreach ($entry as $entryKey => $entryValue) {
-            $this->addColumn($entryKey);
+        foreach ($row as $rowKey => $rowValue) {
+            $this->addColumn($rowKey);
 
-            $newEntry[$this->getColumnObject($entryKey)] = $entryValue;
+            $newRow[$this->getColumnObject($rowKey)] = $rowValue;
         }
 
-        return $newEntry;
+        return $newRow;
     }
 
-    public function addEntries(array $entries): self
+    public function addRows(array $rows): self
     {
-        foreach ($entries as $oneEntry) {
-            $this->addEntry($oneEntry);
+        foreach ($rows as $oneRow) {
+            $this->addRow($oneRow);
         }
 
         return $this;
@@ -106,12 +106,12 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      */
     public function getIndex(int $index): array
     {
-        return self::convertAbstractEntryToArray($this->data[$index]);
+        return self::convertAbstractRowToArray($this->data[$index]);
     }
 
-    public function setIndex(int $index, mixed $entry): self
+    public function setIndex(int $index, mixed $row): self
     {
-        $this->data[$index] = $this->convertEntryToWeakmap($entry);
+        $this->data[$index] = $this->convertRowToWeakmap($row);
 
         return $this;
     }
@@ -123,11 +123,11 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
         return $this;
     }
 
-    public static function convertAbstractEntryToArray(WeakMap $entry): array
+    public static function convertAbstractRowToArray(WeakMap $row): array
     {
         $r = [];
 
-        foreach ($entry as $k => $v) {
+        foreach ($row as $k => $v) {
             $r[$k->name] = $v;
         }
 
@@ -146,7 +146,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
     {
         if (\count($this->columns()) > 1) {
             foreach ($this as $i => $row) {
-                $this->data[$i] = $this->convertEntryToWeakmap($f($row, $i));
+                $this->data[$i] = $this->convertRowToWeakmap($f($row, $i));
             }
         } elseif (\count($this->columns()) === 1) {
             foreach ($this as $i => $row) {
@@ -376,8 +376,8 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      */
     public function append(DataFrame $df): self
     {
-        foreach ($df as $dfEntry) {
-            $this->addEntry($dfEntry);
+        foreach ($df as $dfRow) {
+            $this->addRow($dfRow);
         }
 
         return $this;
@@ -474,8 +474,8 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
     {
         $r = [];
 
-        foreach ($this as $key => $entry) {
-            $r[$key] = $entry;
+        foreach ($this as $key => $row) {
+            $r[$key] = $row;
         }
 
         return $r;
@@ -545,8 +545,8 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
 
         // $data = [];
 
-        // foreach ($this as $entry) {
-        //     $data[] = [$columnName => $entry[$columnName]];
+        // foreach ($this as $row) {
+        //     $data[] = [$columnName => $row[$columnName]];
         // }
 
         // return new DataFrame($data);
@@ -558,8 +558,8 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
 
         $data = [];
 
-        foreach ($this as $entry) {
-            $data[] = [$columnName => $entry[$columnName]];
+        foreach ($this as $row) {
+            $data[] = [$columnName => $row[$columnName]];
         }
 
         return new DataFrame($data);
@@ -666,9 +666,9 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      * @throws DataFrameException
      * @since  0.1.0
      */
-    public function offsetSet(mixed $index, mixed $entry): void
+    public function offsetSet(mixed $index, mixed $row): void
     {
-        empty($index) ? $this->addEntry($entry) : $this->setIndex($index, $entry);
+        empty($index) ? $this->addRow($row) : $this->setIndex($index, $row);
     }
 
     /**
