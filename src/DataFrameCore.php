@@ -87,7 +87,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
         return $this->columns;
     }
 
-    public function getColumnObject(string $columnName): ?Column
+    public function getColumnObject(string $columnName): ?ColumnIndex
     {
         foreach ($this->columns() as $column) {
             if ($column->name === $columnName) {
@@ -291,7 +291,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      * @return bool
      * @since  0.1.0
      */
-    public function hasColumn(Column|string $column): bool
+    public function hasColumn(ColumnIndex|string $column): bool
     {
         if (array_search($column, $this->columns) === false) {
             return false;
@@ -310,7 +310,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
     public function addColumn(string $column): self
     {
         if (!$this->hasColumn($column)) {
-            $this->columns[] = new Column($column);
+            $this->columns[] = new ColumnIndex($column);
         }
 
         return $this;

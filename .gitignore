@@ -17,3 +17,4 @@ phpstan.neon
 *.idea
 *.code-workspace
 .vscode
+apiConcept.php

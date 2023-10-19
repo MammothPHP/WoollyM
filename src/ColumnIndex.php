@@ -6,7 +6,7 @@ namespace CondorcetPHP\Oliphant;
 
 use Stringable;
 
-class Column implements Stringable
+class ColumnIndex implements Stringable
 {
     public function __construct(public string $name)
     {
