@@ -100,7 +100,7 @@ final class DataFrame extends DataFrameCore
      */
     public function toXLSXWorksheet(Spreadsheet &$excel, string $worksheetTitle): Worksheet
     {
-        return XLSX::saveToWorksheet($excel, $worksheetTitle, $this->toArray(), $this->columns);
+        return XLSX::saveToWorksheet($excel, $worksheetTitle, $this->toArray(), $this->columnIndexes);
     }
 
     /**
@@ -128,7 +128,7 @@ final class DataFrame extends DataFrameCore
     public function toSQL($tableName, PDO $pdo, array $options = []): void
     {
         $sql = new SQL($pdo);
-        $sql->insertInto($tableName, $this->columns, $this->toArray(), $options);
+        $sql->insertInto($tableName, $this->columnIndexes, $this->toArray(), $options);
     }
 
     /**

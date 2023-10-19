@@ -5,11 +5,15 @@ declare(strict_types=1);
 namespace CondorcetPHP\Oliphant;
 
 use Stringable;
+use WeakReference;
 
 class ColumnIndex implements Stringable
 {
-    public function __construct(public string $name)
+    public readonly WeakReference $df;
+
+    public function __construct(public string $name, DataFrame $df)
     {
+        $this->df = WeakReference::create($df);
     }
 
     public function __toString(): string

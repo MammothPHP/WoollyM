@@ -151,11 +151,11 @@ final class SQL
             throw new RuntimeException('REPLACE and INSERT IGNORE are mutually exclusive. Please choose only one.');
         }
 
-        $columns = '('.implode(', ', $columns).')';
+        $columns = '(' . implode(', ', $columns) . ')';
 
         foreach ($data as &$row) {
             $row = array_fill(0, \count($row), '?');
-            $row = '('.implode(', ', $row).')';
+            $row = '(' . implode(', ', $row) . ')';
         }
         $data = implode(', ', $data);
 
@@ -204,7 +204,7 @@ final class SQL
 
         if (\count($missingColumns) !== 0) {
             $s = \count($missingColumns) > 1 ? 's' : '';
-            $missingColumns = '`'.implode('`, `', $missingColumns).'`';
+            $missingColumns = '`' . implode('`, `', $missingColumns) . '`';
 
             throw new InvalidColumnException("Error: Table {$tableName} does not contain the column{$s}: {$missingColumns}.");
         }

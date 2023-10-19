@@ -25,6 +25,4 @@ namespace CondorcetPHP\Oliphant\Exceptions;
  *
  * @codeCoverageIgnore
  */
-class DataFrameException extends \Exception
-{
-}
+class DataFrameException extends \Exception {}

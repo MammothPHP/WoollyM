@@ -28,6 +28,4 @@ namespace CondorcetPHP\Oliphant\Exceptions;
  *
  * @codeCoverageIgnore
  */
-class UnknownOptionException extends DataFrameException
-{
-}
+class UnknownOptionException extends DataFrameException {}

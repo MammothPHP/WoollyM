@@ -30,9 +30,7 @@ final class FWF
         'exclude' => null,
     ];
 
-    public function __construct(public readonly string $fileName)
-    {
-    }
+    public function __construct(public readonly string $fileName) {}
 
     /**
      * Loads the file which the FWF class was instantiated with.

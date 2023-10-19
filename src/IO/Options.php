@@ -56,7 +56,7 @@ final class Options
         if (\count($unknownOptions) > 0) {
             $unknownOptions = implode(', ', $unknownOptions);
 
-            throw new UnknownOptionException('Unknown options: ['.$unknownOptions.']');
+            throw new UnknownOptionException('Unknown options: [' . $unknownOptions . ']');
         }
 
         /*

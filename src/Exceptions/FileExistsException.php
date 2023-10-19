@@ -26,6 +26,4 @@ namespace CondorcetPHP\Oliphant\Exceptions;
  *
  * @codeCoverageIgnore
  */
-class FileExistsException extends DataFrameException
-{
-}
+class FileExistsException extends DataFrameException {}

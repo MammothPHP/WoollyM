@@ -25,6 +25,4 @@ namespace CondorcetPHP\Oliphant\Exceptions;
  *
  * @codeCoverageIgnore
  */
-class InvalidColumnException extends DataFrameException
-{
-}
+class InvalidColumnException extends DataFrameException {}

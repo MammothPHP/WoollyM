@@ -33,22 +33,22 @@ test('to pretty j s o n', function (): void {
         ['a' => 7, 'b' => 8, 'c' => 9],
     ]);
 
-    $expected = '['."\n";
-    $expected .= '    {'."\n";
-    $expected .= '        "a": 1,'."\n";
-    $expected .= '        "b": 2,'."\n";
-    $expected .= '        "c": 3'."\n";
-    $expected .= '    },'."\n";
-    $expected .= '    {'."\n";
-    $expected .= '        "a": 4,'."\n";
-    $expected .= '        "b": 5,'."\n";
-    $expected .= '        "c": 6'."\n";
-    $expected .= '    },'."\n";
-    $expected .= '    {'."\n";
-    $expected .= '        "a": 7,'."\n";
-    $expected .= '        "b": 8,'."\n";
-    $expected .= '        "c": 9'."\n";
-    $expected .= '    }'."\n";
+    $expected = '[' . "\n";
+    $expected .= '    {' . "\n";
+    $expected .= '        "a": 1,' . "\n";
+    $expected .= '        "b": 2,' . "\n";
+    $expected .= '        "c": 3' . "\n";
+    $expected .= '    },' . "\n";
+    $expected .= '    {' . "\n";
+    $expected .= '        "a": 4,' . "\n";
+    $expected .= '        "b": 5,' . "\n";
+    $expected .= '        "c": 6' . "\n";
+    $expected .= '    },' . "\n";
+    $expected .= '    {' . "\n";
+    $expected .= '        "a": 7,' . "\n";
+    $expected .= '        "b": 8,' . "\n";
+    $expected .= '        "c": 9' . "\n";
+    $expected .= '    }' . "\n";
     $expected .= ']';
     expect($df->toJSON(['pretty' => true]))->toEqual($expected);
 });

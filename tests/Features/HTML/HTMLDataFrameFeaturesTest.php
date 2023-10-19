@@ -104,14 +104,14 @@ test('class i d options', function (): void {
     ]);
 
     $fnExpected = static function ($tableString) {
-        return $tableString.'<thead><tr><th>a</th><th>b</th><th>c</th></tr></thead>'
-            .'<tfoot><tr><th>a</th><th>b</th><th>c</th></tr></tfoot>'
-            .'<tbody>'
-            .'<tr><td>1</td><td>2</td><td>3</td></tr>'
-            .'<tr><td>4</td><td>5</td><td>6</td></tr>'
-            .'<tr><td>7</td><td>8</td><td>9</td></tr>'
-            .'</tbody>'
-            .'</table>';
+        return $tableString . '<thead><tr><th>a</th><th>b</th><th>c</th></tr></thead>'
+            . '<tfoot><tr><th>a</th><th>b</th><th>c</th></tr></tfoot>'
+            . '<tbody>'
+            . '<tr><td>1</td><td>2</td><td>3</td></tr>'
+            . '<tr><td>4</td><td>5</td><td>6</td></tr>'
+            . '<tr><td>7</td><td>8</td><td>9</td></tr>'
+            . '</tbody>'
+            . '</table>';
     };
 
     $expected = $fnExpected("<table class='classname'>");
@@ -149,7 +149,7 @@ test('data table', function (): void {
     expect(isset($matches[0]))->toBeTrue();
 
     $uuid = substr($matches[0], 1);
-    $expected = "<table id='".$uuid."'>";
+    $expected = "<table id='" . $uuid . "'>";
     $expected .= '<thead><tr><th>a</th></tr></thead>';
     $expected .= '<tfoot><tr><th>a</th></tr></tfoot>';
     $expected .= '<tbody>';
@@ -165,7 +165,7 @@ test('data table', function (): void {
     };
 
     $scriptTag = $wrap('<script>', '</script>');
-    $expected .= $scriptTag('$(document).ready(function() {$(\''.$matches[0].'\').DataTable();});');
+    $expected .= $scriptTag('$(document).ready(function() {$(\'' . $matches[0] . '\').DataTable();});');
 
     expect($actual)->toEqual($expected);
 });

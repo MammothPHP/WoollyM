@@ -39,9 +39,7 @@ final class HTML
         'offset' => 0,
     ];
 
-    public function __construct(public readonly array $data)
-    {
-    }
+    public function __construct(public readonly array $data) {}
 
     /**
      * Assembles a two-dimensional array as an HTML table, where row element keys are header/footer columns,
@@ -109,8 +107,8 @@ final class HTML
         }
 
         $data = $fnTable(
-            $fnTHead($columns).
-            $fnTFoot($columns).
+            $fnTHead($columns) .
+            $fnTFoot($columns) .
             $fnTBody($data)
         );
 
@@ -142,14 +140,14 @@ final class HTML
         $fnQuoted = $this->fnWrapText($quote, $quote);
 
         if ($class !== null) {
-            $class = ' class='.$fnQuoted($class);
+            $class = ' class=' . $fnQuoted($class);
         }
 
         if ($id !== null) {
-            $id = ' id='.$fnQuoted($id);
+            $id = ' id=' . $fnQuoted($id);
         }
 
-        return '<table'.$class.$id.'>';
+        return '<table' . $class . $id . '>';
     }
 
     /**
@@ -171,8 +169,8 @@ final class HTML
         $fnDocumentReady = $this->fnWrapText('$(document).ready(function() {', '});');
         $fnQuoted = $this->fnWrapText($quoteOpt, $quoteOpt);
 
-        $datatableID = $fnQuoted('#'.$idOpt);
-        $jQueryFunction = $fnDocumentReady('$('.$datatableID.').DataTable('.$datatableOpt.');');
+        $datatableID = $fnQuoted('#' . $idOpt);
+        $jQueryFunction = $fnDocumentReady('$(' . $datatableID . ').DataTable(' . $datatableOpt . ');');
 
         return $fnScript($jQueryFunction);
     }
@@ -208,7 +206,7 @@ final class HTML
                 $data = implode('', $data);
             }
 
-            return $leftTag.$data.$rightTag;
+            return $leftTag . $data . $rightTag;
         };
     }
 }

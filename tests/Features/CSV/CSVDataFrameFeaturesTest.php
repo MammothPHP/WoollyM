@@ -4,7 +4,7 @@ declare(strict_types=1);
 use CondorcetPHP\Oliphant\DataFrame;
 
 test('from c s v', function (): void {
-    $fileName = __DIR__.\DIRECTORY_SEPARATOR.'TestFiles'.\DIRECTORY_SEPARATOR.'testCSV.csv';
+    $fileName = __DIR__ . \DIRECTORY_SEPARATOR . 'TestFiles' . \DIRECTORY_SEPARATOR . 'testCSV.csv';
 
     $df = DataFrame::fromCSV($fileName);
 
@@ -15,7 +15,7 @@ test('from c s v', function (): void {
 });
 
 test('from c s v dirty', function (): void {
-    $fileName = __DIR__.\DIRECTORY_SEPARATOR.'TestFiles'.\DIRECTORY_SEPARATOR.'testCSVdirty.csv';
+    $fileName = __DIR__ . \DIRECTORY_SEPARATOR . 'TestFiles' . \DIRECTORY_SEPARATOR . 'testCSVdirty.csv';
 
     $df = DataFrame::fromCSV($fileName, [
         'include' => '/^([1-9]|a)/',
@@ -29,7 +29,7 @@ test('from c s v dirty', function (): void {
 });
 
 test('from c s v no header', function (): void {
-    $fileName = __DIR__.\DIRECTORY_SEPARATOR.'TestFiles'.\DIRECTORY_SEPARATOR.'testCSV.csv';
+    $fileName = __DIR__ . \DIRECTORY_SEPARATOR . 'TestFiles' . \DIRECTORY_SEPARATOR . 'testCSV.csv';
 
     $df = DataFrame::fromCSV($fileName, ['columns' => ['x', 'y', 'z']]);
 
@@ -41,7 +41,7 @@ test('from c s v no header', function (): void {
 });
 
 test('from c s vcol map', function (): void {
-    $fileName = __DIR__.\DIRECTORY_SEPARATOR.'TestFiles'.\DIRECTORY_SEPARATOR.'testCSV.csv';
+    $fileName = __DIR__ . \DIRECTORY_SEPARATOR . 'TestFiles' . \DIRECTORY_SEPARATOR . 'testCSV.csv';
 
     $df = DataFrame::fromCSV($fileName, [
         'colmap' => [
@@ -58,7 +58,7 @@ test('from c s vcol map', function (): void {
 });
 
 test('c s v mapping alias', function (): void {
-    $fileName = __DIR__.\DIRECTORY_SEPARATOR.'TestFiles'.\DIRECTORY_SEPARATOR.'testCSV.csv';
+    $fileName = __DIR__ . \DIRECTORY_SEPARATOR . 'TestFiles' . \DIRECTORY_SEPARATOR . 'testCSV.csv';
 
     $df1 = DataFrame::fromCSV($fileName, [
         'colmap' => [
@@ -80,7 +80,7 @@ test('c s v mapping alias', function (): void {
 });
 
 test('from c s vcol map to null', function (): void {
-    $fileName = __DIR__.\DIRECTORY_SEPARATOR.'TestFiles'.\DIRECTORY_SEPARATOR.'testCSV.csv';
+    $fileName = __DIR__ . \DIRECTORY_SEPARATOR . 'TestFiles' . \DIRECTORY_SEPARATOR . 'testCSV.csv';
 
     $df = DataFrame::fromCSV($fileName, [
         'colmap' => [
@@ -97,7 +97,7 @@ test('from c s vcol map to null', function (): void {
 });
 
 test('from c s vcol map to null2', function (): void {
-    $fileName = __DIR__.\DIRECTORY_SEPARATOR.'TestFiles'.\DIRECTORY_SEPARATOR.'testCSV.csv';
+    $fileName = __DIR__ . \DIRECTORY_SEPARATOR . 'TestFiles' . \DIRECTORY_SEPARATOR . 'testCSV.csv';
 
     $df = DataFrame::fromCSV($fileName, [
         'colmap' => [
@@ -116,7 +116,7 @@ test('from c s vcol map to null2', function (): void {
 });
 
 test('save c s v', function (): void {
-    $fileName = __DIR__.\DIRECTORY_SEPARATOR.'TestFiles'.\DIRECTORY_SEPARATOR.'testCSVSave.csv';
+    $fileName = __DIR__ . \DIRECTORY_SEPARATOR . 'TestFiles' . \DIRECTORY_SEPARATOR . 'testCSVSave.csv';
     if (file_exists($fileName)) {
         unlink($fileName);
     }

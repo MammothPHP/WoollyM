@@ -42,9 +42,7 @@ final class CSV
         'exclude' => null,
     ];
 
-    public function __construct(public readonly string $fileName)
-    {
-    }
+    public function __construct(public readonly string $fileName) {}
 
     /**
      * Loads the file which the CSV class was instantiated with.
@@ -217,7 +215,7 @@ final class CSV
             $rowCount += 1;
 
             foreach ($delimiters as $delimiter) {
-                $fields = preg_split('/['.$delimiter.']/', $row);
+                $fields = preg_split('/[' . $delimiter . ']/', $row);
 
                 if (\count($fields) > 1) {
                     $results[$delimiter] = $results[$delimiter] ?? 0;

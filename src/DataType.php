@@ -31,7 +31,7 @@ enum DataType
         $value = str_replace(['$', ',', ' '], '', $value);
 
         if (substr($value, -1) == '-') {
-            $value = '-'.substr($value, 0, -1);
+            $value = '-' . substr($value, 0, -1);
         }
 
         $value = \floatval($value);
@@ -48,7 +48,7 @@ enum DataType
         $value = (string) $value;
 
         if (substr($value, -1) === '-') {
-            $value = '-'.substr($value, 0, -1);
+            $value = '-' . substr($value, 0, -1);
         }
 
         $value = str_replace(['$', ',', ' '], '', $value);
@@ -90,14 +90,14 @@ enum DataType
         $value[1] = ($value[1] == '' || $value[1] == '0') ? '00' : $value[1];
 
         $value[0] = \floatval($value[0]);
-        $dollars = number_format($value[0]).'.'.$value[1];
+        $dollars = number_format($value[0]) . '.' . $value[1];
 
         if (substr($dollars, 0, 1) == '-') {
             $dollars = '-$' . ltrim($dollars, '-');
         } elseif (substr($dollars, -1) == '-') {
             $dollars = '-$' . rtrim($dollars, '-');
         } else {
-            $dollars = '$'.$dollars;
+            $dollars = '$' . $dollars;
         }
 
         return $dollars;
@@ -114,11 +114,11 @@ enum DataType
         $dollars = number_format($value[0]) . '.' . $value[1];
 
         if (substr($dollars, 0, 1) == '-') {
-            $dollars = '('.ltrim($dollars, '-').')';
+            $dollars = '(' . ltrim($dollars, '-') . ')';
         } elseif (substr($dollars, -1) == '-') {
-            $dollars = '('.rtrim($dollars, '-').')';
+            $dollars = '(' . rtrim($dollars, '-') . ')';
         }
 
-        return '$'.$dollars;
+        return '$' . $dollars;
     }
 }

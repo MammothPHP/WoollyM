@@ -25,6 +25,4 @@ namespace CondorcetPHP\Oliphant\Exceptions;
  *
  * @codeCoverageIgnore
  */
-class NotYetImplementedException extends DataFrameException
-{
-}
+class NotYetImplementedException extends DataFrameException {}

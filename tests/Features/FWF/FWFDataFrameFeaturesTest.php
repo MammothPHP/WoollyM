@@ -4,7 +4,7 @@ declare(strict_types=1);
 use CondorcetPHP\Oliphant\DataFrame;
 
 test('load f w f1', function (): void {
-    $fileName = __DIR__.\DIRECTORY_SEPARATOR.'TestFiles'.\DIRECTORY_SEPARATOR.'testFWF.fwf';
+    $fileName = __DIR__ . \DIRECTORY_SEPARATOR . 'TestFiles' . \DIRECTORY_SEPARATOR . 'testFWF.fwf';
 
     /*
     junk

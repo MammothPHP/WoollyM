@@ -34,9 +34,7 @@ class XLSX
         'sheetname' => null,
     ];
 
-    public function __construct(public readonly string $fileName)
-    {
-    }
+    public function __construct(public readonly string $fileName) {}
 
     /**
      * Loads the file which the CSV class was instantiated with.
@@ -75,13 +73,13 @@ class XLSX
                  * If the current row is the column row then assemble our columns.
                  */
                 if ($i === $colRowOpt) {
-                    $columns[$column] = $sheet->getCell($column.$i)->__toString();
+                    $columns[$column] = $sheet->getCell($column . $i)->__toString();
 
                     continue;
                 }
 
                 $currentColumnName = $columns[$column];
-                $data[$i][$currentColumnName] = $sheet->getCell($column.$i)->__toString();
+                $data[$i][$currentColumnName] = $sheet->getCell($column . $i)->__toString();
             }
         }
 

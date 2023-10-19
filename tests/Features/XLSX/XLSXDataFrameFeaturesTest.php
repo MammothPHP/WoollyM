@@ -6,7 +6,7 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 test('load x l s x', function (): void {
-    $fileName = __DIR__.\DIRECTORY_SEPARATOR.'TestFiles'.\DIRECTORY_SEPARATOR.'test.xlsx';
+    $fileName = __DIR__ . \DIRECTORY_SEPARATOR . 'TestFiles' . \DIRECTORY_SEPARATOR . 'test.xlsx';
 
     // Suppress warning coming from PHPExcel date/time nonsense
     $xlsx = DataFrame::fromXLSX($fileName);
@@ -51,7 +51,7 @@ test('load x l s x', function (): void {
 });
 
 test('to x l s x', function (): void {
-    $fileName = __DIR__.\DIRECTORY_SEPARATOR.'TestFiles'.\DIRECTORY_SEPARATOR.'test_to.xlsx';
+    $fileName = __DIR__ . \DIRECTORY_SEPARATOR . 'TestFiles' . \DIRECTORY_SEPARATOR . 'test_to.xlsx';
 
     if (file_exists($fileName)) {
         unlink($fileName);

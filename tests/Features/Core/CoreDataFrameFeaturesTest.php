@@ -103,7 +103,7 @@ test('set new column', function (): void {
         ->setColumn('d', $this->df->getColumn('c')->apply(static function ($el) {
             return $el + 1;
         }));
-    ;
+
 
 
     $expected = [
