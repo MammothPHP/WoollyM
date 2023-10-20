@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 use CondorcetPHP\Oliphant\DataFrame;
+use CondorcetPHP\Oliphant\Exceptions\DataFrameException;
 
 beforeEach(function (): void {
     $this->input = [
@@ -15,24 +16,20 @@ beforeEach(function (): void {
 
 test('invalid column', function (): void {
     $this->expectException('CondorcetPHP\Oliphant\Exceptions\InvalidColumnException');
-    $this->df->getColumn('foo');
+    $this->df->col('foo');
 });
 
 test('remove non existent column', function (): void {
-    $this->expectException('CondorcetPHP\Oliphant\Exceptions\DataFrameException');
     $this->df->removeColumn('foo');
-});
-test('invalid offset set1', function (): void {
-    $df = $this->df;
+})->throws(DataFrameException::class);
 
-    $this->expectException('CondorcetPHP\Oliphant\Exceptions\DataFrameException');
-    $df->setColumn('foo', $df);
-});
+test('invalid offset set1', function (): void {
+    $this->df->col('foo')->setValues($this->df);
+})->throws(DataFrameException::class);
 
 test('invalid offset set2', function (): void {
     $df = $this->df;
     $df2 = DataFrame::fromArray([['a' => 1, 'b' => 2, 'c' => 3]]);
 
-    $this->expectException('CondorcetPHP\Oliphant\Exceptions\DataFrameException');
-    $df->setColumn('a', $df2->getColumn('a'));
-});
+    $df->col('a')->setValues($df2->col('a')->asDataFrame());
+})->throws(DataFrameException::class);

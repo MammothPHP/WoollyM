@@ -26,7 +26,7 @@ class Sum implements ColumnStatsMethodInterface, ColumnStatsPropertyInterface
         $r = 0;
         $columnName = $column->getName();
 
-        foreach ($column->getDataFrame()->getColumn($columnName) as $value) {
+        foreach ($column->asDataFrame() as $value) {
             if ($value[$columnName] === true) {
                 $value[$columnName] = 1;
             }

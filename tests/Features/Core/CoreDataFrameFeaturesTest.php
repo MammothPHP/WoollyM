@@ -50,8 +50,8 @@ test('addColumn', function():void {
 });
 
 test('column get', function (): void {
-    $a = $this->df->getColumn('a');
-    $b = $this->df->getColumn('b');
+    $a = $this->df->col('a')->asDataFrame();
+    $b = $this->df->col('b')->asDataFrame();
 
     expect($a->toArray())->toEqual([['a' => 1], ['a' => 4], ['a' => 7]]);
     expect($b->toArray())->toEqual([['b' => 2], ['b' => 5], ['b' => 8]]);
@@ -59,7 +59,7 @@ test('column get', function (): void {
 
 test('column set value', function (): void {
     $df = $this->df;
-    $df->setColumnValue('a', 321);
+    $df->col('a')->setValues(321);
 
     $expected = [
         ['a' => 321, 'b' => 2, 'c' => 3],
@@ -79,9 +79,9 @@ test('column set closure', function (): void {
         };
     };
 
-    $df->setColumn('a', $add(10));
-    $df->setColumn('b', $add(20));
-    $df->setColumn('c', $add(30));
+    $df->col('a')->setValues($add(10));
+    $df->col('b')->setValues($add(20));
+    $df->col('c')->setValues($add(30));
 
     $expected = [
         ['a' => 11, 'b' => 22, 'c' => 33],
@@ -95,7 +95,7 @@ test('column set closure', function (): void {
 test('column set dataframe', function (): void {
     $df = $this->df;
 
-    $df->setColumn('a', $df->getColumn('b'));
+    $df->col('a')->setValues($df->col('b')->asDataFrame());
 
     $expected = [
         ['a' => 2, 'b' => 2, 'c' => 3],
@@ -107,13 +107,14 @@ test('column set dataframe', function (): void {
 });
 
 test('set new column', function (): void {
+    expect($this->df->hasColumn('d'))->toBeFalse();
+
     $this->df
-        ->addColumn('d')
-        ->setColumn('d', $this->df->getColumn('c')->apply(static function ($el) {
+        ->setColumn('d', $this->df->col('c')->asDataFrame()->apply(static function ($el) {
             return $el + 1;
         }));
 
-
+    expect($this->df->hasColumn('d'))->toBeTrue();
 
     $expected = [
         ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4],
@@ -331,7 +332,7 @@ test('group by', function (): void {
 test('rename', function (): void {
     $df = $this->df;
 
-    $df->renameColumn('a', 'foo');
+    $df->col('a')->rename('foo');
 
     expect($df->toArray())->toBe([
         ['foo' => 1, 'b' => 2, 'c' => 3],

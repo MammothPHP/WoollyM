@@ -358,24 +358,6 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
     }
 
     /**
-     * Renames specific column.
-     *
-     * ie:
-     *      $df->renameColumn('old_name', 'new_name');
-     *
-     * @param $from
-     * @param $to
-     */
-    public function renameColumn(string $from, string $to): self
-    {
-        $this->mustHaveColumn($from);
-
-        $this->getColumnIndex($from)->name = $to;
-
-        return $this;
-    }
-
-    /**
      * Removes a column (and all associated data) from the DataFrame.
      *
      * @param $columnName
@@ -577,100 +559,14 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
         // return new DataFrame($data);
     }
 
-    public function getColumn(mixed $columnName): mixed
-    {
-        $this->mustHaveColumn($columnName);
-
-        $data = [];
-
-        foreach ($this as $row) {
-            $data[] = [$columnName => $row[$columnName]];
-        }
-
-        return new DataFrame($data);
-    }
-
     public function setColumn(string $targetColumn, mixed $rightHandSide): self
     {
-        if ($rightHandSide instanceof DataFrame) {
-            $this->columnSetDataFrame($targetColumn, $rightHandSide);
-        } elseif ($rightHandSide instanceof Closure) {
-            $this->columnSetClosure($targetColumn, $rightHandSide);
-        } else {
-            $this->setColumnValue($targetColumn, $rightHandSide);
-        }
+        $this->addColumn($targetColumn);
+        $this->mustHaveColumn($targetColumn);
+
+        $this->col($targetColumn)->setValues($rightHandSide);
 
         return $this;
-    }
-
-    /**
-     * Allows user set DataFrame columns from a single-column DataFrame.
-     *      ie:
-     *          $df['bar'] = $df['foo'];
-     *
-     * @internal
-     * @param  $targetColumn
-     * @param  DataFrame $df
-     * @throws DataFrameException
-     * @since  0.1.0
-     */
-    private function columnSetDataFrame(string $targetColumn, DataFrame $df): void
-    {
-        if ($df->countColumns() !== 1) {
-            $msg = 'Can only set a new column from a DataFrame with a single ';
-            $msg .= 'column.';
-
-            throw new DataFrameException($msg);
-        }
-
-        if (\count($df) != \count($this)) {
-            $msg = 'Source and target DataFrames must have identical number ';
-            $msg .= 'of rows.';
-
-            throw new DataFrameException($msg);
-        }
-
-        $this->addColumn($targetColumn);
-
-        foreach ($this as $i => $row) {
-            $this->data[$i][$this->getColumnindex($targetColumn)] = current($df->getIndex($i));
-        }
-    }
-
-    /**
-     * Allows user set DataFrame columns from a Closure.
-     *      ie:
-     *          $df['foo'] = function ($foo) { return $foo + 1; };
-     *
-     * @internal
-     * @param $targetColumn
-     * @param Closure $f
-     * @since 0.1.0
-     */
-    public function columnSetClosure(string $targetColumn, Closure $f): void
-    {
-        foreach ($this as $i => $row) {
-            $this->data[$i][$this->getColumnindex($targetColumn)] = $f($row[$targetColumn]);
-        }
-    }
-
-    /**
-     * Allows user set DataFrame columns from a variable and add new rows to Dataframe
-     *      ie:
-     *          $df['foo'] = 'bar';
-     *
-     *          $df[] = [ 'foo' => 1, 'bar' => 2, 'baz' => 3 ];
-     *
-     * @internal
-     * @param $targetColumn
-     * @param $value
-     * @since 0.1.0
-     */
-    public function setColumnValue(string $targetColumn, mixed $value): void
-    {
-        $this->addColumn($targetColumn);
-
-        $this->columnSetClosure($targetColumn, fn (): mixed => $value);
     }
 
     /**

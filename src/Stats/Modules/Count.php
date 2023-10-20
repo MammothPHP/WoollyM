@@ -26,7 +26,7 @@ class Count implements ColumnStatsMethodInterface, ColumnStatsPropertyInterface
         $r = 0;
         $columnName = $column->getName();
 
-        foreach ($column->getDataFrame()->getColumn($columnName) as $value) {
+        foreach ($column->asDataFrame() as $value) {
             if (!empty($value[$columnName])) {
                 $r += 1;
             }
