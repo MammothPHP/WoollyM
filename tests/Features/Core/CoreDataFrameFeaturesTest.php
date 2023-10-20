@@ -40,6 +40,15 @@ test('for each', function (): void {
     }
 });
 
+test('addColumn', function():void {
+    $this->df->addColumn('foo');
+    $this->df->addColumns(['bar', 'Z']);
+
+    expect($this->df->col('foo')->getName('foo'))->toBe('foo');
+    expect($this->df->col('bar')->getName('bar'))->toBe('bar');
+    expect($this->df->col('Z')->getName('Z'))->toBe('Z');
+});
+
 test('column get', function (): void {
     $a = $this->df->getColumn('a');
     $b = $this->df->getColumn('b');
