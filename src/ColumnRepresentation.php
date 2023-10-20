@@ -42,10 +42,6 @@ class ColumnRepresentation implements Stringable
     public function __get(string $name): mixed {
         $this->isAliveorThrowInvalidColumnException();
 
-        if ($name === 'name') {
-            return $this->getName();
-        }
-
         if ($module = Modules::getColumnStatsPropertyModule($name)) {
             return $module->executeProperty($this);
         }
@@ -55,10 +51,6 @@ class ColumnRepresentation implements Stringable
 
     public function __isset(string $name): bool {
         $this->isAliveorThrowInvalidColumnException();
-
-        if ($name === 'name') {
-            return true;
-        }
 
         return Modules::getColumnStatsPropertyModule($name) ? true : false;
     }

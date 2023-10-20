@@ -7,6 +7,7 @@ namespace CondorcetPHP\Oliphant\Stats;
 use CondorcetPHP\Oliphant\Exceptions\NotYetImplementedException;
 use CondorcetPHP\Oliphant\Stats\Modules\Average;
 use CondorcetPHP\Oliphant\Stats\Modules\Count;
+use CondorcetPHP\Oliphant\Stats\Modules\Name;
 use CondorcetPHP\Oliphant\Stats\Modules\Sum;
 
 abstract class Modules
@@ -20,6 +21,7 @@ abstract class Modules
 
             self::registerModule(new Average);
             self::registerModule(new Count);
+            self::registerModule(new Name);
             self::registerModule(new Sum);
         }
     }
