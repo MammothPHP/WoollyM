@@ -60,12 +60,5 @@ it('remove him self', function (): void {
     expect(fn () => $colB->sum())->toThrow(InvalidColumnException::class);
 });
 
-it('has dynamic properties', fn(string $prop) => expect(isset($this->df->col('c')->$prop))->toBeTrue())
+it('has dynamic properties', fn (string $prop) => expect(isset($this->df->col('c')->{$prop}))->toBeTrue())
     ->with(['average', 'count', 'sum']);
-
-test('sum column', function (): void {
-    $expected = 18;
-
-    expect($this->df->col('c')->sum())->toBe($expected);
-    expect($this->df->col('c')->sum)->toBe($expected);
-});

@@ -5,16 +5,13 @@ declare(strict_types=1);
 namespace CondorcetPHP\Oliphant\Stats;
 
 use CondorcetPHP\Oliphant\Exceptions\NotYetImplementedException;
-use CondorcetPHP\Oliphant\Stats\Modules\Average;
-use CondorcetPHP\Oliphant\Stats\Modules\Count;
-use CondorcetPHP\Oliphant\Stats\Modules\Name;
-use CondorcetPHP\Oliphant\Stats\Modules\Sum;
+use CondorcetPHP\Oliphant\Stats\Modules\{Average, Count, Name, Sum};
 
 abstract class Modules
 {
     protected static ?array $modules = null;
 
-    protected static function init (): void
+    protected static function init(): void
     {
         if (self::$modules === null) {
             self::$modules = [];
@@ -26,7 +23,8 @@ abstract class Modules
         }
     }
 
-    protected static function getModule(string $name, ModuleType $type): ?StatsInterface {
+    protected static function getModule(string $name, ModuleType $type): ?StatsInterface
+    {
         self::init();
 
         $r = self::$modules[$name] ?? null;
@@ -34,11 +32,13 @@ abstract class Modules
         return $r instanceof $type->value ? $r : null;
     }
 
-    public static function getColumnStatsPropertyModule (string $property): ?ColumnStatsPropertyInterface {
+    public static function getColumnStatsPropertyModule(string $property): ?ColumnStatsPropertyInterface
+    {
         return self::getModule($property, ModuleType::ColumnStatsProperty);
     }
 
-    public static function getColumnStatsMethodModule (string $method): ?ColumnStatsMethodInterface {
+    public static function getColumnStatsMethodModule(string $method): ?ColumnStatsMethodInterface
+    {
         return self::getModule($method, ModuleType::ColumnStatsMethod);
     }
 
@@ -53,10 +53,11 @@ abstract class Modules
         self::$modules[$module::NAME] = $module;
     }
 
-    public static function removeModuleByMethod (string $method) {
+    public static function removeModuleByMethod(string $method): void
+    {
         self::init();
 
-        if (array_key_exists($method, self::$modules)) {
+        if (\array_key_exists($method, self::$modules)) {
             unset(self::$modules[$method]);
         }
     }

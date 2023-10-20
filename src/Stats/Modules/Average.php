@@ -6,24 +6,23 @@ namespace CondorcetPHP\Oliphant\Stats\Modules;
 
 use CondorcetPHP\Oliphant\ColumnRepresentation;
 use CondorcetPHP\Oliphant\Exceptions\NotYetImplementedException;
-use CondorcetPHP\Oliphant\Stats\ColumnStatsMethodInterface;
-use CondorcetPHP\Oliphant\Stats\ColumnStatsPropertyInterface;
+use CondorcetPHP\Oliphant\Stats\{ColumnStatsMethodInterface, ColumnStatsPropertyInterface};
 
-class Average implements ColumnStatsPropertyInterface, ColumnStatsMethodInterface
+class Average implements ColumnStatsMethodInterface, ColumnStatsPropertyInterface
 {
     public const NAME = 'average';
 
-    public function executeProperty (ColumnRepresentation $column): int|float
+    public function executeProperty(ColumnRepresentation $column): int|float
     {
         return $this->execute($column);
     }
 
-    public function executeMethod (ColumnRepresentation $column, array $arguments): int|float
+    public function executeMethod(ColumnRepresentation $column, array $arguments): int|float
     {
         return $this->execute($column);
     }
 
-    protected function execute (ColumnRepresentation $column): int|float
+    protected function execute(ColumnRepresentation $column): int|float
     {
         $sum = $column->sum();
         $count = $column->count();

@@ -28,18 +28,21 @@ class ColumnRepresentation implements Stringable
     }
 
     // Implement property & methods overloading
-    public function __set(string $name, mixed $value): void {
+    public function __set(string $name, mixed $value): void
+    {
         $this->isAliveorThrowInvalidColumnException();
 
         if ($name === 'values') {
             $this->setValues($value);
+
             return;
         }
 
         throw new PropertyNotExistException;
     }
 
-    public function __get(string $name): mixed {
+    public function __get(string $name): mixed
+    {
         $this->isAliveorThrowInvalidColumnException();
 
         if ($module = Modules::getColumnStatsPropertyModule($name)) {
@@ -49,7 +52,8 @@ class ColumnRepresentation implements Stringable
         throw new PropertyNotExistException;
     }
 
-    public function __isset(string $name): bool {
+    public function __isset(string $name): bool
+    {
         $this->isAliveorThrowInvalidColumnException();
 
         return Modules::getColumnStatsPropertyModule($name) ? true : false;
@@ -63,7 +67,7 @@ class ColumnRepresentation implements Stringable
             return $module->executeMethod($this, $arguments);
         }
 
-        throw new MethodNotExistException();
+        throw new MethodNotExistException;
     }
 
     protected function isAliveorThrowInvalidColumnException(): void
