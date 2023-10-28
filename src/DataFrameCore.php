@@ -55,7 +55,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
         return \array_key_exists($position, $this->data);
     }
 
-    protected function convertRowToAbstract(array $rowArray): array
+    protected function convertRecordToAbstract(array $rowArray): array
     {
         $newRow = [];
 
@@ -64,6 +64,8 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
 
             $newRow[$this->getColumnKey($rowKey)] = $rowValue;
         }
+
+        ksort($newRow, SORT_NUMERIC);
 
         return $newRow;
     }
@@ -122,7 +124,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
 
     public function addRecord(array $recordArray): self
     {
-        $this->data[] = $this->convertRowToAbstract($recordArray);
+        $this->data[] = $this->convertRecordToAbstract($recordArray);
 
         return $this;
     }
@@ -138,7 +140,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
 
     public function updateRecord(int $position, mixed $recordArray): self
     {
-        $this->data[$position] = $this->convertRowToAbstract($recordArray);
+        $this->data[$position] = $this->convertRecordToAbstract($recordArray);
 
         return $this;
     }
@@ -173,7 +175,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
     {
         if (\count($this->columnIndexes) > 1) {
             foreach ($this as $i => $row) {
-                $this->data[$i] = $this->convertRowToAbstract($f($row, $i));
+                $this->data[$i] = $this->convertRecordToAbstract($f($row, $i));
             }
         } elseif (\count($this->columnIndexes) === 1) {
             foreach ($this as $i => $row) {

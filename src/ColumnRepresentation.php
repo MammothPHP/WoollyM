@@ -95,20 +95,6 @@ class ColumnRepresentation implements Stringable
         return $this->columnIndex->get()->df->get();
     }
 
-    public function asDataFrame(): DataFrameCore
-    {
-        $this->isAliveOrThrowInvalidColumnException();
-
-        $data = [];
-        $colName = $this->getName();
-
-        foreach ($this->getLinkedDataFrame() as $row) {
-            $data[] = [$colName => $row[$colName]];
-        }
-
-        return new DataFrame($data);
-    }
-
     public function remove(): DataFrameCore
     {
         return $this->getLinkedDataFrame()->removeColumn($this->getName());
