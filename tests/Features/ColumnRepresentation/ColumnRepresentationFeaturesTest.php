@@ -19,7 +19,7 @@ beforeEach(function (): void {
     ];
 });
 
-test('alias equivalence', fn () => expect($this->df->col('b'))->toBe($this->df->column('b')));
+test('alias equivalence', fn() => expect($this->df->col('b'))->toBe($this->df->column('b')));
 
 test('set column raw value', function (): void {
     $return = $this->df->col('b')->setValues(42);
@@ -30,7 +30,7 @@ test('set column raw value', function (): void {
 });
 
 it('apply closure to column', function (): void {
-    $this->df->col('b')->setValues(fn ($v): int => 42);
+    $this->df->col('b')->setValues(fn($v): int => 42);
 
     expect($this->df->toArray())->toBe($this->expected1);
 });
@@ -56,9 +56,9 @@ it('remove him self', function (): void {
     expect($return)->toBeInstanceOf(DataFrameCore::class);
     expect($return->columns())->toHaveCount(2);
 
-    expect(fn () => $return->col('b'))->toThrow(InvalidColumnException::class);
-    expect(fn () => $colB->sum())->toThrow(InvalidColumnException::class);
+    expect(fn() => $return->col('b'))->toThrow(InvalidColumnException::class);
+    expect(fn() => $colB->sum())->toThrow(InvalidColumnException::class);
 });
 
-it('has dynamic properties', fn (string $prop) => expect(isset($this->df->col('c')->{$prop}))->toBeTrue())
+it('has dynamic properties', fn(string $prop) => expect(isset($this->df->col('c')->{$prop}))->toBeTrue())
     ->with(['average', 'count', 'sum']);

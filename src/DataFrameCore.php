@@ -52,20 +52,20 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
     public function addRow(array $row): self
     {
         if (\count($row) > 0) {
-            $this->data[] = $this->convertRowToWeakmap($row);
+            $this->data[] = $this->convertRowToInternalFormat($row);
         }
 
         return $this;
     }
 
-    protected function convertRowToWeakmap(array $row): WeakMap
+    protected function convertRowToInternalFormat(array $row): array
     {
-        $newRow = new WeakMap;
+        $newRow = [];
 
         foreach ($row as $rowKey => $rowValue) {
             $this->addColumn($rowKey);
 
-            $newRow[$this->getColumnIndex($rowKey)] = $rowValue;
+            $newRow[$this->getColumnIndexKey($rowKey)] = $rowValue;
         }
 
         return $newRow;
@@ -103,7 +103,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
 
     public function col(string $columnName): ColumnRepresentation
     {
-        return $this->columnRepresentations[$this->getColumnIndex($columnName)];
+        return $this->columnRepresentations[$this->getColumnIndexObject($columnName)];
     }
 
     public function column(string $columnName): ColumnRepresentation
@@ -111,15 +111,20 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
         return $this->col($columnName);
     }
 
-    protected function getColumnIndex(string $columnName): ColumnIndex
+    protected function getColumnIndexKey(string $columnName): int
     {
-        foreach ($this->columnIndexes as $column) {
+        foreach ($this->columnIndexes as $columnKey => $column) {
             if ($column->name === $columnName) {
-                return $column;
+                return $columnKey;
             }
         }
 
         throw new InvalidColumnException;
+    }
+
+    protected function getColumnIndexObject(string $columnName): ColumnIndex
+    {
+        return $this->columnIndexes[$this->getColumnIndexKey($columnName)];
     }
 
     /**
@@ -130,12 +135,12 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      */
     public function getIndex(int $index): array
     {
-        return self::convertAbstractRowToArray($this->data[$index]);
+        return $this->convertAbstractRowToArray($this->data[$index]);
     }
 
     public function setIndex(int $index, mixed $row): self
     {
-        $this->data[$index] = $this->convertRowToWeakmap($row);
+        $this->data[$index] = $this->convertRowToInternalFormat($row);
 
         return $this;
     }
@@ -147,12 +152,12 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
         return $this;
     }
 
-    public static function convertAbstractRowToArray(WeakMap $row): array
+    public function convertAbstractRowToArray(array $row): array
     {
         $r = [];
 
         foreach ($row as $k => $v) {
-            $r[$k->name] = $v;
+            $r[$this->columnIndexes[$k]->name] = $v;
         }
 
         return $r;
@@ -170,11 +175,11 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
     {
         if (\count($this->columnIndexes) > 1) {
             foreach ($this as $i => $row) {
-                $this->data[$i] = $this->convertRowToWeakmap($f($row, $i));
+                $this->data[$i] = $this->convertRowToInternalFormat($f($row, $i));
             }
         } elseif (\count($this->columnIndexes) === 1) {
             foreach ($this as $i => $row) {
-                $this->data[$i][$this->getColumnIndex(key($row))] = $f($row[key($row)], $i);
+                $this->data[$i][$this->getColumnIndexKey(key($row))] = $f($row[key($row)], $i);
             }
         }
 
@@ -334,8 +339,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
     public function addColumn(string $columnName): self
     {
         if (!$this->hasColumn($columnName)) {
-            $newColumnIndex = new ColumnIndex($columnName, $this);
-            $this->columnIndexes[] = $newColumnIndex;
+            $this->columnIndexes[] = $newColumnIndex = new ColumnIndex($columnName, $this);
             $this->columnRepresentations[$newColumnIndex] = new ColumnRepresentation($newColumnIndex);
         }
 
@@ -367,10 +371,22 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
     {
         $this->mustHaveColumn($columnName);
 
-        if (($key = array_search($columnName, $this->columnIndexes)) !== false) {
-            unset($this->columnIndexes[$key]);
+        $deletedKey = array_search(
+            needle: $columnName,
+            haystack: $this->columnIndexes,
+            strict: false
+        );
 
-            $this->columnIndexes = array_values($this->columnIndexes); // Reindex columns
+        if ($deletedKey !== false) {
+            unset($this->columnIndexes[$deletedKey]);
+
+            foreach ($this->data as &$row) {
+                $row = array_filter(
+                    array: $row,
+                    callback: fn(int $arrayKey): bool => $arrayKey !== $deletedKey,
+                    mode: \ARRAY_FILTER_USE_KEY
+                );
+            }
         }
 
         return $this;
@@ -424,7 +440,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
     {
         foreach ($this as $i => $row) {
             foreach ($typeMap as $column => $type) {
-                $this->data[$i][$this->getColumnindex($column)] = match ($type) {
+                $this->data[$i][$this->getColumnIndexKey($column)] = match ($type) {
                     DataType::NUMERIC => DataType::convertNumeric($row[$column]),
                     DataType::INTEGER => DataType::convertInt($row[$column]),
                     DataType::DATETIME => DataType::convertDatetime($row[$column], $fromDateFormat, $toDateFormat),
@@ -501,9 +517,9 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
             $by = [$by];
         }
 
-        usort($this->data, function (Weakmap $row_a, Weakmap $row_b) use ($by, $ascending): int {
+        usort($this->data, function (array $row_a, array $row_b) use ($by, $ascending): int {
             foreach ($by as $col) {
-                $col = $this->getColumnIndex($col);
+                $col = $this->getColumnIndexKey($col);
 
                 if ($row_a[$col] > $row_b[$col]) {
                     return $ascending ? 1 : -1;
@@ -587,7 +603,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      */
     public function offsetSet(mixed $index, mixed $row): void
     {
-        empty($index) ? $this->addRow($row) : $this->setIndex($index, $row);
+        \is_int($index) ? $this->setIndex($index, $row) : $this->addRow($row);
     }
 
     /**
@@ -606,8 +622,6 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
     /* *****************************************************************************************************************
      ********************************************* Iterator Implementation *********************************************
      ******************************************************************************************************************/
-
-    private int $pointer = 0;
 
     /**
      * Return the current element
@@ -630,7 +644,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      */
     public function next(): void
     {
-        $this->pointer++;
+        next($this->data);
     }
 
     /**
@@ -642,7 +656,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      */
     public function key(): mixed
     {
-        return $this->pointer;
+        return key($this->data);
     }
 
     /**
@@ -667,7 +681,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      */
     public function rewind(): void
     {
-        $this->pointer = 0;
+        reset($this->data);
     }
 
     /* *****************************************************************************************************************

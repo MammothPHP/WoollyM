@@ -95,7 +95,8 @@ class ColumnRepresentation implements Stringable
         return $this->columnIndex->get()->df->get();
     }
 
-    public function asDataFrame(): DataFrameCore {
+    public function asDataFrame(): DataFrameCore
+    {
         $this->isAliveorThrowInvalidColumnException();
 
         $data = [];
@@ -137,7 +138,7 @@ class ColumnRepresentation implements Stringable
         return $this;
     }
 
-        /**
+    /**
      * Allows user set DataFrame columns from a single-column DataFrame.
      *      ie:
      *          $df['bar'] = $df['foo'];
@@ -164,10 +165,11 @@ class ColumnRepresentation implements Stringable
         }
 
         $target_df = $this->getDataFrame();
-        $target_index = $this->columnIndex->get();
+        $target_colName = $this->columnIndex->get()->name;
 
         foreach ($target_df as $i => $row) {
-            $target_df[$i][$target_index] = current($df->getIndex($i));
+            $row[$target_colName] = current($df->getIndex($i));
+            $target_df[$i] = $row;
         }
     }
 
@@ -183,11 +185,11 @@ class ColumnRepresentation implements Stringable
     public function columnSetClosure(Closure $f): void
     {
         $target_df = $this->getDataFrame();
-        $target_index = $this->columnIndex->get();
-        $target_name = $target_index->name;
+        $target_name = $this->columnIndex->get()->name;
 
         foreach ($target_df as $i => $row) {
-            $target_df[$i][$target_index] = $f($row[$target_name]);
+            $row[$target_name] = $f($row[$target_name]);
+            $target_df[$i] = $row;
         }
     }
 
@@ -204,6 +206,6 @@ class ColumnRepresentation implements Stringable
      */
     public function setColumnValue(mixed $value): void
     {
-        $this->columnSetClosure(fn (): mixed => $value);
+        $this->columnSetClosure(fn(): mixed => $value);
     }
 }

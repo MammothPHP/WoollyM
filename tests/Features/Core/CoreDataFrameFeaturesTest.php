@@ -40,7 +40,7 @@ test('for each', function (): void {
     }
 });
 
-test('addColumn', function():void {
+test('addColumn', function (): void {
     $this->df->addColumn('foo');
     $this->df->addColumns(['bar', 'Z']);
 
