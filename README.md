@@ -1,11 +1,6 @@
-# Archon: PHP Data Analysis Library
+# Oliphant: PHP Data Analysis Library
 
-[![Build Status](https://img.shields.io/travis/HWGehring/Archon.svg?style=flat-square)](https://travis-ci.org/HWGehring/Archon)
-[![Coverage Status](https://img.shields.io/coveralls/HWGehring/Archon.svg?style=flat-square)](https://coveralls.io/github/HWGehring/Archon?branch=master)
-[![Latest Stable Version](https://img.shields.io/packagist/v/archon/dataframe.svg?style=flat-square)](https://packagist.org/packages/archon/dataframe)
-[![License](https://img.shields.io/packagist/l/archon/dataframe.svg?style=flat-square)](https://packagist.org/packages/archon/dataframe)
-
-Archon is a PHP library designed to make working with tabular/relational data, files, and databases easy. The core component of the library is the DataFrame class - a tabular data structure which raises the level of abstraction when working with tabular, two-dimensional data. 
+Oliphant is a PHP library designed to make working with tabular/relational data, files, and databases easy. The core component of the library is the DataFrame class - a tabular data structure which raises the level of abstraction when working with tabular, two-dimensional data. 
 
 ## Installation
 
@@ -15,17 +10,8 @@ Archon is a PHP library designed to make working with tabular/relational data, f
 composer require archon/dataframe
 ```
 
-```json
-{
-    "require": {
-        "archon/dataframe": "1.1.1"
-    }
-}
-```
-
 ### Requirements
- - PHP 7.1 or higher
- - php_pdo_sqlite extension
+ - PHP 8.3 or higher
  - php_mbstring extension
 
 ### License
@@ -43,129 +29,6 @@ $df = DataFrame::fromArray([
 ]);
 ```
 
-### Reading a CSV file:
-
-```
-x|y|z
-1|2|3
-4|5|6
-7|8|9
-```
-
-```php
-$df = DataFrame::fromCSV($fileName, [
-    'sep' => '|',
-    'colmap' => [
-	    'x' => 'a',
-        'y' => 'b',
-        'z' => 'c'
-    ]
-]);
-```
-
-### Writing a CSV file:
-
-```php
-$df->toCSV($fileName);
-```
-
-```
-"a","b","c"
-"1","2","3"
-"4","5","6"
-"7","8","9"
-```
-
-### Reading a fixed-width file:
-
-```
-foo bar baz
------------
-1   2   3
-4   5   6
-7   8   9
-```
-
-```php
-$df = DataFrame::fromFWF($fileName, [
-	'a' => [0, 1],
-    'b' => [4, 5],
-    'c' => [8, 9]
-], ['include' => '^[0-9]']);
-
-```
-
-### Reading an XLSX spreadsheet:
-
-```php
-$dfA = DataFrame::fromXLSX($fileName, ['sheetname' => 'Sheet A']);
-$dfB = DataFrame::fromXLSX($fileName, ['sheetname' => 'Sheet B']);
-$dfC = DataFrame::fromXLSX($fileName, ['sheetname' => 'Sheet C']);
-```
-
-### Writing an XLSX spreadsheet:
-
-```php
-$phpExcel = new PHPExcel();
-$dfA->toXLSXWorksheet($phpExcel, 'Sheet A');
-$dfB->toXLSXWorksheet($phpExcel, 'Sheet B');
-$dfC->toXLSXWorksheet($phpExcel, 'Sheet C');
-$writer = new PHPExcel_Writer_Excel2007($phpExcel);
-$writer->save($fileName);
-```
-
-### Querying from a database:
-
-```php
-$pdo = new PDO('sqlite::memory:');
-$df = DataFrame::fromSQL('SELECT foo, bar, baz FROM table_name;', $pdo);
-```
-
-### Committing to a database:
-
-```php
-$pdo = new PDO('sqlite::memory:');
-$affected = $df->toSQL('table_name', $pdo);
-echo sprintf('%d rows committed to database.', $affected);
-```
-
-### Displaying an HTML table:
-
-```php
-$html = $df->toHTML(['class' => 'myclass', 'id' => 'myid']);
-```
-
-<table>
-<thead><tr><th>a</th><th>b</th><th>c</th></tr></thead>
-<tfoot><tr><th>a</th><th>b</th><th>c</th></tr></tfoot>
-<tbody>
-<tr><th>1</th><th>2</th><th>3</th></tr>
-<tr><th>4</th><th>5</th><th>6</th></tr>
-<tr><th>7</th><th>8</th><th>9</th></tr>
-</tbody>
-</table>
-
-With support for [DataTables.js](http://datatables.net/):
-
-```php
-$dataTable = $df->toHTML(['datatable' => '{ "optionKey": "optionValue" }']);
-```
-
-### Converting to JSON:
-
-```php
-$json = $df->toJSON();
-```
-
-### Creating from JSON:
-
-```php
-$df = DataFrame::fromJSON('[
-    {"a": 1, "b": 2, "c": 3},
-    {"a": 4, "b": 5, "c": 6},
-    {"a": 7, "b": 8, "c": 9}
-]');
-```
 
 ### Extracting the underlying two-dimensional array:
 
@@ -175,62 +38,100 @@ print_r($myArray);
 ```
 
 ```php
-Array
-(
-    [0] => Array
-        (
+[
+    [0] => [
             [a] => 1
             [b] => 2
             [c] => 3
-        )
+        ]
 
-    [1] => Array
-        (
+    [1] => [
             [a] => 4
             [b] => 5
             [c] => 6
-        )
+        ]
 
-    [2] => Array
-        (
+    [2] => [
             [a] => 7
             [b] => 8
             [c] => 9
-        )
-
-)
+        ]
+]
 ```
 
 ## Basic Operations
 
-Getting column names:
+### Records
+
+#### Add new records
+
 ```php
-$df->columns()
---------------
-Array
-(
-    [0] => a
-    [1] => b
-    [2] => c
-)
+$df->addRecord([
+    'a' => 42,
+    'b' => 42,
+]);
+
+// equivalent to
+
+$df[] = [
+    'a' => 42,
+    'b' => 42,
+]);
+
+
+// Multiples records
+$df->addRecords([
+    [
+    'a' => 42,
+    'b' => 42,
+    ],
+    [
+    'a' => 42,
+    'b' => 43,
+    ],
+]);
 ```
 
-Adding columns:
+#### Edit Record
 ```php
-$df['key'] = 'value';
+$df->updateRecord(
+    position: 42,
+    recordArray: [
+    'a' => 42,
+    'b' => 42,
+    ]
+);
+
+// equivalent to
+
+$df[42] = [
+    'a' => 42,
+    'b' => 42,
+]);
 ```
 
-Removing columns:
+#### Unset Record(s)
 ```php
-unset($df['key']);
+$df->updateRecord(position: 42);
+
+// equivalent to
+
+unset($df[42]);
+
+// equivalent to
+$df->filter(fn(array $record, int $position): bool => $position !== 42);
 ```
 
+
+### Itarating overs records
+
+#### Counting Records
 Counting rows:
 ```php
 count($df);
 ```
 
-Iterating over rows:
+#### Iterating over rows:
 ```php
 foreach ($df as $i => $row) {
    echo $i.': '.implode('-', $row).PHP_EOL; 
@@ -241,9 +142,74 @@ foreach ($df as $i => $row) {
 2: 7-8-9
 ```
 
-## Advanced Operations
+### Columns
 
-Applying functions to rows:
+#### Add Column / Remove Column
+
+Columns (attributes) are automatically created when a record contains them for the first time.
+You can also create them manually at any time.
+
+```php
+$df->addColumn('a');
+```
+
+```php
+$df->removeColumn('a');
+
+// equivalent to
+
+$df->col('a')->remove();
+```
+
+#### Getting column name/objects
+```php
+$df->columnsNames()
+--------------
+[
+    [0] => a
+    [1] => b
+    [2] => c
+]
+```
+
+```php
+$df->columns()
+--------------
+[
+    [0] => #ColumnRepresentation Object
+    [1] => #ColumnRepresentation Object
+    [2] => #ColumnRepresentation Object
+]
+```
+
+```php
+$column = $df->col('a')
+$column->name; // 'a'
+```
+
+#### Rename Column
+```php
+isset($df[42]['colName']); // true
+$col = $df->col('colName')->rename('newName');
+$col->name; // 'newName'
+isset($df[42]['colName']); // false
+isset($df[42]['newName']); // true
+```
+
+#### Get column as DataFrame
+```php
+$df->col('colName')->asDataFrame;
+
+// equivalent to
+
+$df->col('colName')->asDataFrame();
+
+```
+
+
+## Advanced editions
+
+### Applying functions to rows:
 ```php
 $df = $df->apply(function ($row, $index) {
     $row['a'] = $row['c'] + 1;
@@ -251,19 +217,65 @@ $df = $df->apply(function ($row, $index) {
 });
 ```
 
-Applying functions to columns directly:
+### Applying functions to columns directly:
 ```php
-$df['a'] = function ($el, $key) {
-    return $el + 3;
-};
+$df->col('a')->apply(fn (mixed $value, int $position) => $el + 3);
 ```
 
-Applying values to columns via function application of other columns:
+### Set value for each record in column
 ```php
-$df['a'] = $df['c']->apply(function ($el, $key) {
-    return $el + 1;
-});
+$df->col('a')->set(42);
 ```
+
+### Set DataFrame (single column) to column
+```php
+$df->col('a')->set(new Dataframe([
+    [1],
+    [2],
+    [3],
+]));
+```
+
+### Set Column to Column
+```php
+$df->col('a')->set($df->col('b')->asDataFrame);
+```
+
+
+## Stats modules for a columns
+
+### Natives Modules
+
+#### Average
+`sum / count` _where count of non empty and numeric properties_
+
+```php
+$df->col('a')->average();
+$df->col('a')->average; # equivalent
+```
+
+#### Count
+Count of non empty and numeric properties.
+
+```php
+$df->col('a')->count();
+$df->col('a')->count; # equivalent
+```
+
+#### Sum
+Where non empty and numeric properties
+
+```php
+$df->col('a')->sum();
+$df->col('a')->sum; # equivalent
+```
+
+### Extend yourself
+_TO DO_
+
+
+## Types
+
 
 Applying types:
 ```php
