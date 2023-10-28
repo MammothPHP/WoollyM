@@ -56,8 +56,8 @@ test('addColumn', function (): void {
 });
 
 test('column get', function (): void {
-    $a = $this->df->col('a')->asDataFrame();
-    $b = $this->df->col('b')->asDataFrame();
+    $a = $this->df->col('a')->asDataFrame(); // call as method
+    $b = $this->df->col('b')->asDataFrame; // call as property
 
     expect($a->toArray())->toEqual([['a' => 1], ['a' => 4], ['a' => 7]]);
     expect($b->toArray())->toEqual([['b' => 2], ['b' => 5], ['b' => 8]]);

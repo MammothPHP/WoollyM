@@ -49,7 +49,7 @@ test('set column raw value from property', function (): void {
     expect($this->df->toArray())->toBe($this->expected1);
 });
 
-it('remove him self', function (): void {
+it('remove himself', function (): void {
     $colB = $this->df->col('b');
     $return = $colB->remove();
 
