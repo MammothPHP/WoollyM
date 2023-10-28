@@ -21,7 +21,7 @@ it('has coherent names', function (): void {
 });
 
 it('has coherent references', function (): void {
-    expect($this->columnRepresentation->getDataFrame())
+    expect($this->columnRepresentation->getLinkedDataFrame())
         ->toBe($this->dataFrame)
         ->toBe($this->columnIndex->df->get());
 

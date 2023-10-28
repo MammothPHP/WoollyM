@@ -59,7 +59,7 @@ test('column get', function (): void {
 
 test('column set value', function (): void {
     $df = $this->df;
-    $df->col('a')->setValues(321);
+    $df->col('a')->set(321);
 
     $expected = [
         ['a' => 321, 'b' => 2, 'c' => 3],
@@ -79,9 +79,9 @@ test('column set closure', function (): void {
         };
     };
 
-    $df->col('a')->setValues($add(10));
-    $df->col('b')->setValues($add(20));
-    $df->col('c')->setValues($add(30));
+    $df->col('a')->set($add(10));
+    $df->col('b')->set($add(20));
+    $df->col('c')->set($add(30));
 
     $expected = [
         ['a' => 11, 'b' => 22, 'c' => 33],
@@ -95,7 +95,7 @@ test('column set closure', function (): void {
 test('column set dataframe', function (): void {
     $df = $this->df;
 
-    $df->col('a')->setValues($df->col('b')->asDataFrame());
+    $df->col('a')->set($df->col('b')->asDataFrame());
 
     $expected = [
         ['a' => 2, 'b' => 2, 'c' => 3],

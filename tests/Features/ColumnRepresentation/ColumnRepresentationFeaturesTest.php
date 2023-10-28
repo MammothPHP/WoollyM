@@ -22,7 +22,7 @@ beforeEach(function (): void {
 test('alias equivalence', fn() => expect($this->df->col('b'))->toBe($this->df->column('b')));
 
 test('set column raw value', function (): void {
-    $return = $this->df->col('b')->setValues(42);
+    $return = $this->df->col('b')->set(42);
 
     expect($this->df->toArray())->toBe($this->expected1);
 
@@ -30,13 +30,13 @@ test('set column raw value', function (): void {
 });
 
 it('apply closure to column', function (): void {
-    $this->df->col('b')->setValues(fn($v): int => 42);
+    $this->df->col('b')->set(fn($v): int => 42);
 
     expect($this->df->toArray())->toBe($this->expected1);
 });
 
 it('apply dataframe to colone', function (): void {
-    $this->df->col('b')->setValues(
+    $this->df->col('b')->set(
         new DataFrame([['b' => 42], ['b' => 42], ['b' => 42]])
     );
 
