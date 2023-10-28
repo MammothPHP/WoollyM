@@ -84,6 +84,11 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
         return $r;
     }
 
+    public function columnsNames(): array
+    {
+        return array_map(fn(ColumnRepresentation $col): string => $col->getName(), $this->columns());
+    }
+
     public function col(string $columnName): ColumnRepresentation
     {
         return $this->columnRepresentations[$this->getColumnIndexObject($columnName)];
@@ -173,6 +178,20 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
         } elseif (\count($this->columnIndexes) === 1) {
             foreach ($this as $i => $row) {
                 $this->data[$i][$this->getColumnKey(key($row))] = $f($row[key($row)], $i);
+            }
+        }
+
+        return $this;
+    }
+
+    public function filter(Closure $f): self
+    {
+        $toDelete = [];
+
+        foreach ($this->data as $position => $recordArray) // Cannot use self iterator. Cause unset php function move the $this->data key unexpectly
+        {
+            if ($f($this->convertAbstractRecordToArray($recordArray), $position) === false) {
+                $this->removeRecord($position);
             }
         }
 
