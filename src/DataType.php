@@ -15,12 +15,31 @@ use RuntimeException;
 
 enum DataType
 {
+    case STRING;
     case NUMERIC;
-    case INTEGER;
+    case INT;
+    case FLOAT;
     case DATETIME;
     case CURRENCY;
     case ACCOUNTING;
 
+    public function convert(mixed $value, array|string|null $fromDateFormat = null, ?string $toDateFormat = null): mixed
+    {
+        return match ($this) {
+            DataType::STRING => DataType::convertString($value),
+            DataType::NUMERIC => DataType::convertNumeric($value),
+            DataType::INT => DataType::convertInt($value),
+            DataType::DATETIME => DataType::convertDatetime($value, $fromDateFormat, $toDateFormat),
+            DataType::CURRENCY => DataType::convertCurrency($value),
+            DataType::ACCOUNTING => DataType::convertAccounting($value),
+        };
+    }
+
+
+    public static function convertString(mixed $value): string
+    {
+        return \strval($value);
+    }
 
     public static function convertNumeric(mixed $value): int|float
     {
@@ -54,6 +73,19 @@ enum DataType
         $value = str_replace(['$', ',', ' '], '', $value);
 
         return \intval(str_replace(',', '', $value));
+    }
+
+    public static function convertFloat(mixed $value): float
+    {
+        if (empty($value)) {
+            return 0.0;
+        }
+
+        if (\is_string($value)) {
+            $value = str_replace(',', '.', $value);
+        }
+
+        return \floatval($value);
     }
 
     public static function convertDatetime(mixed $value, array|string|null $fromFormat, string $toFormat): string

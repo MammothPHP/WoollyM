@@ -19,4 +19,3 @@ test('name module', function (): void {
 
     expect($this->df->col($expected)->rename($expected = 'newName')->name)->toBe($expected);
 });
-

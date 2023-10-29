@@ -95,6 +95,24 @@ class ColumnRepresentation implements Stringable
         return $this->columnIndex->get()->df->get();
     }
 
+    public function type(DataType $type, array|string|null $fromDateFormat = null, ?string $toDateFormat = null): self
+    {
+        $this->apply(fn(mixed $value): mixed => $type->convert($value, $fromDateFormat, $toDateFormat));
+
+        return $this;
+    }
+
+    public function enforceType(?DataType $type): self
+    {
+        if ($type !== null) {
+            $this->type($type);
+        }
+
+        $this->columnIndex->get()->forcedType = $type;
+
+        return $this;
+    }
+
     public function remove(): DataFrameCore
     {
         return $this->getLinkedDataFrame()->removeColumn($this->getName());

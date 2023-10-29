@@ -259,8 +259,8 @@ test('array filter', function (): void {
 });
 
 test('filter', function (): void {
-    $this->df->filter(function(array $rowArray, int $position): bool {
-        if ($position === 1 || in_array(7, $rowArray, true)) {
+    $this->df->filter(function (array $rowArray, int $position): bool {
+        if ($position === 1 || \in_array(7, $rowArray, true)) {
             return false;
         }
 

@@ -276,42 +276,24 @@ _TO DO_
 
 ## Types
 
-
-Applying types:
+### Convert data to a type (oneshoot)
 ```php
-$df = DataFrame::fromArray([
-    ['my_date'           => '11/20/16'],
-    ['my_other_date'     => '2/12/2016'],
-    ['my_decimal'        => '5,000.20'],
-    ['my_int'            => '10-'],
-    ['my_currency'       => '12345.67']
-]);
-
-$df->convertTypes([
-    'my_date'       => 'DATE',
-    'my_other_date' => 'DATE',
-    'my_decimal'    => 'DECIMAL',
-    'my_int'        => 'INT',
-    'my_currency'   => 'CURRENCY'
-], ['m/d/y', 'd/m/Y'], 'Y-m-d');
-
-print_r($df->toArray());
+$df->col('a')->type(DataType::INT);
 ```
 
-```php
-Array
-(
-    [0] => Array
-        (
-            [my_date] => '2016-11-20'
-            [my_other_date] => '2016-12-2'
-            [my_decimal] => '5000.20'
-            [my_int] => '-10'
-            [my_currency] => '$12,345.67'
-        )
+### Keep an active conversion for a column
 
-)
+#### Set it
+```php
+$df->col('a')->enforceType(DataType::INT);
 ```
+
+#### Remove it
+```php
+$df->col('a')->enforceType(null); # Note that data already converted, only the following additions we be concerned.
+```
+
+
 
 Manipulating DataFrame using SQL:
 ```php

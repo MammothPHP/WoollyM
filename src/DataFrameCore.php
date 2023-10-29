@@ -62,10 +62,14 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
         foreach ($rowArray as $rowKey => $rowValue) {
             $this->addColumn($rowKey);
 
+            if ($type = $this->getColumnIndexObject($rowKey)->forcedType) {
+                $rowValue = $type->convert($rowValue);
+            }
+
             $newRow[$this->getColumnKey($rowKey)] = $rowValue;
         }
 
-        ksort($newRow, SORT_NUMERIC);
+        ksort($newRow, \SORT_NUMERIC);
 
         return $newRow;
     }
@@ -190,8 +194,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
     {
         $toDelete = [];
 
-        foreach ($this->data as $position => $recordArray) // Cannot use self iterator. Cause unset php function move the $this->data key unexpectly
-        {
+        foreach ($this->data as $position => $recordArray) { // Cannot use self iterator. Cause unset php function move the $this->data key unexpectly
             if ($f($this->convertAbstractRecordToArray($recordArray), $position) === false) {
                 $this->removeRecord($position);
             }
@@ -450,19 +453,17 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      * @param null|string $toDateFormat The date format of the output.
      * @throws Exception
      */
-    public function convertTypes(array $typeMap, array|string|null $fromDateFormat = null, ?string $toDateFormat = null): void
+    public function convertTypes(array $typeMap, array|string|null $fromDateFormat = null, ?string $toDateFormat = null): self
     {
-        foreach ($this as $i => $row) {
-            foreach ($typeMap as $column => $type) {
-                $this->data[$i][$this->getColumnKey($column)] = match ($type) {
-                    DataType::NUMERIC => DataType::convertNumeric($row[$column]),
-                    DataType::INTEGER => DataType::convertInt($row[$column]),
-                    DataType::DATETIME => DataType::convertDatetime($row[$column], $fromDateFormat, $toDateFormat),
-                    DataType::CURRENCY => DataType::convertCurrency($row[$column]),
-                    DataType::ACCOUNTING => DataType::convertAccounting($row[$column]),
-                };
-            }
+        foreach ($typeMap as $column => $type) {
+            $this->col($column)->type(
+                type: $type,
+                fromDateFormat: $fromDateFormat,
+                toDateFormat: $toDateFormat
+            );
         }
+
+        return $this;
     }
 
     /**
