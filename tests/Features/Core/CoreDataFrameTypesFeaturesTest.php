@@ -15,7 +15,7 @@ test('convert numeric integer', function (): void {
 
     $df->convertTypes([
         'numeric' => DataType::NUMERIC,
-        'integer' => DataType::INTEGER,
+        'integer' => DataType::INT,
     ]);
 
     foreach ($df as $row) {

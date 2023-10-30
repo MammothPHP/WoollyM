@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace CondorcetPHP\Oliphant\Stats;
 
 use CondorcetPHP\Oliphant\Exceptions\NotYetImplementedException;
-use CondorcetPHP\Oliphant\Stats\Modules\{Average, Count, Name, Sum};
+use CondorcetPHP\Oliphant\Stats\Modules\{AsArray, AsDataFrame, Average, Count, Name, Sum};
 
 abstract class Modules
 {
@@ -16,6 +16,8 @@ abstract class Modules
         if (self::$modules === null) {
             self::$modules = [];
 
+            self::registerModule(new AsArray);
+            self::registerModule(new AsDataFrame);
             self::registerModule(new Average);
             self::registerModule(new Count);
             self::registerModule(new Name);

@@ -24,7 +24,7 @@
     "psr-4": { "Tests\\": "tests/" }
   },
   "scripts": {
-    "test": "pest",
+    "test": "pest --display-warning",
     "pintify": "pint"
   },
   "config": {

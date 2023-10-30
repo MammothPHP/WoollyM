@@ -18,8 +18,14 @@ test('from array', function (): void {
 });
 
 test('columns', function (): void {
+    expect($this->df->columns()[0])->toBe($this->df->col('a'));
     expect($this->df->columns())->toEqual(['a', 'b', 'c']);
 });
+
+test('columnsNames', function (): void {
+    expect($this->df->columnsNames())->toBe(['a', 'b', 'c']);
+});
+
 
 test('remove column', function (): void {
     $df = $this->df;
@@ -40,7 +46,7 @@ test('for each', function (): void {
     }
 });
 
-test('addColumn', function():void {
+test('addColumn', function (): void {
     $this->df->addColumn('foo');
     $this->df->addColumns(['bar', 'Z']);
 
@@ -50,8 +56,8 @@ test('addColumn', function():void {
 });
 
 test('column get', function (): void {
-    $a = $this->df->col('a')->asDataFrame();
-    $b = $this->df->col('b')->asDataFrame();
+    $a = $this->df->col('a')->asDataFrame(); // call as method
+    $b = $this->df->col('b')->asDataFrame; // call as property
 
     expect($a->toArray())->toEqual([['a' => 1], ['a' => 4], ['a' => 7]]);
     expect($b->toArray())->toEqual([['b' => 2], ['b' => 5], ['b' => 8]]);
@@ -59,7 +65,7 @@ test('column get', function (): void {
 
 test('column set value', function (): void {
     $df = $this->df;
-    $df->col('a')->setValues(321);
+    $df->col('a')->set(321);
 
     $expected = [
         ['a' => 321, 'b' => 2, 'c' => 3],
@@ -79,9 +85,9 @@ test('column set closure', function (): void {
         };
     };
 
-    $df->col('a')->setValues($add(10));
-    $df->col('b')->setValues($add(20));
-    $df->col('c')->setValues($add(30));
+    $df->col('a')->set($add(10));
+    $df->col('b')->set($add(20));
+    $df->col('c')->set($add(30));
 
     $expected = [
         ['a' => 11, 'b' => 22, 'c' => 33],
@@ -95,7 +101,7 @@ test('column set closure', function (): void {
 test('column set dataframe', function (): void {
     $df = $this->df;
 
-    $df->col('a')->setValues($df->col('b')->asDataFrame());
+    $df->col('a')->set($df->col('b')->asDataFrame());
 
     $expected = [
         ['a' => 2, 'b' => 2, 'c' => 3],
@@ -239,7 +245,7 @@ test('apply index map array', function (): void {
     ]);
 });
 
-test('filter', function (): void {
+test('array filter', function (): void {
     $df = $this->df;
 
     $df = $df->array_filter(static function ($row) {
@@ -249,6 +255,20 @@ test('filter', function (): void {
     expect($df->toArray())->toEqual([
         ['a' => 1, 'b' => 2, 'c' => 3],
         ['a' => 7, 'b' => 8, 'c' => 9],
+    ]);
+});
+
+test('filter', function (): void {
+    $this->df->filter(function (array $rowArray, int $position): bool {
+        if ($position === 1 || \in_array(7, $rowArray, true)) {
+            return false;
+        }
+
+        return true;
+    });
+
+    expect($this->df->toArray())->toBe([
+        0 => ['a' => 1, 'b' => 2, 'c' => 3],
     ]);
 });
 

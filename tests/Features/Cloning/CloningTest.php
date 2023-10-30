@@ -66,6 +66,6 @@ it('is independent', function (): void {
 
     expect($this->df2->col($col)->rename($newName)->name)->toBe($newName);
 
-    expect($this->df2->toArray())->toHaveKey($newName)->not->toHaveKey($col);
+    expect($this->df2->toArray()[0])->toHaveKey($newName)->not->toHaveKey($col);
     expect($this->df1->toArray())->toBe($this->expected)->not->toBe($this->df2->toArray());
 });

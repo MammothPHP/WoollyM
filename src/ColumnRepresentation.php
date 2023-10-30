@@ -31,10 +31,10 @@ class ColumnRepresentation implements Stringable
     // Implement property & methods overloading
     public function __set(string $name, mixed $value): void
     {
-        $this->isAliveorThrowInvalidColumnException();
+        $this->isAliveOrThrowInvalidColumnException();
 
         if ($name === 'values') {
-            $this->setValues($value);
+            $this->set($value);
 
             return;
         }
@@ -44,7 +44,7 @@ class ColumnRepresentation implements Stringable
 
     public function __get(string $name): mixed
     {
-        $this->isAliveorThrowInvalidColumnException();
+        $this->isAliveOrThrowInvalidColumnException();
 
         if ($module = Modules::getColumnStatsPropertyModule($name)) {
             return $module->executeProperty($this);
@@ -55,14 +55,14 @@ class ColumnRepresentation implements Stringable
 
     public function __isset(string $name): bool
     {
-        $this->isAliveorThrowInvalidColumnException();
+        $this->isAliveOrThrowInvalidColumnException();
 
         return Modules::getColumnStatsPropertyModule($name) ? true : false;
     }
 
     public function __call(string $name, array $arguments): mixed
     {
-        $this->isAliveorThrowInvalidColumnException();
+        $this->isAliveOrThrowInvalidColumnException();
 
         if ($module = Modules::getColumnStatsMethodModule($name)) {
             return $module->executeMethod($this, $arguments);
@@ -71,14 +71,14 @@ class ColumnRepresentation implements Stringable
         throw new MethodNotExistException;
     }
 
-    protected function isAliveorThrowInvalidColumnException(): void
+    protected function isAliveOrThrowInvalidColumnException(): void
     {
         $this->isAlive() || throw new InvalidColumnException;
     }
 
     public function getName(): string
     {
-        $this->isAliveorThrowInvalidColumnException();
+        $this->isAliveOrThrowInvalidColumnException();
 
         return $this->columnIndex->get()->name;
     }
@@ -88,48 +88,53 @@ class ColumnRepresentation implements Stringable
         return $this->getName();
     }
 
-    public function getDataFrame(): DataFrameCore
+    public function getLinkedDataFrame(): DataFrameCore
     {
-        $this->isAliveorThrowInvalidColumnException();
+        $this->isAliveOrThrowInvalidColumnException();
 
         return $this->columnIndex->get()->df->get();
     }
 
-    public function asDataFrame(): DataFrameCore {
-        $this->isAliveorThrowInvalidColumnException();
+    public function type(DataType $type, array|string|null $fromDateFormat = null, ?string $toDateFormat = null): self
+    {
+        $this->apply(fn(mixed $value): mixed => $type->convert($value, $fromDateFormat, $toDateFormat));
 
-        $data = [];
-        $colName = $this->getName();
+        return $this;
+    }
 
-        foreach ($this->getDataFrame() as $row) {
-            $data[] = [$colName => $row[$colName]];
+    public function enforceType(?DataType $type): self
+    {
+        if ($type !== null) {
+            $this->type($type);
         }
 
-        return new DataFrame($data);
+        $this->columnIndex->get()->forcedType = $type;
+
+        return $this;
     }
 
     public function remove(): DataFrameCore
     {
-        return $this->getDataFrame()->removeColumn($this->getName());
+        return $this->getLinkedDataFrame()->removeColumn($this->getName());
     }
 
     public function rename(string $to): self
     {
-        $this->isAliveorThrowInvalidColumnException();
+        $this->isAliveOrThrowInvalidColumnException();
 
         $this->columnIndex->get()->name = $to;
 
         return $this;
     }
 
-    public function setValues(mixed $value): self
+    public function set(mixed $value): self
     {
-        $this->isAliveorThrowInvalidColumnException();
+        $this->isAliveOrThrowInvalidColumnException();
 
         if ($value instanceof DataFrame) {
-            $this->columnSetDataFrame($value);
+            $this->setDataFrame($value);
         } elseif ($value instanceof Closure) {
-            $this->columnSetClosure($value);
+            $this->apply($value);
         } else {
             $this->setColumnValue($value);
         }
@@ -137,17 +142,7 @@ class ColumnRepresentation implements Stringable
         return $this;
     }
 
-        /**
-     * Allows user set DataFrame columns from a single-column DataFrame.
-     *      ie:
-     *          $df['bar'] = $df['foo'];
-     *
-     * @internal
-     * @param  DataFrame $df
-     * @throws DataFrameException
-     * @since  0.1.0
-     */
-    private function columnSetDataFrame(DataFrame $df): void
+    private function setDataFrame(DataFrame $df): void
     {
         if ($df->countColumns() !== 1) {
             $msg = 'Can only set a new column from a DataFrame with a single ';
@@ -156,54 +151,29 @@ class ColumnRepresentation implements Stringable
             throw new DataFrameException($msg);
         }
 
-        if (\count($df) != \count($this->getDataFrame())) {
+        if (\count($df) != \count($this->getLinkedDataFrame())) {
             $msg = 'Source and target DataFrames must have identical number ';
             $msg .= 'of rows.';
 
             throw new DataFrameException($msg);
         }
 
-        $target_df = $this->getDataFrame();
-        $target_index = $this->columnIndex->get();
-
-        foreach ($target_df as $i => $row) {
-            $target_df[$i][$target_index] = current($df->getIndex($i));
-        }
+        $this->apply(fn(mixed $value, int $position): mixed => current($df->getRecord($position)));
     }
 
-    /**
-     * Allows user set DataFrame columns from a Closure.
-     *      ie:
-     *          $df['foo'] = function ($foo) { return $foo + 1; };
-     *
-     * @internal
-     * @param Closure $f
-     * @since 0.1.0
-     */
-    public function columnSetClosure(Closure $f): void
+    public function apply(Closure $f): void
     {
-        $target_df = $this->getDataFrame();
-        $target_index = $this->columnIndex->get();
-        $target_name = $target_index->name;
+        $target_df = $this->getLinkedDataFrame();
+        $target_colName = $this->columnIndex->get()->name;
 
         foreach ($target_df as $i => $row) {
-            $target_df[$i][$target_index] = $f($row[$target_name]);
+            $row[$target_colName] = $f($row[$target_colName] ?? null, $i);
+            $target_df[$i] = $row;
         }
     }
 
-    /**
-     * Allows user set DataFrame columns from a variable and add new rows to Dataframe
-     *      ie:
-     *          $df['foo'] = 'bar';
-     *
-     *          $df[] = [ 'foo' => 1, 'bar' => 2, 'baz' => 3 ];
-     *
-     * @internal
-     * @param $value
-     * @since 0.1.0
-     */
     public function setColumnValue(mixed $value): void
     {
-        $this->columnSetClosure(fn (): mixed => $value);
+        $this->apply(fn(): mixed => $value);
     }
 }

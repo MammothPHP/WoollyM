@@ -31,5 +31,5 @@ test('invalid offset set2', function (): void {
     $df = $this->df;
     $df2 = DataFrame::fromArray([['a' => 1, 'b' => 2, 'c' => 3]]);
 
-    $df->col('a')->setValues($df2->col('a')->asDataFrame());
+    $df->col('a')->setValues($df2->col('a')->asDataFrame);
 })->throws(DataFrameException::class);

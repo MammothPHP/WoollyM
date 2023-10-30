@@ -10,6 +10,7 @@ use WeakReference;
 class ColumnIndex implements Stringable
 {
     public readonly WeakReference $df;
+    public ?DataType $forcedType = null;
 
     public function __construct(public string $name, DataFrame $df)
     {
