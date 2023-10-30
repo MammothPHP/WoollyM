@@ -55,14 +55,14 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
 
         foreach ($this->columnIndexes as &$index) {
             $index = new ColumnIndex($index->name, $this);
-            $this->columnRepresentations[$index] = new ColumnRepresentation($index);
+            $this->createColumnRepresentation($index);
         }
     }
 
 
-    public function positionExist(int $position): bool
+    public function recordKeyExist(int $recordKey): bool
     {
-        return \array_key_exists($position, $this->data);
+        return \array_key_exists($recordKey, $this->data);
     }
 
     protected function convertRecordToAbstract(array $rowArray): array
@@ -131,9 +131,9 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
         return $this->columnIndexes[$this->getColumnKey($columnName)];
     }
 
-    public function getRecord(int $position): array
+    public function getRecord(int $recordKey): array
     {
-        return $this->convertAbstractRecordToArray($this->data[$position]);
+        return $this->convertAbstractRecordToArray($this->data[$recordKey]);
     }
 
     public function addRecord(array $recordArray): self
@@ -152,16 +152,16 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
         return $this;
     }
 
-    public function updateRecord(int $position, mixed $recordArray): self
+    public function updateRecord(int $recordKey, mixed $recordArray): self
     {
-        $this->data[$position] = $this->convertRecordToAbstract($recordArray);
+        $this->data[$recordKey] = $this->convertRecordToAbstract($recordArray);
 
         return $this;
     }
 
-    public function removeRecord(int $position): self
+    public function removeRecord(int $recordKey): self
     {
-        unset($this->data[$position]);
+        unset($this->data[$recordKey]);
 
         return $this;
     }
@@ -204,9 +204,9 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
     {
         $toDelete = [];
 
-        foreach ($this->data as $position => $recordArray) { // Cannot use self iterator. Cause unset php function move the $this->data key unexpectly
-            if ($f($this->convertAbstractRecordToArray($recordArray), $position) === false) {
-                $this->removeRecord($position);
+        foreach ($this->data as $recordKey => $recordArray) { // Cannot use self iterator. Cause unset php function move the $this->data key unexpectly
+            if ($f($this->convertAbstractRecordToArray($recordArray), $recordKey) === false) {
+                $this->removeRecord($recordKey);
             }
         }
 
@@ -356,6 +356,11 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
         return true;
     }
 
+    public function createColumnRepresentation(ColumnIndex $columnIndex): void
+    {
+        $this->columnRepresentations[$columnIndex] = new ColumnRepresentation($columnIndex);
+    }
+
     /**
      * Adds a new column to the DataFrame.
      *
@@ -367,7 +372,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
     {
         if (!$this->hasColumn($columnName)) {
             $this->columnIndexes[] = $newColumnIndex = new ColumnIndex($columnName, $this);
-            $this->columnRepresentations[$newColumnIndex] = new ColumnRepresentation($newColumnIndex);
+            $this->createColumnRepresentation($newColumnIndex);
         }
 
         return $this;
@@ -571,7 +576,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      */
     public function offsetExists(mixed $index): bool
     {
-        return $this->positionExist($index);
+        return $this->recordKeyExist($index);
     }
 
     /**
@@ -685,7 +690,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
     }
 
     /**
-     * Checks if current position is valid
+     * Checks if current recordKey is valid
      *
      * @link   http://php.net/manual/en/iterator.valid.php
      * @return boolean The return value will be casted to boolean and then evaluated.
