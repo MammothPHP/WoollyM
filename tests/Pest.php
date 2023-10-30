@@ -26,9 +26,10 @@ uses(Tests\TestCase::class)->in('Features');
 |
 */
 
-// expect()->extend('toBeOne', function () {
-//     return $this->toBe(1);
-// });
+expect()->extend('dump', function () {
+    fwrite(STDERR, var_export($this->value, true));
+    return $this;
+});
 
 /*
 |--------------------------------------------------------------------------

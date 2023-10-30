@@ -49,6 +49,16 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
         $this->addRows($data);
     }
 
+    public function __clone ()
+    {
+        $this->columnRepresentations = new WeakMap;
+
+        foreach ($this->columnIndexes as &$index) {
+            $index = new ColumnIndex($index->name, $this);
+            $this->columnRepresentations[$index] = new ColumnRepresentation($index);
+        }
+    }
+
     public function addRow(array $row): self
     {
         if (\count($row) > 0) {
