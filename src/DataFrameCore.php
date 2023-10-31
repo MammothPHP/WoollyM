@@ -49,7 +49,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
         $this->addRecords($data);
     }
 
-    public function __clone ()
+    public function __clone()
     {
         $this->columnRepresentations = new WeakMap;
 

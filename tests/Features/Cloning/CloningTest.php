@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use CondorcetPHP\Oliphant\DataFrame;
-use Pest\Arch\Expectations\ToBeUsedIn;
 
 beforeEach(function (): void {
     $this->expected = [
@@ -17,14 +16,15 @@ beforeEach(function (): void {
     $this->df2 = clone $this->df1;
 });
 
-test('theoric reminder', function():void {
+test('theoric reminder', function (): void {
     $o = new stdClass;
 
     $c1 = new class ($o) {
         public WeakReference $weakRef;
         public WeakMap $weakmap;
 
-        public function __construct(Object $obj) {
+        public function __construct(object $obj)
+        {
             $this->weakRef = WeakReference::create($obj);
             $this->weakmap = new WeakMap;
             $this->weakmap[$obj] = true;
@@ -49,7 +49,7 @@ test('theoric reminder', function():void {
     unset($o);
 
     expect($c2->weakRef->get())->toBeNull()->toBe($c1->weakRef->get());
-    expect(count($c2->weakmap))->toBe(count($c1->weakmap))->toBe(0);
+    expect($c2->weakmap)->toHaveCount(\count($c1->weakmap))->toHaveCount(0);
 });
 
 it('is not the same object', function (): void {
@@ -58,7 +58,7 @@ it('is not the same object', function (): void {
 
 it('has different column representation', function (string $col): void {
     expect($this->df1->col($col))->not->toBe($this->df2->col($col));
-})->with(['a','b','c']);
+})->with(['a', 'b', 'c']);
 
 it('is independent', function (): void {
     $col = 'a';
@@ -68,4 +68,7 @@ it('is independent', function (): void {
 
     expect($this->df2->toArray()[0])->toHaveKey($newName)->not->toHaveKey($col);
     expect($this->df1->toArray())->toBe($this->expected)->not->toBe($this->df2->toArray());
+
+    $this->df1[] = [];
+    expect($this->df1)->not->toHaveCount(\count($this->df2));
 });

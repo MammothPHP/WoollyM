@@ -27,7 +27,8 @@ uses(Tests\TestCase::class)->in('Features');
 */
 
 expect()->extend('dump', function () {
-    fwrite(STDERR, var_export($this->value, true));
+    fwrite(\STDERR, var_export($this->value, true));
+
     return $this;
 });
 
