@@ -20,6 +20,9 @@ use Countable;
 use Exception;
 use Iterator;
 use ArrayAccess;
+use CondorcetPHP\Oliphant\DataDrivers\{DataDriverInterface, SortableDriverInterface};
+use CondorcetPHP\Oliphant\DataDrivers\DriversExceptions\{InvalidDriverClassException, KeyNotExistException, SortNotSupportedByDriverException};
+use CondorcetPHP\Oliphant\DataDrivers\PhpArray\PhpArrayDriver;
 use PDO;
 use WeakMap;
 
@@ -34,16 +37,25 @@ use WeakMap;
  */
 abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
 {
+    public static string $defaultDataDriverClass = PhpArrayDriver::class;
+
     /* *****************************************************************************************************************
      *********************************************** Core Implementation ***********************************************
      ******************************************************************************************************************/
 
-    protected array $data = [];
+    protected DataDriverInterface $data;
     protected array $columnIndexes = [];
     protected WeakMap $columnRepresentations;
 
-    public function __construct(array $data = [])
+    public function __construct(array $data = [], ?string $dataDriver = null)
     {
+        $dataDriver ??= self::$defaultDataDriverClass;
+
+        if (!is_subclass_of($dataDriver, DataDriverInterface::class, true)) {
+            throw new InvalidDriverClassException;
+        }
+
+        $this->data = new $dataDriver;
         $this->columnRepresentations = new WeakMap;
 
         $this->addRecords($data);
@@ -51,6 +63,10 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
 
     public function __clone()
     {
+        // Data
+        $this->data = clone $this->data;
+
+        // Columns
         $this->columnRepresentations = new WeakMap;
 
         foreach ($this->columnIndexes as &$index) {
@@ -62,7 +78,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
 
     public function recordKeyExist(int $recordKey): bool
     {
-        return \array_key_exists($recordKey, $this->data);
+        return $this->data->keyExist($recordKey);
     }
 
     protected function convertRecordToAbstract(array $rowArray): array
@@ -133,12 +149,12 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
 
     public function getRecord(int $recordKey): array
     {
-        return $this->convertAbstractRecordToArray($this->data[$recordKey]);
+        return $this->convertAbstractRecordToArray($this->data->getRecordKey($recordKey));
     }
 
     public function addRecord(array $recordArray): self
     {
-        $this->data[] = $this->convertRecordToAbstract($recordArray);
+        $this->data->addRecord($this->convertRecordToAbstract($recordArray));
 
         return $this;
     }
@@ -154,14 +170,17 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
 
     public function updateRecord(int $recordKey, mixed $recordArray): self
     {
-        $this->data[$recordKey] = $this->convertRecordToAbstract($recordArray);
+        $this->data->setRecord($recordKey, $this->convertRecordToAbstract($recordArray));
 
         return $this;
     }
 
     public function removeRecord(int $recordKey): self
     {
-        unset($this->data[$recordKey]);
+        try {
+            $this->data->removeRecord($recordKey);
+        } catch (KeyNotExistException) {
+        }
 
         return $this;
     }
@@ -189,11 +208,11 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
     {
         if (\count($this->columnIndexes) > 1) {
             foreach ($this as $i => $row) {
-                $this->data[$i] = $this->convertRecordToAbstract($f($row, $i));
+                $this->data->setRecord($i, $this->convertRecordToAbstract($f($row, $i)));
             }
         } elseif (\count($this->columnIndexes) === 1) {
             foreach ($this as $i => $row) {
-                $this->data[$i][$this->getColumnKey(key($row))] = $f($row[key($row)], $i);
+                $this->data->setRecordColumn($i, $this->getColumnKey(key($row)), $f($row[key($row)], $i));
             }
         }
 
@@ -202,10 +221,8 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
 
     public function filter(Closure $f): self
     {
-        $toDelete = [];
-
-        foreach ($this->data as $recordKey => $recordArray) { // Cannot use self iterator. Cause unset php function move the $this->data key unexpectly
-            if ($f($this->convertAbstractRecordToArray($recordArray), $recordKey) === false) {
+        foreach ($this as $recordKey => $recordArray) {
+            if ($f($recordArray, $recordKey) === false) {
                 $this->removeRecord($recordKey);
             }
         }
@@ -412,12 +429,14 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
         if ($deletedKey !== false) {
             unset($this->columnIndexes[$deletedKey]);
 
-            foreach ($this->data as &$row) {
+            foreach ($this->data as $recordKey => $row) {
                 $row = array_filter(
                     array: $row,
                     callback: fn(int $arrayKey): bool => $arrayKey !== $deletedKey,
                     mode: \ARRAY_FILTER_USE_KEY
                 );
+
+                $this->data->setRecord($recordKey, $row);
             }
         }
 
@@ -543,11 +562,15 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      */
     public function sortValues(array|string $by, bool $ascending = true): void
     {
+        if (! $this->data instanceof SortableDriverInterface) {
+            throw new SortNotSupportedByDriverException;
+        }
+
         if (!\is_array($by)) {
             $by = [$by];
         }
 
-        usort($this->data, function (array $row_a, array $row_b) use ($by, $ascending): int {
+        $this->data->usort(function (array $row_a, array $row_b) use ($by, $ascending): int {
             foreach ($by as $col) {
                 $col = $this->getColumnKey($col);
 
@@ -592,7 +615,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      */
     public function offsetGet(mixed $index): mixed
     {
-        return $this->data[$index];
+        return $this->data->getRecordKey($index);
 
         // $this->mustHaveColumn($columnName);
 
@@ -653,13 +676,20 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      ********************************************* Iterator Implementation *********************************************
      ******************************************************************************************************************/
 
+    protected Iterator $driverIterator;
+
+    protected function initDriverIterator(): void
+    {
+        $this->driverIterator = $this->data->getIterator();
+    }
+
     /**
-     * Return the current element
-     *
-     * @link   http://php.net/manual/en/iterator.current.php
-     * @return mixed Can return any type.
-     * @since  0.1.0
-     */
+    * Return the current element
+    *
+    * @link   http://php.net/manual/en/iterator.current.php
+    * @return mixed Can return any type.
+    * @since  0.1.0
+    */
     public function current(): mixed
     {
         return $this->getRecord($this->key());
@@ -674,7 +704,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      */
     public function next(): void
     {
-        next($this->data);
+        $this->driverIterator->next();
     }
 
     /**
@@ -686,7 +716,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      */
     public function key(): mixed
     {
-        return key($this->data);
+        return $this->driverIterator->key();
     }
 
     /**
@@ -699,7 +729,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      */
     public function valid(): bool
     {
-        return isset($this->data[$this->key()]);
+        return $this->driverIterator->valid();
     }
 
     /**
@@ -711,7 +741,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      */
     public function rewind(): void
     {
-        reset($this->data);
+        $this->initDriverIterator();
     }
 
     /* *****************************************************************************************************************
@@ -728,6 +758,6 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      */
     public function count(): int
     {
-        return \count($this->data);
+        return $this->data->count();
     }
 }
