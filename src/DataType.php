@@ -8,7 +8,7 @@ declare(strict_types=1);
  * Time: 10:33 PM
  */
 
-namespace CondorcetPHP\Oliphant;
+namespace MammothPHP\WoollyM;
 
 use DateTimeImmutable;
 use RuntimeException;

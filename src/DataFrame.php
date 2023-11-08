@@ -7,14 +7,14 @@ declare(strict_types=1);
  * @package   DataFrame
  * @author    Howard Gehring <hwgehring@gmail.com>
  * @copyright 2015 Howard Gehring <hwgehring@gmail.com>
- * @license   https://github.com/HWGehring/CondorcetPHP\Oliphant/blob/master/LICENSE BSD-3-Clause
- * @link      https://github.com/HWGehring/CondorcetPHP\Oliphant
+ * @license   https://github.com/HWGehring/MammothPHP\WoollyM/blob/master/LICENSE BSD-3-Clause
+ * @link      https://github.com/HWGehring/MammothPHP\WoollyM
  * @since     0.1.0
  */
 
-namespace CondorcetPHP\Oliphant;
+namespace MammothPHP\WoollyM;
 
-use CondorcetPHP\Oliphant\IO\{CSV, FWF, HTML, JSON, SQL, XLSX};
+use MammothPHP\WoollyM\IO\{CSV, FWF, HTML, JSON, SQL, XLSX};
 use PDO;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
@@ -22,11 +22,11 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 /**
  * The DataFrame class acts as an interface to various underlying data structure, file format, and database
  * implementations.
- * @package   CondorcetPHP\Oliphant
+ * @package   MammothPHP\WoollyM
  * @author    Howard Gehring <hwgehring@gmail.com>
  * @copyright 2015 Howard Gehring <hwgehring@gmail.com>
- * @license   https://github.com/HWGehring/CondorcetPHP\Oliphant/blob/master/LICENSE BSD-3-Clause
- * @link      https://github.com/HWGehring/CondorcetPHP\Oliphant
+ * @license   https://github.com/HWGehring/MammothPHP\WoollyM/blob/master/LICENSE BSD-3-Clause
+ * @link      https://github.com/HWGehring/MammothPHP\WoollyM
  * @since     0.1.0
  */
 final class DataFrame extends DataFrameCore
@@ -51,7 +51,7 @@ final class DataFrame extends DataFrameCore
      * @param  $fileName
      * @param  array $options
      * @return $this
-     * @throws \CondorcetPHP\Oliphant\Exceptions\FileExistsException
+     * @throws \MammothPHP\WoollyM\Exceptions\FileExistsException
      * @since  0.1.0
      */
     public function toCSV(string $fileName, array $options = []): self
@@ -163,7 +163,7 @@ final class DataFrame extends DataFrameCore
      * Outputs a DataFrame to an HTML string.
      * @param  array $options
      * @return string
-     * @throws \CondorcetPHP\Oliphant\Exceptions\NotYetImplementedException
+     * @throws \MammothPHP\WoollyM\Exceptions\NotYetImplementedException
      * @since  0.1.0
      */
     public function toHTML($options = []): string

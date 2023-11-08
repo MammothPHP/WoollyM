@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace CondorcetPHP\Oliphant\Stats\Modules;
+namespace MammothPHP\WoollyM\Stats\Modules;
 
-use CondorcetPHP\Oliphant\{ColumnRepresentation, DataFrame, DataFrameCore};
-use CondorcetPHP\Oliphant\Stats\{ColumnStatsMethodInterface, ColumnStatsPropertyInterface};
+use MammothPHP\WoollyM\{ColumnRepresentation, DataFrame, DataFrameCore};
+use MammothPHP\WoollyM\Stats\{ColumnStatsMethodInterface, ColumnStatsPropertyInterface};
 
 class AsArray implements ColumnStatsMethodInterface, ColumnStatsPropertyInterface
 {

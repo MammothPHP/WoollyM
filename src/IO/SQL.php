@@ -7,14 +7,14 @@ declare(strict_types=1);
  * @package   DataFrame
  * @author    Howard Gehring <hwgehring@gmail.com>
  * @copyright 2015 Howard Gehring <hwgehring@gmail.com>
- * @license   https://github.com/HWGehring/CondorcetPHP\Oliphant/blob/master/LICENSE BSD-3-Clause
- * @link      https://github.com/HWGehring/CondorcetPHP\Oliphant
+ * @license   https://github.com/HWGehring/MammothPHP\WoollyM/blob/master/LICENSE BSD-3-Clause
+ * @link      https://github.com/HWGehring/MammothPHP\WoollyM
  * @since     0.2.0
  */
 
-namespace CondorcetPHP\Oliphant\IO;
+namespace MammothPHP\WoollyM\IO;
 
-use CondorcetPHP\Oliphant\Exceptions\InvalidColumnException;
+use MammothPHP\WoollyM\Exceptions\InvalidColumnException;
 use PDO;
 use PDOException;
 use RecursiveArrayIterator;
@@ -23,11 +23,11 @@ use RuntimeException;
 
 /**
  * The SQL class contains implementation details for reading and writing data to and from relational databases.
- * @package   CondorcetPHP\Oliphant\IO
+ * @package   MammothPHP\WoollyM\IO
  * @author    Howard Gehring <hwgehring@gmail.com>
  * @copyright 2015 Howard Gehring <hwgehring@gmail.com>
- * @license   https://github.com/HWGehring/CondorcetPHP\Oliphant/blob/master/LICENSE BSD-3-Clause
- * @link      https://github.com/HWGehring/CondorcetPHP\Oliphant
+ * @license   https://github.com/HWGehring/MammothPHP\WoollyM/blob/master/LICENSE BSD-3-Clause
+ * @link      https://github.com/HWGehring/MammothPHP\WoollyM
  * @since     0.2.0
  */
 final class SQL

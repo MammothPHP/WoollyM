@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace CondorcetPHP\Oliphant;
+namespace MammothPHP\WoollyM;
 
 use Closure;
-use CondorcetPHP\Oliphant\Exceptions\{DataFrameException, InvalidColumnException, MethodNotExistException, PropertyNotExistException};
-use CondorcetPHP\Oliphant\Stats\Modules;
+use MammothPHP\WoollyM\Exceptions\{DataFrameException, InvalidColumnException, MethodNotExistException, PropertyNotExistException};
+use MammothPHP\WoollyM\Stats\Modules;
 use Stringable;
 use WeakReference;
 

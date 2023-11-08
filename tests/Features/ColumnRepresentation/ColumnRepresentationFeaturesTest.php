@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use CondorcetPHP\Oliphant\{DataFrame, DataFrameCore};
-use CondorcetPHP\Oliphant\Exceptions\InvalidColumnException;
+use MammothPHP\WoollyM\{DataFrame, DataFrameCore};
+use MammothPHP\WoollyM\Exceptions\InvalidColumnException;
 
 beforeEach(function (): void {
     $this->df = new DataFrame([

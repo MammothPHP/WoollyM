@@ -1,7 +1,7 @@
 <?php
 
 declare(strict_types=1);
-use CondorcetPHP\Oliphant\DataFrame;
+use MammothPHP\WoollyM\DataFrame;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 

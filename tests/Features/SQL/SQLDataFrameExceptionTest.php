@@ -1,7 +1,7 @@
 <?php
 
 declare(strict_types=1);
-use CondorcetPHP\Oliphant\DataFrame;
+use MammothPHP\WoollyM\DataFrame;
 
 test('rollback', function (): void {
     // This test is tricky. We want to assert that a failed commit will roll back the database.

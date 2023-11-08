@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use CondorcetPHP\Oliphant\{DataFrame, DataFrameCore, DataType};
+use MammothPHP\WoollyM\{DataFrame, DataFrameCore, DataType};
 
 beforeEach(function (): void {
     $this->df = new DataFrame([

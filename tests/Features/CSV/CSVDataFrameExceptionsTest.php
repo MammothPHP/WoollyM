@@ -1,7 +1,7 @@
 <?php
 
 declare(strict_types=1);
-use CondorcetPHP\Oliphant\DataFrame;
+use MammothPHP\WoollyM\DataFrame;
 
 test('overwrite fail c s v', function (): void {
     $fileName = __DIR__ . \DIRECTORY_SEPARATOR . 'TestFiles' . \DIRECTORY_SEPARATOR . 'testCSVOverwrite.csv';
@@ -12,14 +12,14 @@ test('overwrite fail c s v', function (): void {
         ['a' => 7, 'b' => 8, 'c' => 9],
     ]);
 
-    $this->expectException('CondorcetPHP\Oliphant\Exceptions\FileExistsException');
+    $this->expectException('MammothPHP\WoollyM\Exceptions\FileExistsException');
     $df->toCSV($fileName);
 });
 
 test('invalid option', function (): void {
     $fileName = __DIR__ . \DIRECTORY_SEPARATOR . 'TestFiles' . \DIRECTORY_SEPARATOR . 'testCSVOverwrite.csv';
 
-    $this->expectException('CondorcetPHP\Oliphant\Exceptions\UnknownOptionException');
+    $this->expectException('MammothPHP\WoollyM\Exceptions\UnknownOptionException');
     DataFrame::fromCSV($fileName, ['invalid_option' => 0]);
 });
 
@@ -33,6 +33,6 @@ test('unknown delimiter', function (): void {
 test('invalid column count', function (): void {
     $fileName = __DIR__ . \DIRECTORY_SEPARATOR . 'TestFiles' . \DIRECTORY_SEPARATOR . 'testCSVInvalidColumnCount.csv';
 
-    $this->expectException('CondorcetPHP\Oliphant\Exceptions\InvalidColumnException');
+    $this->expectException('MammothPHP\WoollyM\Exceptions\InvalidColumnException');
     DataFrame::fromCSV($fileName);
 });

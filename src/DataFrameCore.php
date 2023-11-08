@@ -7,32 +7,32 @@ declare(strict_types=1);
  * @package   DataFrame
  * @author    Howard Gehring <hwgehring@gmail.com>
  * @copyright 2015 Howard Gehring <hwgehring@gmail.com>
- * @license   https://github.com/HWGehring/CondorcetPHP\Oliphant/blob/master/LICENSE BSD-3-Clause
- * @link      https://github.com/HWGehring/CondorcetPHP\Oliphant
+ * @license   https://github.com/HWGehring/MammothPHP\WoollyM/blob/master/LICENSE BSD-3-Clause
+ * @link      https://github.com/HWGehring/MammothPHP\WoollyM
  * @since     0.1.0
  */
 
-namespace CondorcetPHP\Oliphant;
+namespace MammothPHP\WoollyM;
 
-use CondorcetPHP\Oliphant\Exceptions\{DataFrameException, InvalidColumnException};
+use MammothPHP\WoollyM\Exceptions\{DataFrameException, InvalidColumnException};
 use Closure;
 use Countable;
 use Exception;
 use Iterator;
 use ArrayAccess;
-use CondorcetPHP\Oliphant\DataDrivers\{DataDriverInterface, SortableDriverInterface};
-use CondorcetPHP\Oliphant\DataDrivers\DriversExceptions\{InvalidDriverClassException, KeyNotExistException, SortNotSupportedByDriverException};
-use CondorcetPHP\Oliphant\DataDrivers\PhpArray\PhpArrayDriver;
+use MammothPHP\WoollyM\DataDrivers\{DataDriverInterface, SortableDriverInterface};
+use MammothPHP\WoollyM\DataDrivers\DriversExceptions\{InvalidDriverClassException, KeyNotExistException, SortNotSupportedByDriverException};
+use MammothPHP\WoollyM\DataDrivers\PhpArray\PhpArrayDriver;
 use PDO;
 use WeakMap;
 
 /**
  * The DataFrameCore class acts as the implementation for the various data manipulation features of the DataFrame class.
- * @package   CondorcetPHP\Oliphant
+ * @package   MammothPHP\WoollyM
  * @author    Howard Gehring <hwgehring@gmail.com>
  * @copyright 2015 Howard Gehring <hwgehring@gmail.com>
- * @license   https://github.com/HWGehring/CondorcetPHP\Oliphant/blob/master/LICENSE BSD-3-Clause
- * @link      https://github.com/HWGehring/CondorcetPHP\Oliphant
+ * @license   https://github.com/HWGehring/MammothPHP\WoollyM/blob/master/LICENSE BSD-3-Clause
+ * @link      https://github.com/HWGehring/MammothPHP\WoollyM
  * @since     0.1.0
  */
 abstract class DataFrameCore implements ArrayAccess, Countable, Iterator

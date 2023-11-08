@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use CondorcetPHP\Oliphant\{ColumnIndex, ColumnRepresentation, DataFrame};
-use CondorcetPHP\Oliphant\Exceptions\{InvalidColumnException, PropertyNotExistException};
+use MammothPHP\WoollyM\{ColumnIndex, ColumnRepresentation, DataFrame};
+use MammothPHP\WoollyM\Exceptions\{InvalidColumnException, PropertyNotExistException};
 
 beforeEach(function (): void {
     $this->dataFrame = new DataFrame;

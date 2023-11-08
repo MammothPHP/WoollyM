@@ -2,6 +2,6 @@
 
 declare(strict_types=1);
 
-namespace CondorcetPHP\Oliphant\Exceptions;
+namespace MammothPHP\WoollyM\Exceptions;
 
 class MethodNotExistException extends DataFrameException {}

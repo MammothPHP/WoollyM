@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace CondorcetPHP\Oliphant\DataDrivers;
+namespace MammothPHP\WoollyM\DataDrivers;
 
 use Closure;
 use Countable;

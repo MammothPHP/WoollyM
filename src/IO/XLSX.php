@@ -7,12 +7,12 @@ declare(strict_types=1);
  * @package   DataFrame
  * @author    Howard Gehring <hwgehring@gmail.com>
  * @copyright 2015 Howard Gehring <hwgehring@gmail.com>
- * @license   https://github.com/HWGehring/CondorcetPHP\Oliphant/blob/master/LICENSE BSD-3-Clause
- * @link      https://github.com/HWGehring/CondorcetPHP\Oliphant
+ * @license   https://github.com/HWGehring/MammothPHP\WoollyM/blob/master/LICENSE BSD-3-Clause
+ * @link      https://github.com/HWGehring/MammothPHP\WoollyM
  * @since     0.3.0
  */
 
-namespace CondorcetPHP\Oliphant\IO;
+namespace MammothPHP\WoollyM\IO;
 
 use PhpOffice\PhpSpreadsheet\{IOFactory, Spreadsheet};
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
@@ -20,11 +20,11 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 /**
  * The XLSX class contains implementation details for reading and writing data to and from instances of PHPExcel,
  * Worksheet, and the XLSX file format in general.
- * @package   CondorcetPHP\Oliphant\IO
+ * @package   MammothPHP\WoollyM\IO
  * @author    Howard Gehring <hwgehring@gmail.com>
  * @copyright 2015 Howard Gehring <hwgehring@gmail.com>
- * @license   https://github.com/HWGehring/CondorcetPHP\Oliphant/blob/master/LICENSE BSD-3-Clause
- * @link      https://github.com/HWGehring/CondorcetPHP\Oliphant
+ * @license   https://github.com/HWGehring/MammothPHP\WoollyM/blob/master/LICENSE BSD-3-Clause
+ * @link      https://github.com/HWGehring/MammothPHP\WoollyM
  * @since     0.3.0
  */
 class XLSX
@@ -43,7 +43,7 @@ class XLSX
      *      sheetname: The name of the worksheet to load. Defaults to first worksheet (default: null)
      * @param  array $options
      * @return array
-     * @throws \CondorcetPHP\Oliphant\Exceptions\UnknownOptionException
+     * @throws \MammothPHP\WoollyM\Exceptions\UnknownOptionException
      * @throws \PhpOffice\PhpSpreadsheet\Exception
      * @since  0.3.0
      */

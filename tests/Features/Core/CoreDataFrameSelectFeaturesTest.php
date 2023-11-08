@@ -1,7 +1,7 @@
 <?php
 
 declare(strict_types=1);
-use CondorcetPHP\Oliphant\DataFrame;
+use MammothPHP\WoollyM\DataFrame;
 
 test('data frame select', function (): void {
     $df = DataFrame::fromArray([

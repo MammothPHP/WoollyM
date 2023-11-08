@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use CondorcetPHP\Oliphant\DataFrame;
+use MammothPHP\WoollyM\DataFrame;
 use PhpBench\Attributes as Bench;
 
 class IntensiveUsageBench

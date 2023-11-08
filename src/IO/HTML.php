@@ -7,23 +7,23 @@ declare(strict_types=1);
  * @package   DataFrame
  * @author    Howard Gehring <hwgehring@gmail.com>
  * @copyright 2015 Howard Gehring <hwgehring@gmail.com>
- * @license   https://github.com/HWGehring/CondorcetPHP\Oliphant/blob/master/LICENSE BSD-3-Clause
- * @link      https://github.com/HWGehring/CondorcetPHP\Oliphant
+ * @license   https://github.com/HWGehring/MammothPHP\WoollyM/blob/master/LICENSE BSD-3-Clause
+ * @link      https://github.com/HWGehring/MammothPHP\WoollyM
  * @since     0.1.0
  */
 
-namespace CondorcetPHP\Oliphant\IO;
+namespace MammothPHP\WoollyM\IO;
 
-use CondorcetPHP\Oliphant\Exceptions\NotYetImplementedException;
+use MammothPHP\WoollyM\Exceptions\NotYetImplementedException;
 use Gajus\Dindent\Indenter;
 
 /**
  * The HTML class contains implementation details for transforming two-dimensional arrays into HTML tables.
- * @package   CondorcetPHP\Oliphant\IO
+ * @package   MammothPHP\WoollyM\IO
  * @author    Howard Gehring <hwgehring@gmail.com>
  * @copyright 2015 Howard Gehring <hwgehring@gmail.com>
- * @license   https://github.com/HWGehring/CondorcetPHP\Oliphant/blob/master/LICENSE BSD-3-Clause
- * @link      https://github.com/HWGehring/CondorcetPHP\Oliphant
+ * @license   https://github.com/HWGehring/MammothPHP\WoollyM/blob/master/LICENSE BSD-3-Clause
+ * @link      https://github.com/HWGehring/MammothPHP\WoollyM
  * @since     0.1.0
  */
 final class HTML
@@ -53,7 +53,7 @@ final class HTML
      * @param  array $options
      * @return string
      * @throws NotYetImplementedException
-     * @throws \CondorcetPHP\Oliphant\Exceptions\UnknownOptionException
+     * @throws \MammothPHP\WoollyM\Exceptions\UnknownOptionException
      * @since  0.1.0
      */
     public function assembleTable(array $options): string

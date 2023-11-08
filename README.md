@@ -1,13 +1,19 @@
-# Oliphant: PHP Data Analysis Library
+<p align="center">
+    <picture>
+        <img alt="" width="40%" src="wollym_logo.svg">
+    </picture>
+</p>
 
-Oliphant is a PHP library designed to make working with tabular/relational data, files, and databases easy. The core component of the library is the DataFrame class - a tabular data structure which raises the level of abstraction when working with tabular, two-dimensional data. 
+# WoollyM: PHP Dataframes for Data Analysis library
+
+WoollyM is a PHP library designed to make working with tabular/relational data, files, and databases easy. The core component of the library is the DataFrame class - a tabular data structure that raises the level of abstraction when working with tabular, two-dimensional data.
 
 ## Installation
 
 ### Using Composer:
 
 ```sh
-composer require archon/dataframe
+composer require mammothphp/woollym
 ```
 
 ### Requirements
@@ -134,7 +140,7 @@ count($df);
 #### Iterating over rows:
 ```php
 foreach ($df as $i => $row) {
-   echo $i.': '.implode('-', $row).PHP_EOL; 
+   echo $i.': '.implode('-', $row).PHP_EOL;
 }
 --------------------------
 0: 1-2-3

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace CondorcetPHP\Oliphant;
+namespace MammothPHP\WoollyM;
 
 use Stringable;
 use WeakReference;

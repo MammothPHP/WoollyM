@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace CondorcetPHP\Oliphant\Stats;
+namespace MammothPHP\WoollyM\Stats;
 
-use CondorcetPHP\Oliphant\Exceptions\NotYetImplementedException;
-use CondorcetPHP\Oliphant\Stats\Modules\{AsArray, AsDataFrame, Average, Count, Name, Sum};
+use MammothPHP\WoollyM\Exceptions\NotYetImplementedException;
+use MammothPHP\WoollyM\Stats\Modules\{AsArray, AsDataFrame, Average, Count, Name, Sum};
 
 abstract class Modules
 {

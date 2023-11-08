@@ -1,8 +1,8 @@
 <?php
 
 declare(strict_types=1);
-use CondorcetPHP\Oliphant\DataFrame;
-use CondorcetPHP\Oliphant\Exceptions\DataFrameException;
+use MammothPHP\WoollyM\DataFrame;
+use MammothPHP\WoollyM\Exceptions\DataFrameException;
 
 beforeEach(function (): void {
     $this->input = [
@@ -15,7 +15,7 @@ beforeEach(function (): void {
 });
 
 test('invalid column', function (): void {
-    $this->expectException('CondorcetPHP\Oliphant\Exceptions\InvalidColumnException');
+    $this->expectException('MammothPHP\WoollyM\Exceptions\InvalidColumnException');
     $this->df->col('foo');
 });
 

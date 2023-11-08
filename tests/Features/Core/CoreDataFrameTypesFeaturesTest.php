@@ -1,7 +1,7 @@
 <?php
 
 declare(strict_types=1);
-use CondorcetPHP\Oliphant\{DataFrame, DataType};
+use MammothPHP\WoollyM\{DataFrame, DataType};
 
 test('convert numeric integer', function (): void {
     $df = DataFrame::fromArray([

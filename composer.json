@@ -18,7 +18,7 @@
     "phpbench/phpbench": "^1.2"
   },
   "autoload": {
-    "psr-4": { "CondorcetPHP\\Oliphant\\": "src/"}
+    "psr-4": { "MammothPHP\\WoollyM\\": "src/"}
   },
   "autoload-dev" : {
     "psr-4": { "Tests\\": "tests/" }

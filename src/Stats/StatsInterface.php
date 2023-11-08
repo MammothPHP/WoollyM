@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace CondorcetPHP\Oliphant\Stats;
+namespace MammothPHP\WoollyM\Stats;
 
 interface StatsInterface
 {

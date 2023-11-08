@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-namespace CondorcetPHP\Oliphant\DataDrivers\DriversExceptions;
+namespace MammothPHP\WoollyM\DataDrivers\DriversExceptions;
 
-use CondorcetPHP\Oliphant\Exceptions\DataFrameException;
+use MammothPHP\WoollyM\Exceptions\DataFrameException;
 
 class SortNotSupportedByDriverException extends DataFrameException {}

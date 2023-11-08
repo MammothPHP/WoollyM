@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-use CondorcetPHP\Oliphant\DataDrivers\DataDriverInterface;
-use CondorcetPHP\Oliphant\DataDrivers\DriversExceptions\{InvalidDriverClassException, SortNotSupportedByDriverException};
-use CondorcetPHP\Oliphant\DataFrame;
+use MammothPHP\WoollyM\DataDrivers\DataDriverInterface;
+use MammothPHP\WoollyM\DataDrivers\DriversExceptions\{InvalidDriverClassException, SortNotSupportedByDriverException};
+use MammothPHP\WoollyM\DataFrame;
 
 class InvalidDriverClass {}
 class NotSortableDriver implements DataDriverInterface

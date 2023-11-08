@@ -7,22 +7,22 @@ declare(strict_types=1);
  * @package   DataFrame
  * @author    Howard Gehring <hwgehring@gmail.com>
  * @copyright 2015 Howard Gehring <hwgehring@gmail.com>
- * @license   https://github.com/HWGehring/CondorcetPHP\Oliphant/blob/master/LICENSE BSD-3-Clause
- * @link      https://github.com/HWGehring/CondorcetPHP\Oliphant
+ * @license   https://github.com/HWGehring/MammothPHP\WoollyM/blob/master/LICENSE BSD-3-Clause
+ * @link      https://github.com/HWGehring/MammothPHP\WoollyM
  */
 
-namespace CondorcetPHP\Oliphant\IO;
+namespace MammothPHP\WoollyM\IO;
 
-use CondorcetPHP\Oliphant\Exceptions\UnknownOptionException;
+use MammothPHP\WoollyM\Exceptions\UnknownOptionException;
 
 /**
  * Options class provides basic common handling for array options which are passed to various data format
- * implementations in the CondorcetPHP\Oliphant/IO package.
- * @package   CondorcetPHP\Oliphant\IO
+ * implementations in the MammothPHP\WoollyM/IO package.
+ * @package   MammothPHP\WoollyM\IO
  * @author    Howard Gehring <hwgehring@gmail.com>
  * @copyright 2015 Howard Gehring <hwgehring@gmail.com>
- * @license   https://github.com/HWGehring/CondorcetPHP\Oliphant/blob/master/LICENSE BSD-3-Clause
- * @link      https://github.com/HWGehring/CondorcetPHP\Oliphant
+ * @license   https://github.com/HWGehring/MammothPHP\WoollyM/blob/master/LICENSE BSD-3-Clause
+ * @link      https://github.com/HWGehring/MammothPHP\WoollyM
  */
 final class Options
 {

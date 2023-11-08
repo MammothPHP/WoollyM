@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace CondorcetPHP\Oliphant\DataDrivers\PhpArray;
+namespace MammothPHP\WoollyM\DataDrivers\PhpArray;
 
 use ArrayIterator;
 use Closure;
-use CondorcetPHP\Oliphant\DataDrivers\DriversExceptions\KeyNotExistException;
-use CondorcetPHP\Oliphant\DataDrivers\{DataDriverInterface, SortableDriverInterface};
+use MammothPHP\WoollyM\DataDrivers\DriversExceptions\KeyNotExistException;
+use MammothPHP\WoollyM\DataDrivers\{DataDriverInterface, SortableDriverInterface};
 
 class PhpArrayDriver implements DataDriverInterface, SortableDriverInterface
 {
