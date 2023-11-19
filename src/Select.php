@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace MammothPHP\WoollyM;
 
 use Closure;
-use MammothPHP\WoollyM\Exceptions\{DataFrameException, InvalidSelectException, MethodNotExistException, NotYetImplementedException, PropertyNotExistException};
+use Iterator;
+use MammothPHP\WoollyM\Exceptions\{ InvalidSelectException, NotYetImplementedException};
 use WeakReference;
 
-class Select
+class Select implements Iterator
 {
     protected WeakReference $df;
 
@@ -175,6 +176,81 @@ class Select
     {
         $this->isAliveOrThrowInvalidSelectException();
 
-        return new DataFrame;
+        $df = new DataFrame;
+
+        foreach ($this as $record) {
+            $df->addRecord($record);
+        }
+
+        return $df;
     }
+
+    // Internal
+    protected function filterColumn(array $record): array
+    {
+        return array_filter(
+            array: $record,
+            callback: fn(string $k): bool => \in_array($k, $this->select, true),
+            mode: \ARRAY_FILTER_USE_KEY
+        );
+    }
+
+    protected function isValidRecord(int $key, array $record): bool
+    {
+        return true;
+    }
+
+
+    // Iterator
+    protected int $limitCount = 0;
+    protected int $offsetCount = 0;
+
+    public function moveToNextValidRecord(): void
+    {
+        if ($this->valid()) {
+            if ($this->limit !== null && $this->limitCount >= $this->limit) {
+                $this->next();
+            } elseif ($this->isValidRecord($this->key(), $this->current())) {
+                if ($this->offsetCount++ < $this->offset) {
+                    $this->next();
+                } else {
+                    $this->limitCount++;
+                }
+            } else {
+                $this->next();
+            }
+        }
+    }
+
+    public function rewind(): void
+    {
+        $this->limitCount = 0;
+        $this->offsetCount = 0;
+        $this->getLinkedDataFrame()->rewind();
+        $this->moveToNextValidRecord();
+    }
+
+    public function current(): mixed
+    {
+        $r = $this->getLinkedDataFrame()->current();
+
+        return $this->filterColumn($r);
+    }
+
+    public function key(): int
+    {
+        return $this->getLinkedDataFrame()->key();
+    }
+
+    public function next(): void
+    {
+        $this->getLinkedDataFrame()->next();
+        $this->moveToNextValidRecord();
+    }
+
+    public function valid(): bool
+    {
+        return $this->getLinkedDataFrame()->valid();
+    }
+
 }

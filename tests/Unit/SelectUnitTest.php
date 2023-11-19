@@ -122,3 +122,11 @@ it('support cloning', function (): void {
     expect(fn() => $select2->offset(42))->toThrow(InvalidSelectException::class);
     expect(fn() => $select2->get())->toThrow(InvalidSelectException::class);
 });
+
+it('can produce a new DataFrame', function (): void {
+    $newDf = $this->df->select('colA', 'colB', 'colC')->get();
+    expect($newDf->toArray())->toEqual($this->df->toArray());
+
+    $newDf = $this->df->select('colA', 'colB')->get();
+    expect($newDf->toArray())->not->toEqual($this->df->toArray());
+});
