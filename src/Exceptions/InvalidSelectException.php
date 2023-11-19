@@ -25,4 +25,4 @@ namespace MammothPHP\WoollyM\Exceptions;
  *
  * @codeCoverageIgnore
  */
-class InvalidColumnException extends DataFrameException {}
+class InvalidSelectException extends DataFrameException {}

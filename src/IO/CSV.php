@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace MammothPHP\WoollyM\IO;
 
-use MammothPHP\WoollyM\Exceptions\{FileExistsException, InvalidColumnException};
+use MammothPHP\WoollyM\Exceptions\{FileExistsException, InvalidSelectException};
 use RuntimeException;
 
 /**
@@ -60,7 +60,7 @@ final class CSV
      *      exclude: Blacklist Regular Expression
      * @param  array $options The option map.
      * @return array Returns multi-dimensional array of row-column strings.
-     * @throws InvalidColumnException
+     * @throws InvalidSelectException
      * @since  0.1.0
      */
     public function loadFile(array $options = [])
@@ -125,7 +125,7 @@ final class CSV
             $line = str_getcsv($line, $sepOpt, $quoteOpt, $escapeOpt);
 
             if (\count($columns) != \count($line)) {
-                throw new InvalidColumnException("Column count of line {$i} does not match column count of header.");
+                throw new InvalidSelectException("Column count of line {$i} does not match column count of header.");
             }
 
             $fileData[$i] = array_map('trim', $this->applyColMapToRowKeys($line, $columns));

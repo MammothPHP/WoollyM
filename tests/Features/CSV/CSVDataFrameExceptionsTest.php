@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 use MammothPHP\WoollyM\DataFrame;
+use MammothPHP\WoollyM\Exceptions\{FileExistsException, InvalidSelectException, UnknownOptionException};
 
 test('overwrite fail c s v', function (): void {
     $fileName = __DIR__ . \DIRECTORY_SEPARATOR . 'TestFiles' . \DIRECTORY_SEPARATOR . 'testCSVOverwrite.csv';
@@ -12,27 +13,23 @@ test('overwrite fail c s v', function (): void {
         ['a' => 7, 'b' => 8, 'c' => 9],
     ]);
 
-    $this->expectException('MammothPHP\WoollyM\Exceptions\FileExistsException');
     $df->toCSV($fileName);
-});
+})->throws(FileExistsException::class);
 
 test('invalid option', function (): void {
     $fileName = __DIR__ . \DIRECTORY_SEPARATOR . 'TestFiles' . \DIRECTORY_SEPARATOR . 'testCSVOverwrite.csv';
 
-    $this->expectException('MammothPHP\WoollyM\Exceptions\UnknownOptionException');
     DataFrame::fromCSV($fileName, ['invalid_option' => 0]);
-});
+})->throws(UnknownOptionException::class);
 
 test('unknown delimiter', function (): void {
     $fileName = __DIR__ . \DIRECTORY_SEPARATOR . 'TestFiles' . \DIRECTORY_SEPARATOR . 'testCSVUnknownDelimiter.csv';
 
-    $this->expectException('RuntimeException');
     DataFrame::fromCSV($fileName);
-});
+})->throws(RuntimeException::class);
 
 test('invalid column count', function (): void {
     $fileName = __DIR__ . \DIRECTORY_SEPARATOR . 'TestFiles' . \DIRECTORY_SEPARATOR . 'testCSVInvalidColumnCount.csv';
 
-    $this->expectException('MammothPHP\WoollyM\Exceptions\InvalidColumnException');
     DataFrame::fromCSV($fileName);
-});
+})->throws(InvalidSelectException::class);

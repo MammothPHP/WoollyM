@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 use MammothPHP\WoollyM\DataFrame;
-use MammothPHP\WoollyM\Exceptions\DataFrameException;
+use MammothPHP\WoollyM\Exceptions\{DataFrameException, InvalidSelectException};
 
 beforeEach(function (): void {
     $this->input = [
@@ -15,9 +15,8 @@ beforeEach(function (): void {
 });
 
 test('invalid column', function (): void {
-    $this->expectException('MammothPHP\WoollyM\Exceptions\InvalidColumnException');
     $this->df->col('foo');
-});
+})->throws(InvalidSelectException::class);
 
 test('remove non existent column', function (): void {
     $this->df->removeColumn('foo');

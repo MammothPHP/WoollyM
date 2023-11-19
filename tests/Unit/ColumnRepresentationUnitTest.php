@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use MammothPHP\WoollyM\{ColumnIndex, ColumnRepresentation, DataFrame};
-use MammothPHP\WoollyM\Exceptions\{InvalidColumnException, PropertyNotExistException};
+use MammothPHP\WoollyM\Exceptions\{InvalidSelectException, PropertyNotExistException};
 
 beforeEach(function (): void {
     $this->dataFrame = new DataFrame;
@@ -30,7 +30,7 @@ it('has coherent references', function (): void {
 test('ColumnRepresentation throw exception if the source no longer exists', function (): void {
     $this->columnIndex = null;
     $this->columnRepresentation->getName();
-})->throws(InvalidColumnException::class);
+})->throws(InvalidSelectException::class);
 
 it('throw error if dynamic property not exist on get', fn() => $this->columnRepresentation->foo)->throws(PropertyNotExistException::class);
 it('throw error if dynamic property not exist on set', fn() => $this->columnRepresentation->foo = 42)->throws(PropertyNotExistException::class);

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace MammothPHP\WoollyM;
 
 use Closure;
-use MammothPHP\WoollyM\Exceptions\{DataFrameException, InvalidColumnException, MethodNotExistException, PropertyNotExistException};
+use MammothPHP\WoollyM\Exceptions\{DataFrameException, InvalidSelectException, MethodNotExistException, PropertyNotExistException};
 use MammothPHP\WoollyM\Stats\Modules;
 use Stringable;
 use WeakReference;
@@ -21,17 +21,13 @@ class ColumnRepresentation implements Stringable
 
     public function isAlive(): bool
     {
-        if ($this->columnIndex->get() === null) {
-            return false;
-        }
-
-        return true;
+        return $this->columnIndex->get() !== null;
     }
 
     // Implement property & methods overloading
     public function __set(string $name, mixed $value): void
     {
-        $this->isAliveOrThrowInvalidColumnException();
+        $this->isAliveOrThrowInvalidSelectException();
 
         if ($name === 'values') {
             $this->set($value);
@@ -44,7 +40,7 @@ class ColumnRepresentation implements Stringable
 
     public function __get(string $name): mixed
     {
-        $this->isAliveOrThrowInvalidColumnException();
+        $this->isAliveOrThrowInvalidSelectException();
 
         if ($module = Modules::getColumnStatsPropertyModule($name)) {
             return $module->executeProperty($this);
@@ -55,14 +51,14 @@ class ColumnRepresentation implements Stringable
 
     public function __isset(string $name): bool
     {
-        $this->isAliveOrThrowInvalidColumnException();
+        $this->isAliveOrThrowInvalidSelectException();
 
         return Modules::getColumnStatsPropertyModule($name) ? true : false;
     }
 
     public function __call(string $name, array $arguments): mixed
     {
-        $this->isAliveOrThrowInvalidColumnException();
+        $this->isAliveOrThrowInvalidSelectException();
 
         if ($module = Modules::getColumnStatsMethodModule($name)) {
             return $module->executeMethod($this, $arguments);
@@ -71,14 +67,14 @@ class ColumnRepresentation implements Stringable
         throw new MethodNotExistException;
     }
 
-    protected function isAliveOrThrowInvalidColumnException(): void
+    protected function isAliveOrThrowInvalidSelectException(): void
     {
-        $this->isAlive() || throw new InvalidColumnException;
+        $this->isAlive() || throw new InvalidSelectException;
     }
 
     public function getName(): string
     {
-        $this->isAliveOrThrowInvalidColumnException();
+        $this->isAliveOrThrowInvalidSelectException();
 
         return $this->columnIndex->get()->name;
     }
@@ -90,7 +86,7 @@ class ColumnRepresentation implements Stringable
 
     public function getLinkedDataFrame(): DataFrameCore
     {
-        $this->isAliveOrThrowInvalidColumnException();
+        $this->isAliveOrThrowInvalidSelectException();
 
         return $this->columnIndex->get()->df->get();
     }
@@ -120,7 +116,7 @@ class ColumnRepresentation implements Stringable
 
     public function rename(string $to): self
     {
-        $this->isAliveOrThrowInvalidColumnException();
+        $this->isAliveOrThrowInvalidSelectException();
 
         $this->columnIndex->get()->name = $to;
 
@@ -129,7 +125,7 @@ class ColumnRepresentation implements Stringable
 
     public function set(mixed $value): self
     {
-        $this->isAliveOrThrowInvalidColumnException();
+        $this->isAliveOrThrowInvalidSelectException();
 
         if ($value instanceof DataFrame) {
             $this->setDataFrame($value);

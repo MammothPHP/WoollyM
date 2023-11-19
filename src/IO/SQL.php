@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace MammothPHP\WoollyM\IO;
 
-use MammothPHP\WoollyM\Exceptions\InvalidColumnException;
+use MammothPHP\WoollyM\Exceptions\InvalidSelectException;
 use PDO;
 use PDOException;
 use RecursiveArrayIterator;
@@ -68,7 +68,7 @@ final class SQL
      * @param  array $data
      * @param  array $options
      * @return int
-     * @throws InvalidColumnException
+     * @throws InvalidSelectException
      * @since  0.2.0
      */
     public function insertInto($tableName, array $columns, array $data, $options = []): int
@@ -82,7 +82,7 @@ final class SQL
         } catch (PDOException $pdoe) {
             // If this function throws a PDO exception then it's probably just a unit test running a SQLite query
             // SQLite doesn't support "show columns like" syntax
-        } catch (InvalidColumnException $ice) {
+        } catch (InvalidSelectException $ice) {
             throw $ice;
         }
 
@@ -194,7 +194,7 @@ final class SQL
      *
      * @param array $columns
      * @param $tableName
-     * @throws InvalidColumnException
+     * @throws InvalidSelectException
      */
     private function identifyAnyMissingColumns(array $columns, $tableName): void
     {
@@ -206,7 +206,7 @@ final class SQL
             $s = \count($missingColumns) > 1 ? 's' : '';
             $missingColumns = '`' . implode('`, `', $missingColumns) . '`';
 
-            throw new InvalidColumnException("Error: Table {$tableName} does not contain the column{$s}: {$missingColumns}.");
+            throw new InvalidSelectException("Error: Table {$tableName} does not contain the column{$s}: {$missingColumns}.");
         }
     }
 }

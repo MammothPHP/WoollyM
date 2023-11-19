@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use MammothPHP\WoollyM\{DataFrame, DataFrameCore};
-use MammothPHP\WoollyM\Exceptions\InvalidColumnException;
+use MammothPHP\WoollyM\Exceptions\InvalidSelectException;
 
 beforeEach(function (): void {
     $this->df = new DataFrame([
@@ -56,8 +56,8 @@ it('remove himself', function (): void {
     expect($return)->toBeInstanceOf(DataFrameCore::class);
     expect($return->columns())->toHaveCount(2);
 
-    expect(fn() => $return->col('b'))->toThrow(InvalidColumnException::class);
-    expect(fn() => $colB->sum())->toThrow(InvalidColumnException::class);
+    expect(fn() => $return->col('b'))->toThrow(InvalidSelectException::class);
+    expect(fn() => $colB->sum())->toThrow(InvalidSelectException::class);
 });
 
 it('has dynamic properties', fn(string $prop) => expect(isset($this->df->col('c')->{$prop}))->toBeTrue())

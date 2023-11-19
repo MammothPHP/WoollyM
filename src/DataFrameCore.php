@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace MammothPHP\WoollyM;
 
-use MammothPHP\WoollyM\Exceptions\{DataFrameException, InvalidColumnException};
+use MammothPHP\WoollyM\Exceptions\{DataFrameException, InvalidSelectException};
 use Closure;
 use Countable;
 use Exception;
@@ -121,6 +121,11 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
         return array_map(fn(ColumnRepresentation $col): string => $col->getName(), $this->columns());
     }
 
+    public function select(string ...$selections): Select
+    {
+        return new Select($this, ...$selections);
+    }
+
     public function col(string $columnName): ColumnRepresentation
     {
         return $this->columnRepresentations[$this->getColumnIndexObject($columnName)];
@@ -139,7 +144,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
             }
         }
 
-        throw new InvalidColumnException;
+        throw new InvalidSelectException;
     }
 
     protected function getColumnIndexObject(string $columnName): ColumnIndex
@@ -313,7 +318,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
         $driver = $pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
         if ($driver === 'sqlite') {
             $sqlColumns = implode(', ', $this->columnIndexes);
-            // @codeCoverageIgnoreStart
+        // @codeCoverageIgnoreStart
         } elseif ($driver === 'mysql') {
             $sqlColumns = implode(' VARCHAR(255), ', $this->columnIndexes) . ' VARCHAR(255)';
         } else {
@@ -345,13 +350,13 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      * Assertion that the DataFrame must have the column specified. If not then an exception is thrown.
      *
      * @param  $columnName
-     * @throws InvalidColumnException
+     * @throws InvalidSelectException
      * @since  0.1.0
      */
     public function mustHaveColumn(string $columnName): self
     {
         if ($this->hasColumn($columnName) === false) {
-            throw new InvalidColumnException("{$columnName} doesn't exist in DataFrame");
+            throw new InvalidSelectException("{$columnName} doesn't exist in DataFrame");
         }
 
         return $this;
@@ -562,7 +567,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      */
     public function sortValues(array|string $by, bool $ascending = true): void
     {
-        if (! $this->data instanceof SortableDriverInterface) {
+        if (!$this->data instanceof SortableDriverInterface) {
             throw new SortNotSupportedByDriverException;
         }
 
@@ -610,7 +615,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      * @internal
      * @param  mixed $columnName
      * @return DataFrame
-     * @throws InvalidColumnException
+     * @throws InvalidSelectException
      * @since  0.1.0
      */
     public function offsetGet(mixed $index): mixed
@@ -664,7 +669,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      *      ie: unset($df['column'])
      *
      * @param  mixed $offset
-     * @throws InvalidColumnException
+     * @throws InvalidSelectException
      * @since  0.1.0
      */
     public function offsetUnset(mixed $offset): void
