@@ -60,6 +60,8 @@ class Select
 
     public function select(string ...$selections): self
     {
+        $this->isAliveOrThrowInvalidSelectException();
+
         foreach ($selections as $oneSelection) {
             $this->select[] = $oneSelection;
         }
@@ -89,9 +91,10 @@ class Select
     }
 
 
-
     public function and(Closure|string ...$conditions): self
     {
+        $this->isAliveOrThrowInvalidSelectException();
+
         foreach ($conditions as $oneCondition) {
             $this->where[] = [$oneCondition];
         }
@@ -101,6 +104,8 @@ class Select
 
     public function or(Closure|string ...$conditions): self
     {
+        $this->isAliveOrThrowInvalidSelectException();
+
         foreach ($conditions as $oneCondition) {
             if (\count($this->where) === 0) {
                 $this->where($oneCondition);
@@ -126,6 +131,8 @@ class Select
 
     public function limit(?int $limit = null, int $offset = 0): self
     {
+        $this->isAliveOrThrowInvalidSelectException();
+
         if ($limit !== null && $limit < 0) {
             throw new NotYetImplementedException('$limit argument must be >= 0');
         }
@@ -145,6 +152,8 @@ class Select
 
     public function offset(int $offset): self
     {
+        $this->isAliveOrThrowInvalidSelectException();
+
         if ($offset < 0) {
             throw new NotYetImplementedException('$offset argument must be >= 0');
         }
@@ -164,6 +173,8 @@ class Select
 
     public function get(): DataFrame
     {
+        $this->isAliveOrThrowInvalidSelectException();
+
         return new DataFrame;
     }
 }

@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use MammothPHP\WoollyM\{DataFrame, Select, SelectParam};
+use MammothPHP\WoollyM\Exceptions\InvalidSelectException;
 
 beforeEach(function (): void {
     $this->df = DataFrame::fromArray([
@@ -103,4 +104,21 @@ test('the reset', function (): void {
     expect($select->config(SelectParam::WHERE))->toBe([]);
     expect($select->config(SelectParam::LIMIT))->toBeNull();
     expect($select->config(SelectParam::OFFSET))->toBe(0);
+});
+
+it('support cloning', function (): void {
+    $select1 = $this->df->select('colA');
+    $select2 = clone $select1;
+    expect($select1->getLinkedDataFrame())->toBe($this->df)->toBe($select2->getLinkedDataFrame());
+
+    $this->df = new DataFrame;
+
+    expect(fn() => $select1->getLinkedDataFrame())->toThrow(InvalidSelectException::class);
+    expect(fn() => $select2->getLinkedDataFrame())->toThrow(InvalidSelectException::class);
+
+    expect(fn() => $select2->select('colB'))->toThrow(InvalidSelectException::class);
+    expect(fn() => $select2->where(fn() => true))->toThrow(InvalidSelectException::class);
+    expect(fn() => $select2->limit(42))->toThrow(InvalidSelectException::class);
+    expect(fn() => $select2->offset(42))->toThrow(InvalidSelectException::class);
+    expect(fn() => $select2->get())->toThrow(InvalidSelectException::class);
 });
