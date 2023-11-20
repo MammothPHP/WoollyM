@@ -43,6 +43,13 @@ it('support select constructor', function (): void {
     expect($select->config(SelectParam::SELECT))->toBe([]);
 });
 
+it('support whereColumn constructor', function (): void {
+    $select = $this->df->select('colA')->whereColumn('colB', 42)->whereColumn('colC', fn(mixed $v): bool => $v > 1);
+
+    expect($select->config(SelectParam::WHERE))->toBeArray()->toHaveCount(2);
+    expect($select->config(SelectParam::WHERE)[1][0])->toBeInstanceOf(Closure::class);
+});
+
 it('support where constructor', function (): void {
     $select = $this->df->select('colA');
 
@@ -94,7 +101,7 @@ it('support limit and offset constructor', function (): void {
     expect($select->config(SelectParam::OFFSET))->toBe(0);
 });
 
-test('the reset', function (): void {
+test('reset', function (): void {
     $c1 = fn() => true;
     $select = $this->df->select('colA')->where($c1)->and($c1)->or($c1)->limit(4)->offset(5);
 

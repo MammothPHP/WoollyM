@@ -105,3 +105,15 @@ it('can use or condition', function (): void {
         ['colA' => 13, 'colB' => 14, 'colC' => 15],
     ]);
 });
+
+test('whereColumn', function (): void {
+    $select1 = $this->df->select('colA')
+        ->whereColumn('colB', 8);
+
+    $select2 = $this->df->select('colA')
+        ->whereColumn('colB', fn($v): bool => $v === 8);
+
+    expect($select1->get()->toArray())->toBe($select2->get()->toArray())->toBe([
+        ['colA' => 7],
+    ]);
+});

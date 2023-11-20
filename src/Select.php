@@ -123,6 +123,19 @@ class Select implements Iterator
         return $this;
     }
 
+    public function whereColumn(string $column, mixed $condition): self
+    {
+        if ($condition instanceof Closure) {
+            $condition = fn(mixed $v): bool => $condition($v[$column]);
+        } else {
+            $condition = fn(mixed $v): bool => $condition === $v[$column];
+        }
+
+        $this->and($condition);
+
+        return $this;
+    }
+
     public function resetWhere(): self
     {
         $this->where = [];
@@ -195,7 +208,7 @@ class Select implements Iterator
         );
     }
 
-    protected function isValidRecord(int $key, array $record): bool
+    protected function passWhereStatement(int $key, array $record): bool
     {
         foreach ($this->where as $conditionsGroup) {
             $r = false;
@@ -226,7 +239,7 @@ class Select implements Iterator
         if ($this->valid()) {
             if ($this->limit !== null && $this->limitCount >= $this->limit) {
                 $this->next();
-            } elseif ($this->isValidRecord($this->key(), $this->current())) {
+            } elseif ($this->passWhereStatement($this->key(), $this->currentUnfiltered())) {
                 if ($this->offsetCount++ < $this->offset) {
                     $this->next();
                 } else {
@@ -251,6 +264,11 @@ class Select implements Iterator
         $r = $this->getLinkedDataFrame()->current();
 
         return $this->filterColumn($r);
+    }
+
+    public function currentUnfiltered(): array
+    {
+        return $this->getLinkedDataFrame()->current();
     }
 
     public function key(): int
