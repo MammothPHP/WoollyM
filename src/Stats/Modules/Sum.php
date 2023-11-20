@@ -4,35 +4,42 @@ declare(strict_types=1);
 
 namespace MammothPHP\WoollyM\Stats\Modules;
 
-use MammothPHP\WoollyM\ColumnRepresentation;
-use MammothPHP\WoollyM\Stats\{ColumnStatsMethodInterface, ColumnStatsPropertyInterface};
+use MammothPHP\WoollyM\Select;
+use MammothPHP\WoollyM\Stats\{StatsMethodInterface, StatsPropertyInterface};
 
-class Sum implements ColumnStatsMethodInterface, ColumnStatsPropertyInterface
+class Sum implements StatsMethodInterface, StatsPropertyInterface
 {
     public const NAME = 'sum';
 
-    public function executeProperty(ColumnRepresentation $column): int|float
+    public function executeProperty(Select $select): int|float
     {
-        return $this->execute($column);
+        return $this->execute($select);
     }
 
-    public function executeMethod(ColumnRepresentation $column, array $arguments): int|float
+    public function executeMethod(Select $select, array $arguments): int|float
     {
-        return $this->execute($column);
+        return $this->execute($select);
     }
 
-    protected function execute(ColumnRepresentation $column): int|float
+    protected function execute(Select $select): int|float
     {
         $r = 0;
-        $columnName = $column->getName();
 
-        foreach ($column->asDataFrame() as $value) {
-            if ($value[$columnName] === true) {
-                $value[$columnName] = 1;
-            }
+        foreach ($select as $record) {
+            foreach ($record as $value) {
+                if ($value === true) {
+                    $value = 1;
+                }
 
-            if (!empty($value[$columnName]) && is_numeric($value[$columnName])) {
-                $r += $value[$columnName];
+                if (!empty($value) && is_numeric($value)) {
+                    if (\is_string($value) && ctype_digit($value)) {
+                        $value = \intval($value);
+                    } else {
+                        $value = \floatval($value);
+                    }
+
+                    $r += $value;
+                }
             }
         }
 

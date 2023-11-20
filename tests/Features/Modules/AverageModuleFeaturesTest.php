@@ -17,8 +17,8 @@ beforeEach(function (): void {
 test('average column B', function (): void {
     $expected = (8 + 2) / 2;
 
-    expect($this->df->col('b')->average())->toBe($expected);
-    expect($this->df->col('b')->average)->toBe($expected);
+    expect($this->df->col('b')->average())->toEqual($expected);
+    expect($this->df->col('b')->average)->toEqual($expected);
 });
 
 test('average column C', function (): void {

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace MammothPHP\WoollyM\Stats;
 
 use MammothPHP\WoollyM\Exceptions\NotYetImplementedException;
-use MammothPHP\WoollyM\Stats\Modules\{AsArray, AsDataFrame, Average, Count, Name, Sum};
+use MammothPHP\WoollyM\Stats\Modules\{Average, Count, Sum};
 
 abstract class Modules
 {
@@ -16,11 +16,8 @@ abstract class Modules
         if (self::$modules === null) {
             self::$modules = [];
 
-            self::registerModule(new AsArray);
-            self::registerModule(new AsDataFrame);
             self::registerModule(new Average);
             self::registerModule(new Count);
-            self::registerModule(new Name);
             self::registerModule(new Sum);
         }
     }
@@ -34,14 +31,14 @@ abstract class Modules
         return $r instanceof $type->value ? $r : null;
     }
 
-    public static function getColumnStatsPropertyModule(string $property): ?ColumnStatsPropertyInterface
+    public static function getStatsPropertyModule(string $property): ?StatsPropertyInterface
     {
-        return self::getModule($property, ModuleType::ColumnStatsProperty);
+        return self::getModule($property, ModuleType::StatsProperty);
     }
 
-    public static function getColumnStatsMethodModule(string $method): ?ColumnStatsMethodInterface
+    public static function getStatsMethodModule(string $method): ?StatsMethodInterface
     {
-        return self::getModule($method, ModuleType::ColumnStatsMethod);
+        return self::getModule($method, ModuleType::StatsMethod);
     }
 
     public static function registerModule(StatsInterface $module): void

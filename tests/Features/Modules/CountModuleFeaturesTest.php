@@ -16,13 +16,18 @@ beforeEach(function (): void {
 test('count column B', function (): void {
     $expected = 1;
 
-    expect($this->df->col('b')->count())->toBe($expected);
-    expect($this->df->col('b')->count)->toBe($expected);
+    $r = $this->df->col('b')->count();
+    expect($this->df->col('b')->count())
+        ->toBe($this->df->col('b')->count)
+        ->toBe($expected)
+    ;
 });
 
 test('count column C', function (): void {
     $expected = 2;
 
-    expect($this->df->col('c')->count())->toBe($expected);
-    expect($this->df->col('c')->count)->toBe($expected);
+    expect($this->df->col('c')->count())
+        ->toBe($this->df->col('c')->count)
+        ->toBe($expected)
+    ;
 });

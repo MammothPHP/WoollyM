@@ -15,17 +15,17 @@ beforeEach(function (): void {
 it('can apply type', function (): void {
     $this->df->col('b')->type(DataType::STRING);
 
-    expect($this->df->col('b')->asArray)->toBe([['b' => '2'], ['b' => '5'], ['b' => '8']]);
+    expect($this->df->col('b')->asArray())->toBe([['b' => '2'], ['b' => '5'], ['b' => '8']]);
 });
 
 it('can force type', function (): void {
     $this->df->col('b')->enforceType(DataType::STRING);
 
-    expect($this->df->col('b')->asArray)->toBe([['b' => '2'], ['b' => '5'], ['b' => '8']]);
+    expect($this->df->col('b')->asArray())->toBe([['b' => '2'], ['b' => '5'], ['b' => '8']]);
 
     $this->df[] = ['b' => 42, 'c' => 42];
 
-    expect($this->df->col('b')->asArray)->toBe([['b' => '2'], ['b' => '5'], ['b' => '8'], ['b' => '42']]);
+    expect($this->df->col('b')->asArray())->toBe([['b' => '2'], ['b' => '5'], ['b' => '8'], ['b' => '42']]);
 
     expect($this->df->toArray())->toBe([
         ['a' => 1, 'b' => '2', 'c' => 3],
@@ -38,5 +38,5 @@ it('can force type', function (): void {
 
     $this->df[] = ['b' => 43, 'c' => 43];
 
-    expect($this->df->col('b')->asArray)->toBe([['b' => '2'], ['b' => '5'], ['b' => '8'], ['b' => '42'], ['b' => 43]]);
+    expect($this->df->col('b')->asArray())->toBe([['b' => '2'], ['b' => '5'], ['b' => '8'], ['b' => '42'], ['b' => 43]]);
 });

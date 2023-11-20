@@ -4,29 +4,29 @@ declare(strict_types=1);
 
 namespace MammothPHP\WoollyM\Stats\Modules;
 
-use MammothPHP\WoollyM\ColumnRepresentation;
 use MammothPHP\WoollyM\Exceptions\NotYetImplementedException;
-use MammothPHP\WoollyM\Stats\{ColumnStatsMethodInterface, ColumnStatsPropertyInterface};
+use MammothPHP\WoollyM\Select;
+use MammothPHP\WoollyM\Stats\{StatsMethodInterface, StatsPropertyInterface};
 
-class Average implements ColumnStatsMethodInterface, ColumnStatsPropertyInterface
+class Average implements StatsMethodInterface, StatsPropertyInterface
 {
     public const NAME = 'average';
 
-    public function executeProperty(ColumnRepresentation $column): int|float
+    public function executeProperty(Select $select): int|float
     {
-        return $this->execute($column);
+        return $this->execute($select);
     }
 
-    public function executeMethod(ColumnRepresentation $column, array $arguments): int|float
+    public function executeMethod(Select $select, array $arguments): int|float
     {
-        return $this->execute($column);
+        return $this->execute($select);
     }
 
-    protected function execute(ColumnRepresentation $column): int|float
+    protected function execute(Select $select): int|float
     {
-        $sum = $column->sum();
-        $count = $column->count();
+        $sum = $select->sum();
+        $count = $select->count();
 
-        return $count > 0 ? $sum / $count : throw new NotYetImplementedException;
+        return $count > 0 ? ($sum / $count) : throw new NotYetImplementedException;
     }
 }

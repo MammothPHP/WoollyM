@@ -15,14 +15,14 @@ beforeEach(function (): void {
 test('sum column C', function (): void {
     $expected = 3 + 6 + 9;
 
-    expect($this->df->col('c')->sum())->toBe($expected);
-    expect($this->df->col('c')->sum)->toBe($expected);
+    expect($this->df->col('c')->sum())->toEqual($expected);
+    expect($this->df->col('c')->sum)->toEqual($expected);
 });
 
 
 test('sum column B', function (): void {
     $expected = 5 + 8;
 
-    expect($this->df->col('b')->sum())->toBe($expected);
-    expect($this->df->col('b')->sum)->toBe($expected);
+    expect($this->df->col('b')->sum())->toEqual($expected);
+    expect($this->df->col('b')->sum)->toEqual($expected);
 });

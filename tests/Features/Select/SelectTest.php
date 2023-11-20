@@ -46,17 +46,17 @@ it('iterable', function (): void {
     ]);
 });
 
-it('can be count', function (): void {
+it('count records', function (): void {
     $select = $this->df->select('colC', 'colB');
 
-    expect($select)
-        ->toHaveCount(5)
-        ->and($select->whereColumn('colA', fn($v) => $v > 1))
-        ->toHaveCount(4)
-        ->and($select->limit(2))
-        ->toHaveCount(2)
-        ->and($select->offset(3))
-        ->toHaveCount(1)
+    expect($select->countRecords())
+        ->toBe(5)
+        ->and($select->whereColumn('colA', fn($v) => $v > 1)->countRecords())
+        ->toBe(4)
+        ->and($select->limit(2)->countRecords())
+        ->toBe(2)
+        ->and($select->offset(3)->countRecords())
+        ->toBe(1)
     ;
 });
 

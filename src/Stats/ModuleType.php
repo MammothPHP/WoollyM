@@ -6,6 +6,6 @@ namespace MammothPHP\WoollyM\Stats;
 
 enum ModuleType: string
 {
-    case ColumnStatsProperty = ColumnStatsPropertyInterface::class;
-    case ColumnStatsMethod = ColumnStatsMethodInterface::class;
+    case StatsProperty = StatsPropertyInterface::class;
+    case StatsMethod = StatsMethodInterface::class;
 }

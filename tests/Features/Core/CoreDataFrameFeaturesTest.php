@@ -56,11 +56,9 @@ test('addColumn', function (): void {
 });
 
 test('column get', function (): void {
-    $a = $this->df->col('a')->asDataFrame(); // call as method
-    $b = $this->df->col('b')->asDataFrame; // call as property
+    $df = $this->df->col('a')->get(); // call as method
 
-    expect($a->toArray())->toEqual([['a' => 1], ['a' => 4], ['a' => 7]]);
-    expect($b->toArray())->toEqual([['b' => 2], ['b' => 5], ['b' => 8]]);
+    expect($df->toArray())->toEqual([['a' => 1], ['a' => 4], ['a' => 7]]);
 });
 
 test('column set value', function (): void {
@@ -101,7 +99,7 @@ test('column set closure', function (): void {
 test('column set dataframe', function (): void {
     $df = $this->df;
 
-    $df->col('a')->set($df->col('b')->asDataFrame());
+    $df->col('a')->set($df->col('b')->get());
 
     $expected = [
         ['a' => 2, 'b' => 2, 'c' => 3],
@@ -116,7 +114,7 @@ test('set new column', function (): void {
     expect($this->df->hasColumn('d'))->toBeFalse();
 
     $this->df
-        ->setColumn('d', $this->df->col('c')->asDataFrame()->apply(static function ($el) {
+        ->setColumn('d', $this->df->col('c')->get()->apply(static function ($el) {
             return $el + 1;
         }));
 

@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace MammothPHP\WoollyM;
 
 use Closure;
-use Countable;
 use Iterator;
-use MammothPHP\WoollyM\Exceptions\{InvalidSelectException, NotYetImplementedException};
+use MammothPHP\WoollyM\Exceptions\{InvalidSelectException, MethodNotExistException, NotYetImplementedException, PropertyNotExistException};
+use MammothPHP\WoollyM\Stats\Modules;
 use WeakReference;
 
-class Select implements Countable, Iterator
+class Select implements Iterator
 {
     protected WeakReference $df;
 
@@ -46,11 +46,57 @@ class Select implements Countable, Iterator
     public function config(SelectParam $param): array|int|null
     {
         return match ($param) {
-            SelectParam::SELECT => $this->select,
+            SelectParam::SELECT => $this->getSelect(),
             SelectParam::WHERE => $this->where,
             SelectParam::LIMIT => $this->limit,
             SelectParam::OFFSET => $this->offset,
         };
+    }
+
+
+    // MODULES Implementation
+
+    // Implement property & methods overloading
+    public function __set(string $name, mixed $value): void
+    {
+        $this->isAliveOrThrowInvalidSelectException();
+
+        if ($name === 'values') {
+            $this->set($value);
+
+            return;
+        }
+
+        throw new PropertyNotExistException;
+    }
+
+    public function __get(string $name): mixed
+    {
+        $this->isAliveOrThrowInvalidSelectException();
+
+        if ($module = Modules::getStatsPropertyModule($name)) {
+            return $module->executeProperty($this);
+        }
+
+        throw new PropertyNotExistException;
+    }
+
+    public function __isset(string $name): bool
+    {
+        $this->isAliveOrThrowInvalidSelectException();
+
+        return Modules::getStatsPropertyModule($name) ? true : false;
+    }
+
+    public function __call(string $name, array $arguments): mixed
+    {
+        $this->isAliveOrThrowInvalidSelectException();
+
+        if ($module = Modules::getStatsMethodModule($name)) {
+            return $module->executeMethod($this, $arguments);
+        }
+
+        throw new MethodNotExistException;
     }
 
 
@@ -81,6 +127,11 @@ class Select implements Countable, Iterator
         $this->select = [];
 
         return $this;
+    }
+
+    protected function getSelect(): array
+    {
+        return $this->select;
     }
 
     public function where(Closure|string ...$conditions): self
@@ -199,12 +250,25 @@ class Select implements Countable, Iterator
         return $df;
     }
 
+    public function asArray(): array
+    {
+        $this->isAliveOrThrowInvalidSelectException();
+
+        $r = [];
+
+        foreach ($this as $key => $record) {
+            $r[$key] = $record;
+        }
+
+        return $r;
+    }
+
     // Internal
     protected function filterColumn(array $record): array
     {
         return array_filter(
             array: $record,
-            callback: fn(string $k): bool => \in_array($k, $this->select, true),
+            callback: fn(string $k): bool => \in_array($k, $this->getSelect(), true),
             mode: \ARRAY_FILTER_USE_KEY
         );
     }
@@ -231,8 +295,7 @@ class Select implements Countable, Iterator
     }
 
 
-    // Countable
-    public function count(): int
+    public function countRecords(): int
     {
         $c = 0;
 
