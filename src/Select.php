@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace MammothPHP\WoollyM;
 
 use Closure;
+use Countable;
 use Iterator;
 use MammothPHP\WoollyM\Exceptions\{InvalidSelectException, NotYetImplementedException};
 use WeakReference;
 
-class Select implements Iterator
+class Select implements Countable, Iterator
 {
     protected WeakReference $df;
 
@@ -227,6 +228,19 @@ class Select implements Iterator
         }
 
         return true;
+    }
+
+
+    // Countable
+    public function count(): int
+    {
+        $c = 0;
+
+        foreach ($this as $record) {
+            $c++;
+        }
+
+        return $c;
     }
 
 

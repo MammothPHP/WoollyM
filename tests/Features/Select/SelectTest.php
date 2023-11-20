@@ -46,6 +46,20 @@ it('iterable', function (): void {
     ]);
 });
 
+it('can be count', function (): void {
+    $select = $this->df->select('colC', 'colB');
+
+    expect($select)
+        ->toHaveCount(5)
+        ->and($select->whereColumn('colA', fn($v) => $v > 1))
+        ->toHaveCount(4)
+        ->and($select->limit(2))
+        ->toHaveCount(2)
+        ->and($select->offset(3))
+        ->toHaveCount(1)
+    ;
+});
+
 it('can be use a single condition', function (): void {
     $select = $this->df->select('colA', 'colB', 'colC')->where(fn(array $r): bool => $r['colB'] % 2 === 0); // Even numbers in colB only
 
