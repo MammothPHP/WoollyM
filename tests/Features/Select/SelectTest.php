@@ -45,3 +45,63 @@ it('iterable', function (): void {
         4 => ['colC' => 15],
     ]);
 });
+
+it('can be use a single condition', function (): void {
+    $select = $this->df->select('colA', 'colB', 'colC')->where(fn(array $r): bool => $r['colB'] % 2 === 0); // Even numbers in colB only
+
+    expect($select->get()->toArray())->toBe([
+        ['colA' => 1, 'colB' => 2, 'colC' => 3],
+        ['colA' => 7, 'colB' => 8, 'colC' => 9],
+        ['colA' => 13, 'colB' => 14, 'colC' => 15],
+    ]);
+
+    $select = $this->df->select('colA', 'colB', 'colC')
+        ->where(fn(array $r): bool => $r['colB'] % 2 === 0) // Even numbers in colB only
+        ->and(fn(array $r): bool => $r['colB'] < 14);
+});
+
+it('can use multiple conditions', function (): void {
+    $select1 = $this->df->select('colA', 'colB', 'colC')
+        ->where(fn(array $r): bool => $r['colB'] % 2 === 0) // Even numbers in colB only
+        ->and(fn(array $r): bool => $r['colB'] < 14);
+
+    // Equivalent to previous
+    $select2 = $this->df->select('colA', 'colB', 'colC')
+        ->where(fn(array $r): bool => $r['colB'] % 2 === 0) // Even numbers in colB only
+        ->where(fn(array $r): bool => $r['colB'] < 14);
+
+    expect($select1->get()->toArray())->toBe($select2->get()->toArray())->toBe([
+        ['colA' => 1, 'colB' => 2, 'colC' => 3],
+        ['colA' => 7, 'colB' => 8, 'colC' => 9],
+    ]);
+});
+
+it('cannot match any condition', function (): void {
+    $select = $this->df->select('colA', 'colB', 'colC')
+        ->and(fn(array $r): bool => $r['colB'] > 14);
+
+    expect($select->get()->toArray())->toBe([]);
+});
+
+it('can use or condition', function (): void {
+    $select = $this->df->select('colA', 'colB', 'colC')
+        ->where(fn(array $r): bool => $r['colB'] % 2 === 0) // Even numbers in colB only
+        ->or(fn(array $r): bool => $r['colA'] === 4);
+
+    expect($select->get()->toArray())->toBe([
+        ['colA' => 1, 'colB' => 2, 'colC' => 3],
+        ['colA' => 4, 'colB' => 5, 'colC' => 6],
+        ['colA' => 7, 'colB' => 8, 'colC' => 9],
+        ['colA' => 13, 'colB' => 14, 'colC' => 15],
+    ]);
+
+    $select = $this->df->select('colA', 'colB', 'colC')
+        ->where(fn(array $r): bool => $r['colB'] > 2) // Even numbers in colB only
+        ->and(fn(array $r): bool => $r['colA'] % 2 === 0)->or(fn(array $r): bool => $r['colA'] === 13)
+        ->and(fn(array $r): bool => $r['colA'] !== 4);
+
+    expect($select->get()->toArray())->toBe([
+        ['colA' => 10, 'colB' => 11, 'colC' => 12],
+        ['colA' => 13, 'colB' => 14, 'colC' => 15],
+    ]);
+});

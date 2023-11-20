@@ -6,7 +6,7 @@ namespace MammothPHP\WoollyM;
 
 use Closure;
 use Iterator;
-use MammothPHP\WoollyM\Exceptions\{ InvalidSelectException, NotYetImplementedException};
+use MammothPHP\WoollyM\Exceptions\{InvalidSelectException, NotYetImplementedException};
 use WeakReference;
 
 class Select implements Iterator
@@ -197,6 +197,22 @@ class Select implements Iterator
 
     protected function isValidRecord(int $key, array $record): bool
     {
+        foreach ($this->where as $conditionsGroup) {
+            $r = false;
+
+            foreach ($conditionsGroup as $condition) {
+                if ($condition($record, $key)) {
+                    $r = true;
+
+                    break;
+                }
+            }
+
+            if ($r === false) {
+                return false;
+            }
+        }
+
         return true;
     }
 
