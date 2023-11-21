@@ -12,9 +12,8 @@ beforeEach(function (): void {
     ]);
 });
 
-
 test('count column B', function (): void {
-    $expected = 1;
+    $expected = 2;
 
     $r = $this->df->col('b')->count();
     expect($this->df->col('b')->count())
@@ -24,10 +23,19 @@ test('count column B', function (): void {
 });
 
 test('count column C', function (): void {
-    $expected = 2;
+    $expected = 3;
 
     expect($this->df->col('c')->count())
         ->toBe($this->df->col('c')->count)
+        ->toBe($expected)
+    ;
+});
+
+test('count all values', function (): void {
+    $expected = 8;
+
+    expect($this->df->select('a','b','c')->count())
+        ->toBe($this->df->select('a','b','c')->count)
         ->toBe($expected)
     ;
 });

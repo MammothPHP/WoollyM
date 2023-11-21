@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use MammothPHP\WoollyM\{DataFrame, DataFrameCore};
+use MammothPHP\WoollyM\DataFrame;
 
 beforeEach(function (): void {
     $this->df = new DataFrame([
@@ -24,15 +24,18 @@ test('average equivalence between average and mean terms', function (): void {
 test('average column B', function (): void {
     $expected = (8 + 2) / 2;
 
-    expect($this->df->col('b')->average())->toEqual($expected);
-    expect($this->df->col('b')->average)->toEqual($expected);
+    expect($this->df->col('b')->average())
+        ->toBe($this->df->col('b')->average)
+        ->toEqual($expected)
+    ;
 });
 
 test('average column C', function (): void {
     $expected = (3 + 9 + 1) / 3;
 
-    expect($this->df->col('c')->average())->toBe($expected);
-    expect($this->df->col('c')->average)->toBe($expected);
+    expect($this->df->col('c')->average())
+        ->toBe($this->df->col('c')->average)
+        ->toBe($expected);
 });
 
 test('average column A', function (): void {
