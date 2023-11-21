@@ -13,6 +13,13 @@ beforeEach(function (): void {
     ]);
 });
 
+test('average equivalence between average and mean terms', function (): void {
+    expect($this->df->col('b')->average())
+        ->tobe($this->df->col('b')->average)
+        ->toBe($this->df->col('b')->mean())
+        ->toBe($this->df->col('b')->mean)
+    ;
+});
 
 test('average column B', function (): void {
     $expected = (8 + 2) / 2;

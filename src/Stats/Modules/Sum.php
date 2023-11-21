@@ -34,7 +34,7 @@ class Sum implements StatsMethodInterface, StatsPropertyInterface
                 if (!empty($value) && is_numeric($value)) {
                     if (\is_string($value) && ctype_digit($value)) {
                         $value = \intval($value);
-                    } else {
+                    } elseif (!\is_int($value)) {
                         $value = \floatval($value);
                     }
 

@@ -21,6 +21,17 @@ beforeEach(function (): void {
 
 test('alias equivalence', fn() => expect($this->df->col('b'))->toBe($this->df->column('b')));
 
+test('name and rename', function (): void {
+    $expected = 'c';
+
+    expect($this->df->col($expected)->name)->toBe($expected);
+
+    expect($this->df->col($expected)->rename($expected = 'newName')->name)->toBe($expected);
+
+    expect($this->df->col($expected)->limit(2)->sum())->toBe(9);
+});
+
+
 test('set column raw value', function (): void {
     $return = $this->df->col('b')->set(42);
 
