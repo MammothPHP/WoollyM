@@ -137,3 +137,9 @@ it('can produce a new DataFrame', function (): void {
     $newDf = $this->df->select('colA', 'colB')->get();
     expect($newDf->toArray())->not->toEqual($this->df->toArray());
 });
+
+it('can select all', function(): void {
+    $select = $this->df->selectAll();
+
+    expect($select->config(SelectParam::SELECT))->toBe(['colA', 'colB', 'colC']);
+});

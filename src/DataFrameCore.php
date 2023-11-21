@@ -126,6 +126,13 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
         return new Select($this, ...$selections);
     }
 
+    public function selectAll(): Select
+    {
+        $columns = [];
+
+        return $this->select(...$this->columnsNames());
+    }
+
     public function col(string $columnName): ColumnRepresentation
     {
         return $this->columnRepresentations[$this->getColumnIndexObject($columnName)];
