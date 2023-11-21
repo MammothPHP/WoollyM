@@ -250,7 +250,7 @@ class Select implements Iterator
         return $df;
     }
 
-    public function asArray(): array
+    public function toArray(): array
     {
         $this->isAliveOrThrowInvalidSelectException();
 
