@@ -19,13 +19,13 @@ test('to array', function (): void {
 
 test('head', function (): void {
     expect($this->df->head())->toBe($this->input);
-    expect($this->df->head(2))->toBe(array_slice($this->input, 0 , 2 , true));
+    expect($this->df->head(2))->toBe(\array_slice($this->input, 0, 2, true));
     expect($this->df->head(columns: 'b'))->toBe([['b' => 2], ['b' => 5], ['b' => 8]]);
     expect($this->df->head(length: 1, offset: 1, columns: 'b'))->toBe([1 => ['b' => 5]]);
     expect($this->df->head(columns: ['b', 'c']))->toBe([
         ['b' => 2, 'c' => 3],
         ['b' => 5, 'c' => 6],
-        ['b' => 8, 'c' => 9]
+        ['b' => 8, 'c' => 9],
     ]);
 });
 

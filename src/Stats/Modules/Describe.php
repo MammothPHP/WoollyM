@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace MammothPHP\WoollyM\Stats\Modules;
 
-use MammothPHP\WoollyM\Exceptions\NotYetImplementedException;
 use MammothPHP\WoollyM\Select;
 use MammothPHP\WoollyM\Stats\{StatsMethodInterface, StatsPropertyInterface};
 
@@ -25,6 +24,8 @@ class Describe implements StatsMethodInterface
             'size' => $select->size(),
             'sum' => $select->average(),
             'mean' => $select->mean(),
+            'max' => $select->max(),
+            'min' => $select->min(),
         ];
     }
 }

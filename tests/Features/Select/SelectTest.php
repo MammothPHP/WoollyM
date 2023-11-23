@@ -133,12 +133,12 @@ test('whereColumn', function (): void {
 });
 
 test('whereKeyBetween', function (): void {
-    $select = $this->df->selectAll()->whereKeyBetween(1,3);
+    $select = $this->df->selectAll()->whereKeyBetween(1, 3);
 
-    expect($select->countRecords())->toBe(3)->and($select->toArray())->toHaveCount(3)->toHaveKeys([1,2,3]);
-    expect($select->whereKeyBetween(0, null)->countRecords())->toBe(5)->and($select->toArray())->toHaveCount(5)->toHaveKeys([0,1,2,3,4]);
-    expect($select->whereKeyBetween(1,4)->countRecords())->toBe(4)->and($select->toArray())->toHaveCount(4)->toHaveKeys([1,2,3,4]);
-    expect($select->whereKeyBetween(2,3)->countRecords())->toBe(2)->and($select->toArray())->toHaveCount(2)->toHaveKeys([2,3]);
+    expect($select->countRecords())->toBe(3)->and($select->toArray())->toHaveCount(3)->toHaveKeys([1, 2, 3]);
+    expect($select->whereKeyBetween(0, null)->countRecords())->toBe(5)->and($select->toArray())->toHaveCount(5)->toHaveKeys([0, 1, 2, 3, 4]);
+    expect($select->whereKeyBetween(1, 4)->countRecords())->toBe(4)->and($select->toArray())->toHaveCount(4)->toHaveKeys([1, 2, 3, 4]);
+    expect($select->whereKeyBetween(2, 3)->countRecords())->toBe(2)->and($select->toArray())->toHaveCount(2)->toHaveKeys([2, 3]);
 
     expect($select->resetWhere()->countRecords())->toBe(5);
 

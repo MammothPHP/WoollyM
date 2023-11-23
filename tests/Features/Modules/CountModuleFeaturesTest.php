@@ -34,8 +34,8 @@ test('count column C', function (): void {
 test('count all values', function (): void {
     $expected = 8;
 
-    expect($this->df->select('a','b','c')->count())
-        ->toBe($this->df->select('a','b','c')->count)
+    expect($this->df->select('a', 'b', 'c')->count())
+        ->toBe($this->df->select('a', 'b', 'c')->count)
         ->toBe($expected)
     ;
 });

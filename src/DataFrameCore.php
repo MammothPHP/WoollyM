@@ -779,7 +779,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
 
     public function head(int $length = 5, int $offset = 0, array|string|null $columns = null): array
     {
-        if (is_string($columns)) {
+        if (\is_string($columns)) {
             $columns = [$columns];
         }
 
