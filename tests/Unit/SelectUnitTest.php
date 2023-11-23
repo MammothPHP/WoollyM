@@ -44,7 +44,7 @@ it('support select constructor', function (): void {
 });
 
 it('support whereColumn constructor', function (): void {
-    $select = $this->df->select('colA')->whereColumn('colB', 42)->whereColumn('colC', fn(mixed $v): bool => $v > 1);
+    $select = $this->df->select('colA')->whereColumnEqual('colB', 42)->whereColumnEqual('colC', fn(mixed $v): bool => $v > 1);
 
     expect($select->config(SelectParam::WHERE))->toBeArray()->toHaveCount(2);
     expect($select->config(SelectParam::WHERE)[1][0])->toBeInstanceOf(Closure::class);

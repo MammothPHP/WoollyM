@@ -175,7 +175,7 @@ class Select implements Iterator
         return $this;
     }
 
-    public function whereColumn(string $column, mixed $condition): self
+    public function whereColumnEqual(string $column, mixed $condition): self
     {
         if ($condition instanceof Closure) {
             $condition = fn(mixed $v): bool => $condition($v[$column]);
@@ -184,6 +184,15 @@ class Select implements Iterator
         }
 
         $this->and($condition);
+
+        return $this;
+    }
+
+    public function whereKeyBetween(int $start = 0, ?int $end = null): self
+    {
+        $this->isAliveOrThrowInvalidSelectException();
+
+        $this->where['keyBetween'] = [fn(mixed $v, int $k): bool => $k >= $start && ($k <= $end || $end === null)];
 
         return $this;
     }

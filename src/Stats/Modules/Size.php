@@ -21,7 +21,7 @@ class Size implements StatsMethodInterface, StatsPropertyInterface
         return $this->execute($select, ...$arguments);
     }
 
-    protected function execute(Select $select, bool $ignoreNonNumeric = false): int|float
+    protected function execute(Select $select): int|float
     {
         $r = 0;
 

@@ -51,7 +51,7 @@ it('count records', function (): void {
 
     expect($select->countRecords())
         ->toBe(5)
-        ->and($select->whereColumn('colA', fn($v) => $v > 1)->countRecords())
+        ->and($select->whereColumnEqual('colA', fn($v) => $v > 1)->countRecords())
         ->toBe(4)
         ->and($select->limit(2)->countRecords())
         ->toBe(2)
@@ -122,12 +122,24 @@ it('can use or condition', function (): void {
 
 test('whereColumn', function (): void {
     $select1 = $this->df->select('colA')
-        ->whereColumn('colB', 8);
+        ->whereColumnEqual('colB', 8);
 
     $select2 = $this->df->select('colA')
-        ->whereColumn('colB', fn($v): bool => $v === 8);
+        ->whereColumnEqual('colB', fn($v): bool => $v === 8);
 
     expect($select1->get()->toArray())->toBe($select2->get()->toArray())->toBe([
         ['colA' => 7],
     ]);
+});
+
+test('whereKeyBetween', function (): void {
+    $select = $this->df->selectAll()->whereKeyBetween(1,3);
+
+    expect($select->countRecords())->toBe(3)->and($select->toArray())->toHaveCount(3)->toHaveKeys([1,2,3]);
+    expect($select->whereKeyBetween(0, null)->countRecords())->toBe(5)->and($select->toArray())->toHaveCount(5)->toHaveKeys([0,1,2,3,4]);
+    expect($select->whereKeyBetween(1,4)->countRecords())->toBe(4)->and($select->toArray())->toHaveCount(4)->toHaveKeys([1,2,3,4]);
+    expect($select->whereKeyBetween(2,3)->countRecords())->toBe(2)->and($select->toArray())->toHaveCount(2)->toHaveKeys([2,3]);
+
+    expect($select->resetWhere()->countRecords())->toBe(5);
+
 });
