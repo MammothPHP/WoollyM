@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MammothPHP\WoollyM;
 
+use BadMethodCallException;
 use Closure;
 use Iterator;
 use MammothPHP\WoollyM\Exceptions\{InvalidSelectException, MethodNotExistException, NotYetImplementedException, PropertyNotExistException};
@@ -59,14 +60,6 @@ class Select implements Iterator
     // Implement property & methods overloading
     public function __set(string $name, mixed $value): void
     {
-        $this->isAliveOrThrowInvalidSelectException();
-
-        if ($name === 'values') {
-            $this->set($value);
-
-            return;
-        }
-
         throw new PropertyNotExistException;
     }
 
@@ -78,7 +71,7 @@ class Select implements Iterator
             return $module->executeProperty($this);
         }
 
-        throw new PropertyNotExistException;
+        throw new PropertyNotExistException('Call to undefined property ' . $name);
     }
 
     public function __isset(string $name): bool
@@ -96,7 +89,7 @@ class Select implements Iterator
             return $module->executeMethod($this, $arguments);
         }
 
-        throw new MethodNotExistException;
+        throw new BadMethodCallException('Call to undefined method ' . $name . '()');
     }
 
 

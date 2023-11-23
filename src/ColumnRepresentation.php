@@ -33,6 +33,20 @@ class ColumnRepresentation extends Select implements Stringable
         return parent::__get($name);
     }
 
+    // Implement property & methods overloading
+    public function __set(string $name, mixed $value): void
+    {
+        $this->isAliveOrThrowInvalidSelectException();
+
+        if ($name === 'values') {
+            $this->set($value);
+
+            return;
+        }
+
+        parent::__set($name, $value);
+    }
+
     public function getName(): string
     {
         $this->isAliveOrThrowInvalidSelectException();

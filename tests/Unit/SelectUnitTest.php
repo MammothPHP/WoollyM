@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use MammothPHP\WoollyM\{DataFrame, Select, SelectParam};
-use MammothPHP\WoollyM\Exceptions\InvalidSelectException;
+use MammothPHP\WoollyM\Exceptions\{InvalidSelectException, PropertyNotExistException};
 
 beforeEach(function (): void {
     $this->df = DataFrame::fromArray([
@@ -143,3 +143,11 @@ it('can select all', function (): void {
 
     expect($select->config(SelectParam::SELECT))->toBe(['colA', 'colB', 'colC']);
 });
+
+it('throw an exception if module method not exist', function (): void {
+    $this->df->selectAll()->bidule();
+})->throws(BadMethodCallException::class, 'Call to undefined method bidule()');
+
+it('throw an exception if module property not exist', function (): void {
+    $this->df->selectAll()->bidule;
+})->throws(PropertyNotExistException::class, 'Call to undefined property bidule');
