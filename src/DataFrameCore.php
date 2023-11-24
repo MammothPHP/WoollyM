@@ -154,7 +154,8 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
         throw new InvalidSelectException;
     }
 
-    protected function getColumnIndexObject(string $columnName): ColumnIndex
+    # Internal only
+    public function getColumnIndexObject(string $columnName): ColumnIndex
     {
         return $this->columnIndexes[$this->getColumnKey($columnName)];
     }

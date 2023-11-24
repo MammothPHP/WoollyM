@@ -9,13 +9,14 @@ use Closure;
 use Iterator;
 use MammothPHP\WoollyM\Exceptions\{InvalidSelectException, MethodNotExistException, NotYetImplementedException, PropertyNotExistException};
 use MammothPHP\WoollyM\Stats\Modules;
+use WeakMap;
 use WeakReference;
 
 class Select implements Iterator
 {
     protected WeakReference $df;
 
-    protected array $select = [];
+    protected WeakMap $select;
     protected array $where = [];
     protected ?int $limit = null;
     protected int $offset = 0;
@@ -23,6 +24,7 @@ class Select implements Iterator
     public function __construct(DataFrame $df, string ...$selections)
     {
         $this->df = WeakReference::create($df);
+        $this->resetSelect();
 
         $this->select(...$selections);
     }
@@ -103,8 +105,10 @@ class Select implements Iterator
     {
         $this->isAliveOrThrowInvalidSelectException();
 
+        $df = $this->getLinkedDataFrame();
+
         foreach ($selections as $oneSelection) {
-            $this->select[] = $oneSelection;
+            $this->select[$df->getColumnIndexObject($oneSelection)] = null;
         }
 
         return $this;
@@ -117,14 +121,20 @@ class Select implements Iterator
 
     public function resetSelect(): self
     {
-        $this->select = [];
+        $this->select = new WeakMap;
 
         return $this;
     }
 
     protected function getSelect(): array
     {
-        return $this->select;
+        $r = [];
+
+        foreach ($this->select as $col => $v) {
+            $r[] = $col->name;
+        }
+
+        return $r;
     }
 
     public function where(Closure|string ...$conditions): self
