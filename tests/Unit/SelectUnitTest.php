@@ -113,7 +113,7 @@ test('reset', function (): void {
     expect($select->config(SelectParam::OFFSET))->toBe(0);
 });
 
-it('support cloning', function (): void {
+it('support cloning (dataFrame tests)', function (): void {
     $select1 = $this->df->select('colA');
     $select2 = clone $select1;
     expect($select1->getLinkedDataFrame())->toBe($this->df)->toBe($select2->getLinkedDataFrame());
@@ -128,6 +128,16 @@ it('support cloning', function (): void {
     expect(fn() => $select2->limit(42))->toThrow(InvalidSelectException::class);
     expect(fn() => $select2->offset(42))->toThrow(InvalidSelectException::class);
     expect(fn() => $select2->get())->toThrow(InvalidSelectException::class);
+});
+
+it('support cloning (selections tests)', function (): void {
+    $select1 = $this->df->select('colA');
+    $select2 = clone $select1;
+
+    expect($select1->getSelect())->toBe($select2->getSelect());
+
+    $select2->select('colA', 'colB');
+    expect($select1->getSelect())->not->toBe($select2->getSelect());
 });
 
 it('can produce a new DataFrame', function (): void {

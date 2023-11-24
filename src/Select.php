@@ -29,6 +29,11 @@ class Select implements Iterator
         $this->select(...$selections);
     }
 
+    public function __clone(): void
+    {
+        $this->select = clone $this->select;
+    }
+
     public function getLinkedDataFrame(): DataFrameCore
     {
         $this->isAliveOrThrowInvalidSelectException();
@@ -126,7 +131,7 @@ class Select implements Iterator
         return $this;
     }
 
-    protected function getSelect(): array
+    public function getSelect(): array
     {
         $r = [];
 
