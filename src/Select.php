@@ -7,7 +7,7 @@ namespace MammothPHP\WoollyM;
 use BadMethodCallException;
 use Closure;
 use Iterator;
-use MammothPHP\WoollyM\Exceptions\{InvalidSelectException, MethodNotExistException, NotYetImplementedException, PropertyNotExistException};
+use MammothPHP\WoollyM\Exceptions\{InvalidSelectException, NotYetImplementedException, PropertyNotExistException};
 use MammothPHP\WoollyM\Stats\Modules;
 use WeakMap;
 use WeakReference;

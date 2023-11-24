@@ -6,6 +6,7 @@ namespace MammothPHP\WoollyM;
 
 use Closure;
 use MammothPHP\WoollyM\Exceptions\{DataFrameException, MethodNotAvailableInColumnContextException, MethodNotExistException, NotYetImplementedException, PropertyNotExistException};
+use Override;
 use Stringable;
 use WeakReference;
 
@@ -19,11 +20,13 @@ class ColumnRepresentation extends Select implements Stringable
         $this->df = WeakReference::create($columnIndex->df->get());
     }
 
+    #[Override]
     public function isAlive(): bool
     {
         return $this->columnIndex->get() !== null && parent::isAlive();
     }
 
+    #[Override]
     public function __get(string $name): mixed
     {
         if ($name === 'name') {
@@ -34,6 +37,7 @@ class ColumnRepresentation extends Select implements Stringable
     }
 
     // Implement property & methods overloading
+    #[Override]
     public function __set(string $name, mixed $value): void
     {
         $this->isAliveOrThrowInvalidSelectException();
@@ -54,6 +58,7 @@ class ColumnRepresentation extends Select implements Stringable
         return $this->columnIndex->get()->name;
     }
 
+    #[Override]
     public function getSelect(): array
     {
         return [$this->getName()];
@@ -147,16 +152,19 @@ class ColumnRepresentation extends Select implements Stringable
     }
 
     // Cancel some Select methods
+    #[Override]
     public function select(string ...$selections): never
     {
         throw new MethodNotAvailableInColumnContextException;
     }
 
+    #[Override]
     public function replaceSelect(string ...$selections): never
     {
         throw new MethodNotAvailableInColumnContextException;
     }
 
+    #[Override]
     public function resetSelect(string ...$selections): never
     {
         throw new MethodNotAvailableInColumnContextException;
