@@ -6,7 +6,7 @@ namespace MammothPHP\WoollyM\Stats\Modules;
 
 class Min extends MinMaxMaxAbstract
 {
-    public const NAME = 'min';
+    public const string NAME = 'min';
 
     protected function compare(mixed $a, mixed $b): bool
     {

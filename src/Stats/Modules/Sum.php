@@ -9,7 +9,7 @@ use MammothPHP\WoollyM\Stats\{StatsMethodInterface, StatsPropertyInterface};
 
 class Sum implements StatsMethodInterface, StatsPropertyInterface
 {
-    public const NAME = 'sum';
+    public const string NAME = 'sum';
 
     public function executeProperty(Select $select): int|float
     {

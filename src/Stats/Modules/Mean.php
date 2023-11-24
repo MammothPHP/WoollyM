@@ -10,7 +10,7 @@ use MammothPHP\WoollyM\Stats\{StatsMethodInterface, StatsPropertyInterface};
 
 class Mean implements StatsMethodInterface, StatsPropertyInterface
 {
-    public const NAME = 'mean';
+    public const string NAME = 'mean';
 
     public function executeProperty(Select $select): int|float
     {

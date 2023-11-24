@@ -65,6 +65,6 @@ final class JSON
     {
         Options::setDefaultOptions($options, $this->defaultOptions);
 
-        return json_decode($jsonString, true);
+        return json_decode(json: $jsonString, associative: true, flags: \JSON_THROW_ON_ERROR);
     }
 }

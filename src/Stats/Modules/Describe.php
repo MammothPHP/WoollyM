@@ -9,7 +9,7 @@ use MammothPHP\WoollyM\Stats\{StatsMethodInterface, StatsPropertyInterface};
 
 class Describe implements StatsMethodInterface
 {
-    public const NAME = 'describe';
+    public const string NAME = 'describe';
 
     public function executeMethod(Select $select, array $arguments): array
     {

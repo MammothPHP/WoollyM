@@ -6,5 +6,5 @@ namespace MammothPHP\WoollyM\Stats;
 
 interface StatsInterface
 {
-    public const NAME = null;
+    public const string NAME = '';
 }

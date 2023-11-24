@@ -10,9 +10,9 @@ use SplObjectStorage;
 
 class CountDistinct implements StatsMethodInterface, StatsPropertyInterface
 {
-    public const NAME = 'countDistinct';
-    public const HASH_ALGO = 'sha3-256';
-    public const HASH_START_AT = 256;
+    public const string NAME = 'countDistinct';
+    public const string HASH_ALGO = 'sha3-256';
+    public const int HASH_START_AT = 256;
 
     public function executeProperty(Select $select): int|float
     {

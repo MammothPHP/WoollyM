@@ -6,5 +6,5 @@ namespace MammothPHP\WoollyM\Stats\Modules;
 
 class Average extends Mean
 {
-    public const NAME = 'average';
+    public const string NAME = 'average';
 }

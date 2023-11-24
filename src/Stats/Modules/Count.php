@@ -9,7 +9,7 @@ use MammothPHP\WoollyM\Stats\{StatsMethodInterface, StatsPropertyInterface};
 
 class Count implements StatsMethodInterface, StatsPropertyInterface
 {
-    public const NAME = 'count';
+    public const string NAME = 'count';
 
     public function executeProperty(Select $select): int|float
     {
