@@ -11,6 +11,8 @@ use SplObjectStorage;
 class CountDistinct implements StatsMethodInterface, StatsPropertyInterface
 {
     public const NAME = 'countDistinct';
+    public const HASH_ALGO = 'sha3-256';
+    public const HASH_START_AT = 256;
 
     public function executeProperty(Select $select): int|float
     {
@@ -29,6 +31,7 @@ class CountDistinct implements StatsMethodInterface, StatsPropertyInterface
         $distinctObject = new SplObjectStorage;
         $hasTrue = 0;
         $hasFalse = 0;
+        $distinctHash = [];
 
         foreach ($select as $record) {
             foreach ($record as $value) {
@@ -41,11 +44,15 @@ class CountDistinct implements StatsMethodInterface, StatsPropertyInterface
                 } elseif (\is_float($value)) {
                     $distinctFloat[] = $value;
                 } elseif (\is_scalar($value)) {
-                    $distinctScalar[$value] = null;
+                    if (\is_string($value) && (\strlen($value) * 8) > static::HASH_START_AT) {
+                        $distinctHash[hash(static::HASH_ALGO, $value, true)] = null;
+                    } else {
+                        $distinctScalar[$value] = null;
+                    }
                 }
             }
         }
 
-        return $hasTrue + $hasFalse + \count($distinctObject) + \count(array_unique($distinctFloat)) + \count($distinctScalar);
+        return $hasTrue + $hasFalse + \count($distinctObject) + \count(array_unique($distinctFloat)) + \count($distinctScalar) + \count($distinctHash);
     }
 }
