@@ -45,7 +45,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
 
     protected DataDriverInterface $data;
     protected array $columnIndexes = [];
-    protected WeakMap $columnRepresentations;
+    protected readonly WeakMap $columnRepresentations;
 
     public function __construct(array $data = [], ?string $dataDriver = null)
     {
@@ -73,6 +73,9 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
             $index = new ColumnIndex($index->name, $this);
             $this->createColumnRepresentation($index);
         }
+
+        // Driver Iterator
+        $this->driverIterator = null;
     }
 
 
@@ -689,7 +692,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      ********************************************* Iterator Implementation *********************************************
      ******************************************************************************************************************/
 
-    protected Iterator $driverIterator;
+    protected ?Iterator $driverIterator;
 
     protected function initDriverIterator(): void
     {
