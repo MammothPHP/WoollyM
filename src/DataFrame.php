@@ -4,17 +4,41 @@ declare(strict_types=1);
 
 namespace MammothPHP\WoollyM;
 
+use MammothPHP\WoollyM\Exceptions\FileExistsException;
 use MammothPHP\WoollyM\IO\{CSV, FWF, HTML, JSON, SQL, XLSX};
 use PDO;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use SplFileInfo;
+use SplFileObject;
 
 class DataFrame extends DataFrameCore
 {
+    protected static function initFileObject (string|SplFileInfo $path, bool $mustBeWritable = false): SplFileObject
+    {
+        $file = ($path instanceof SplFileInfo) ? $path : new \SplFileInfo($path);
+
+        if ($file->isFile()) {
+            throw new FileExistsException("File {$path} exists.");
+        }
+
+        if (!$file->isReadable()) {
+            throw new FileExistsException("File {$path} not readable.");
+        }
+
+        if ($mustBeWritable && !$file->isWritable()) {
+            throw new FileExistsException("File {$path} not writable.");
+        }
+
+        if (!$file instanceof SplFileObject) {
+           $file = $file->openFile($mustBeWritable ? 'w+' : 'r');
+        }
+
+        return $file;
+    }
+
     /**
      * Factory method for creating a DataFrame from a CSV file.
-     * @param  $fileName
-     * @param  array $options
      * @return DataFrame
      * @since  0.1.0
      */

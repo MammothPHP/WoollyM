@@ -74,7 +74,7 @@ class XLSX
      * @throws \PhpOffice\PhpSpreadsheet\Exception
      * @since  0.3.0
      */
-    public static function saveToWorksheet(Spreadsheet &$excel, string $worksheetTitle, array $data, array $columns): Worksheet
+    public static function saveToWorksheet(Spreadsheet $excel, string $worksheetTitle, array $data, array $columns): Worksheet
     {
         // Check if this is a brand new spreadsheet
         if ($excel->getSheetCount() === 1) {

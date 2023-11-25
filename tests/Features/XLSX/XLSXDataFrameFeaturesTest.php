@@ -5,7 +5,7 @@ use MammothPHP\WoollyM\DataFrame;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
-test('load x l s x', function (): void {
+test('load xlsx', function (): void {
     $fileName = __DIR__ . \DIRECTORY_SEPARATOR . 'TestFiles' . \DIRECTORY_SEPARATOR . 'test.xlsx';
 
     // Suppress warning coming from PHPExcel date/time nonsense
@@ -50,7 +50,7 @@ test('load x l s x', function (): void {
     expect($xlsx)->toEqual($assertion_array);
 });
 
-test('to x l s x', function (): void {
+test('to xlsx', function (): void {
     $fileName = __DIR__ . \DIRECTORY_SEPARATOR . 'TestFiles' . \DIRECTORY_SEPARATOR . 'test_to.xlsx';
 
     if (file_exists($fileName)) {
