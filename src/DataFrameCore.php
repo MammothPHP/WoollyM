@@ -16,15 +16,6 @@ use MammothPHP\WoollyM\DataDrivers\PhpArray\PhpArrayDriver;
 use PDO;
 use WeakMap;
 
-/**
- * The DataFrameCore class acts as the implementation for the various data manipulation features of the DataFrame class.
- * @package   MammothPHP\WoollyM
- * @author    Howard Gehring <hwgehring@gmail.com>
- * @copyright 2015 Howard Gehring <hwgehring@gmail.com>
- * @license   https://github.com/HWGehring/MammothPHP\WoollyM/blob/master/LICENSE BSD-3-Clause
- * @link      https://github.com/HWGehring/MammothPHP\WoollyM
- * @since     0.1.0
- */
 abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
 {
     public static string $defaultDataDriverClass = PhpArrayDriver::class;

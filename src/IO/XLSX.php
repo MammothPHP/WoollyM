@@ -2,31 +2,11 @@
 
 declare(strict_types=1);
 
-/**
- * Contains the XLSX class.
- * @package   DataFrame
- * @author    Howard Gehring <hwgehring@gmail.com>
- * @copyright 2015 Howard Gehring <hwgehring@gmail.com>
- * @license   https://github.com/HWGehring/MammothPHP\WoollyM/blob/master/LICENSE BSD-3-Clause
- * @link      https://github.com/HWGehring/MammothPHP\WoollyM
- * @since     0.3.0
- */
-
 namespace MammothPHP\WoollyM\IO;
 
 use PhpOffice\PhpSpreadsheet\{IOFactory, Spreadsheet};
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-/**
- * The XLSX class contains implementation details for reading and writing data to and from instances of PHPExcel,
- * Worksheet, and the XLSX file format in general.
- * @package   MammothPHP\WoollyM\IO
- * @author    Howard Gehring <hwgehring@gmail.com>
- * @copyright 2015 Howard Gehring <hwgehring@gmail.com>
- * @license   https://github.com/HWGehring/MammothPHP\WoollyM/blob/master/LICENSE BSD-3-Clause
- * @link      https://github.com/HWGehring/MammothPHP\WoollyM
- * @since     0.3.0
- */
 class XLSX
 {
     private $defaultOptions = [
