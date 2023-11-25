@@ -14,16 +14,7 @@ declare(strict_types=1);
 
 namespace MammothPHP\WoollyM\IO;
 
-/**
- * The FWF class contains implementation details for reading and writing files in the fixed-width format.
- * @package   MammothPHP\WoollyM\IO
- * @author    Howard Gehring <hwgehring@gmail.com>
- * @copyright 2015 Howard Gehring <hwgehring@gmail.com>
- * @license   https://github.com/HWGehring/MammothPHP\WoollyM/blob/master/LICENSE BSD-3-Clause
- * @link      https://github.com/HWGehring/MammothPHP\WoollyM
- * @since     0.1.0
- */
-final class FWF
+class FWF
 {
     private $defaultOptions = [
         'include' => null,

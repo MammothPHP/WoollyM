@@ -2,30 +2,11 @@
 
 declare(strict_types=1);
 
-/**
- * Contains the JSON class.
- * @package   DataFrame
- * @author    Howard Gehring <hwgehring@gmail.com>
- * @copyright 2015 Howard Gehring <hwgehring@gmail.com>
- * @license   https://github.com/HWGehring/MammothPHP\WoollyM/blob/master/LICENSE BSD-3-Clause
- * @link      https://github.com/HWGehring/MammothPHP\WoollyM
- * @since     0.4.0
- */
-
 namespace MammothPHP\WoollyM\IO;
 
 use MammothPHP\WoollyM\Exceptions\NotYetImplementedException;
 
-/**
- * The JSON class contains implementation details for encoding and decoding a DataFrame into and from a JSON string.
- * @package   MammothPHP\WoollyM\IO
- * @author    Howard Gehring <hwgehring@gmail.com>
- * @copyright 2015 Howard Gehring <hwgehring@gmail.com>
- * @license   https://github.com/HWGehring/MammothPHP\WoollyM/blob/master/LICENSE BSD-3-Clause
- * @link      https://github.com/HWGehring/MammothPHP\WoollyM
- * @since     0.4.0
- */
-final class JSON
+class JSON
 {
     private $defaultOptions = [
         'pretty' => false,

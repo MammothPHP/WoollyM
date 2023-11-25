@@ -17,16 +17,7 @@ namespace MammothPHP\WoollyM\IO;
 use MammothPHP\WoollyM\Exceptions\NotYetImplementedException;
 use Gajus\Dindent\Indenter;
 
-/**
- * The HTML class contains implementation details for transforming two-dimensional arrays into HTML tables.
- * @package   MammothPHP\WoollyM\IO
- * @author    Howard Gehring <hwgehring@gmail.com>
- * @copyright 2015 Howard Gehring <hwgehring@gmail.com>
- * @license   https://github.com/HWGehring/MammothPHP\WoollyM/blob/master/LICENSE BSD-3-Clause
- * @link      https://github.com/HWGehring/MammothPHP\WoollyM
- * @since     0.1.0
- */
-final class HTML
+class HTML
 {
     private $defaultOptions = [
         'pretty' => false,

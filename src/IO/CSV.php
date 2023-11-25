@@ -17,16 +17,7 @@ namespace MammothPHP\WoollyM\IO;
 use MammothPHP\WoollyM\Exceptions\{FileExistsException, InvalidSelectException};
 use RuntimeException;
 
-/**
- * The CSV class contains implementation details for reading and writing files in the CSV format.
- * @package   MammothPHP\WoollyM\IO
- * @author    Howard Gehring <hwgehring@gmail.com>
- * @copyright 2015 Howard Gehring <hwgehring@gmail.com>
- * @license   https://github.com/HWGehring/MammothPHP\WoollyM/blob/master/LICENSE BSD-3-Clause
- * @link      https://github.com/HWGehring/MammothPHP\WoollyM
- * @since     0.1.0
- */
-final class CSV
+class CSV
 {
     private $defaultOptions = [
         'sep' => null,

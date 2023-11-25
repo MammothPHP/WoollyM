@@ -21,16 +21,7 @@ use RecursiveArrayIterator;
 use RecursiveIteratorIterator;
 use RuntimeException;
 
-/**
- * The SQL class contains implementation details for reading and writing data to and from relational databases.
- * @package   MammothPHP\WoollyM\IO
- * @author    Howard Gehring <hwgehring@gmail.com>
- * @copyright 2015 Howard Gehring <hwgehring@gmail.com>
- * @license   https://github.com/HWGehring/MammothPHP\WoollyM/blob/master/LICENSE BSD-3-Clause
- * @link      https://github.com/HWGehring/MammothPHP\WoollyM
- * @since     0.2.0
- */
-final class SQL
+class SQL
 {
     private $defaultOptions = [
         'chunksize' => 5000,

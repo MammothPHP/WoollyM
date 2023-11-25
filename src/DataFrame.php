@@ -19,17 +19,7 @@ use PDO;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-/**
- * The DataFrame class acts as an interface to various underlying data structure, file format, and database
- * implementations.
- * @package   MammothPHP\WoollyM
- * @author    Howard Gehring <hwgehring@gmail.com>
- * @copyright 2015 Howard Gehring <hwgehring@gmail.com>
- * @license   https://github.com/HWGehring/MammothPHP\WoollyM/blob/master/LICENSE BSD-3-Clause
- * @link      https://github.com/HWGehring/MammothPHP\WoollyM
- * @since     0.1.0
- */
-final class DataFrame extends DataFrameCore
+class DataFrame extends DataFrameCore
 {
     /**
      * Factory method for creating a DataFrame from a CSV file.

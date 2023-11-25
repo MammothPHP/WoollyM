@@ -16,6 +16,7 @@ class Select implements Iterator
 {
     protected WeakReference $df;
 
+    protected bool $selectAllMode = false;
     protected WeakMap $select;
     protected array $where = [];
     protected ?int $limit = null;

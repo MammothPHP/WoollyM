@@ -154,6 +154,13 @@ it('can select all', function (): void {
     expect($select->config(SelectParam::SELECT))->toBe(['colA', 'colB', 'colC']);
 });
 
+it('keep select all', function (): void {
+    $select = $this->df->selectAll();
+    $this->df->addColumn('colD');
+
+    expect($select->config(SelectParam::SELECT))->toBe(['colA', 'colB', 'colC', 'colD']);
+})->todo(); // Maybe...
+
 it('throw an exception if module method not exist', function (): void {
     $this->df->selectAll()->bidule();
 })->throws(BadMethodCallException::class, 'Call to undefined method bidule()');
