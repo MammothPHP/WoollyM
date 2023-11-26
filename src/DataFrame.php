@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace MammothPHP\WoollyM;
 
 use MammothPHP\WoollyM\Exceptions\FileExistsException;
-use MammothPHP\WoollyM\IO\{CSV, FWF, HTML, JSON, SQL, XLSX};
+use MammothPHP\WoollyM\IO\{CSV, CSV2, FWF, HTML, JSON, SQL, XLSX};
 use PDO;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
@@ -14,7 +14,7 @@ use SplFileObject;
 
 class DataFrame extends DataFrameCore
 {
-    protected static function initFileObject (string|SplFileInfo $path, bool $mustBeWritable = false): SplFileObject
+    protected static function initFileObject(string|SplFileInfo $path, bool $mustBeWritable = false): SplFileObject
     {
         $file = ($path instanceof SplFileInfo) ? $path : new \SplFileInfo($path);
 
@@ -31,7 +31,7 @@ class DataFrame extends DataFrameCore
         }
 
         if (!$file instanceof SplFileObject) {
-           $file = $file->openFile($mustBeWritable ? 'w+' : 'r');
+            $file = $file->openFile($mustBeWritable ? 'w+' : 'r');
         }
 
         return $file;
@@ -42,12 +42,27 @@ class DataFrame extends DataFrameCore
      * @return DataFrame
      * @since  0.1.0
      */
-    public static function fromCSV(string $fileName, array $options = []): self
-    {
-        $csv = new CSV($fileName);
-        $data = $csv->loadFile($options);
+    public static function fromCSV(
+        mixed $input,
+        string $delimiter = CSV2::DEFAULT_DELIMITER,
+        string $enclosure = CSV2::DEFAULT_ENCLOSURE,
+        string $escape = CSV2::DEFAULT_ESCAPE,
+        ?int $headerOffset = CSV2::DEFAULT_HEADER_OFFSET,
+        ?array $columns = null,
+        ?array $onlyColumns = null,
+        ?array $mapping = null,
+    ): self {
+        $csv = new CSV2(new self);
 
-        return new self($data);
+        $csv->delimiter = $delimiter;
+        $csv->enclosure = $enclosure;
+        $csv->escape = $escape;
+        $csv->headerOffset = $headerOffset;
+        $csv->columns = $columns;
+        $csv->onlyColumns = $onlyColumns;
+        $csv->mapping = $mapping;
+
+        return $csv->importFrom($input);
     }
 
     /**

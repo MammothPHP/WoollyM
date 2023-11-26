@@ -3,7 +3,7 @@
 declare(strict_types=1);
 use MammothPHP\WoollyM\DataFrame;
 
-test('from c s v', function (): void {
+test('from csv', function (): void {
     $fileName = __DIR__ . \DIRECTORY_SEPARATOR . 'TestFiles' . \DIRECTORY_SEPARATOR . 'testCSV.csv';
 
     $df = DataFrame::fromCSV($fileName);
@@ -14,24 +14,10 @@ test('from c s v', function (): void {
     ]);
 });
 
-test('from c s v dirty', function (): void {
-    $fileName = __DIR__ . \DIRECTORY_SEPARATOR . 'TestFiles' . \DIRECTORY_SEPARATOR . 'testCSVdirty.csv';
-
-    $df = DataFrame::fromCSV($fileName, [
-        'include' => '/^([1-9]|a)/',
-        'exclude' => '/^([7]|junk)/',
-    ]);
-
-    expect($df->toArray())->toEqual([
-        ['a' => 1, 'b' => 2, 'c' => 3],
-        ['a' => 4, 'b' => 5, 'c' => 6],
-    ]);
-});
-
-test('from c s v no header', function (): void {
+test('from csv no header', function (): void {
     $fileName = __DIR__ . \DIRECTORY_SEPARATOR . 'TestFiles' . \DIRECTORY_SEPARATOR . 'testCSV.csv';
 
-    $df = DataFrame::fromCSV($fileName, ['columns' => ['x', 'y', 'z']]);
+    $df = DataFrame::fromCSV(input: $fileName, headerOffset: null, columns: ['x', 'y', 'z']);
 
     expect($df->toArray())->toEqual([
         ['x' => 'a', 'y' => 'b', 'z' => 'c'],
@@ -40,16 +26,17 @@ test('from c s v no header', function (): void {
     ]);
 });
 
-test('from c s vcol map', function (): void {
+test('from csvcol map', function (): void {
     $fileName = __DIR__ . \DIRECTORY_SEPARATOR . 'TestFiles' . \DIRECTORY_SEPARATOR . 'testCSV.csv';
 
-    $df = DataFrame::fromCSV($fileName, [
-        'colmap' => [
+    $df = DataFrame::fromCSV(
+        input: $fileName,
+        mapping: [
             'a' => 'x',
             'b' => 'y',
             'c' => 'z',
         ],
-    ]);
+    );
 
     expect($df->toArray())->toEqual([
         ['x' => 1, 'y' => 2, 'z' => 3],
@@ -57,38 +44,41 @@ test('from c s vcol map', function (): void {
     ]);
 });
 
-test('c s v mapping alias', function (): void {
+test('csv mapping alias', function (): void {
     $fileName = __DIR__ . \DIRECTORY_SEPARATOR . 'TestFiles' . \DIRECTORY_SEPARATOR . 'testCSV.csv';
 
-    $df1 = DataFrame::fromCSV($fileName, [
-        'colmap' => [
+    $df1 = DataFrame::fromCSV(
+        input: $fileName,
+        mapping: [
             'a' => 'x',
             'b' => 'y',
             'c' => 'z',
         ],
-    ]);
+    );
 
-    $df2 = DataFrame::fromCSV($fileName, [
-        'mapping' => [
+    $df2 = DataFrame::fromCSV(
+        input: $fileName,
+        mapping: [
             'a' => 'x',
             'b' => 'y',
             'c' => 'z',
         ],
-    ]);
+    );
 
     expect($df2->toArray())->toEqual($df1->toArray());
 });
 
-test('from c s vcol map to null', function (): void {
+test('from csvcol map to null', function (): void {
     $fileName = __DIR__ . \DIRECTORY_SEPARATOR . 'TestFiles' . \DIRECTORY_SEPARATOR . 'testCSV.csv';
 
-    $df = DataFrame::fromCSV($fileName, [
-        'colmap' => [
+    $df = DataFrame::fromCSV(
+        input: $fileName,
+        mapping: [
             'a' => 'x',
             'b' => null,
             'c' => 'z',
         ],
-    ]);
+    );
 
     expect($df->toArray())->toEqual([
         ['x' => 1, 'z' => 3],
@@ -96,18 +86,19 @@ test('from c s vcol map to null', function (): void {
     ]);
 });
 
-test('from c s vcol map to null2', function (): void {
+test('from csvcol map to null2', function (): void {
     $fileName = __DIR__ . \DIRECTORY_SEPARATOR . 'TestFiles' . \DIRECTORY_SEPARATOR . 'testCSV.csv';
 
-    $df = DataFrame::fromCSV($fileName, [
-        'colmap' => [
+    $df = DataFrame::fromCSV(
+        input: $fileName,
+        mapping: [
             'a' => 'x',
             'b' => null,
             'c' => 'z',
             'doesnt_exist' => 'b',
             'doesnt_exist_either' => null,
         ],
-    ]);
+    );
 
     expect($df->toArray())->toEqual([
         ['x' => 1, 'z' => 3],
@@ -115,7 +106,7 @@ test('from c s vcol map to null2', function (): void {
     ]);
 });
 
-test('save c s v', function (): void {
+test('save csv', function (): void {
     $fileName = __DIR__ . \DIRECTORY_SEPARATOR . 'TestFiles' . \DIRECTORY_SEPARATOR . 'testCSVSave.csv';
     if (file_exists($fileName)) {
         unlink($fileName);
