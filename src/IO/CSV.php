@@ -4,262 +4,157 @@ declare(strict_types=1);
 
 namespace MammothPHP\WoollyM\IO;
 
-use MammothPHP\WoollyM\Exceptions\{FileExistsException, InvalidSelectException};
-use RuntimeException;
+use League\Csv\{AbstractCsv, Reader, Writer};
+use MammothPHP\WoollyM\DataFrame;
+use MammothPHP\WoollyM\Exceptions\{FileExistsException, NotYetImplementedException};
+use SplFileInfo;
+use SplFileObject;
 
 class CSV
 {
-    private $defaultOptions = [
-        'sep' => null,
-        'nlsep' => "\n",
-        'columns' => null,
-        'colline' => 0,
-        'colmap' => null,
-        'mapping' => null,
-        'quote' => '"',
-        'escape' => '\\',
-        'overwrite' => false,
-        'include' => null,
-        'exclude' => null,
-    ];
+    public const string DEFAULT_DELIMITER = ',';
+    public string $delimiter = self::DEFAULT_DELIMITER;
 
-    public function __construct(public readonly string $fileName) {}
+    public const string DEFAULT_ENCLOSURE = '"';
+    public string $enclosure = self::DEFAULT_ENCLOSURE;
 
-    /**
-     * Loads the file which the CSV class was instantiated with.
-     * Options include:
-     *      sep:     The CSV separator (default: ,)
-     *      nlsep:   The new line separator (default: \n)
-     *      columns: Optional column names to use (default: null)
-     *      colline: The line of the CSV file where columns are specified (default: 0)
-     *      colmap:  Optional mapping for renaming columns from what they are in the file to what the user wants them
-     *               to be once loaded into memory (default: null)
-     *      mapping: colmap alias
-     *      quote:   The character used to specify literal quoted segments (default: ")
-     *      escape:  The character used to escape quotes or other special characters (default: \)
-     *      include: Whitelist Regular Expression
-     *      exclude: Blacklist Regular Expression
-     * @param  array $options The option map.
-     * @return array Returns multi-dimensional array of row-column strings.
-     * @throws InvalidSelectException
-     * @since  0.1.0
-     */
-    public function loadFile(array $options = [])
+    public const string DEFAULT_ESCAPE = '\\';
+    public string $escape = self::DEFAULT_ESCAPE;
+
+    public const ?int DEFAULT_HEADER_OFFSET = 0;
+    public ?int $headerOffset = self::DEFAULT_HEADER_OFFSET;
+
+    public ?array $columns = null; // only if headeroffset is null
+    public ?array $onlyColumns = null;
+    public ?array $mapping = null;
+
+    public function __construct(public readonly DataFrame $df) {}
+
+    protected function applyOptions(AbstractCsv $csv): void
     {
-        $fileName = $this->fileName;
-        $options = Options::setDefaultOptions($options, $this->defaultOptions);
+        $csv->setDelimiter($this->delimiter);
+        $csv->setEnclosure($this->enclosure);
+        $csv->setEscape($this->escape);
+        $csv instanceof Reader && $csv->setHeaderOffset($this->headerOffset);
+    }
 
-        $sepOpt = $options['sep'];
-        $columnsOpt = $options['columns'];
-        $collineOpt = $options['colline'];
-        $quoteOpt = $options['quote'];
-        $escapeOpt = $options['escape'];
-        $includeRegexOpt = $options['include'];
-        $excludeRegexOpt = $options['exclude'];
+    public function importFrom(mixed $input): DataFrame
+    {
+        if ($input instanceof SplFileInfo) {
+            return self::importFromFileObject($input);
+        } elseif ($input instanceof Reader) {
+            return self::importFromCsvReader($input);
+        } elseif (\is_string($input)) {
+            return self::importFromPath($input);
+        } elseif (\is_resource($input)) {
+            return self::importFromStream($input);
+        } else {
+            throw new NotYetImplementedException('Invalid Input');
+        }
+    }
 
-        $colmapOpt = $options['colmap'] ?? $options['mapping'];
-
-        $fileData = file_get_contents($fileName);
-        $fileData = $this->scrubRawData($fileData, $options);
-
-        if ($sepOpt === null) {
-            $sepOpt = self::autoDetectDelimiter($fileData);
+    public function importFromFileObject(SplFileInfo $file): DataFrame
+    {
+        if (!$file instanceof SplFileObject) {
+            $file = $file->openFile('r');
         }
 
-        /**
-         * Determines how to assign columns of the CSV
-         * First checks if options specify a line of the file to use
-         * Otherwise uses columns specified by user
-         */
-        if ($columnsOpt === null) {
-            $columns = $fileData[$collineOpt];
-            $columns = str_getcsv($columns, $sepOpt, $quoteOpt, $escapeOpt);
-            $columns = array_map('trim', array_map('trim', $columns));
+        $reader = Reader::createFromFileObject($file);
 
-            /**
-             * Rename columns if a colmap exists
-             * Columns which are mapped to null are flagged for removal
-             */
-            if ($colmapOpt !== null) {
-                foreach ($columns as &$column) {
-                    if (array_search($column, array_keys($colmapOpt), true) !== false) {
-                        $column = $colmapOpt[$column];
+        if (!($file->getFlags() & SplFileObject::READ_CSV)) {
+            self::applyOptions($reader);
+        }
+
+        return self::importFromCsvReader($reader);
+    }
+
+    public function importFromPath(string $file): DataFrame
+    {
+        $reader = Reader::createFromPath($file);
+        self::applyOptions($reader);
+
+        return self::importFromCsvReader($reader);
+    }
+
+    public function importFromString(string $input): DataFrame
+    {
+        $reader = Reader::createFromString($input);
+        self::applyOptions($reader);
+
+        return self::importFromCsvReader($reader);
+    }
+
+    public function importFromStream($stream): DataFrame
+    {
+        $reader = Reader::createFromStream($stream);
+        self::applyOptions($reader);
+
+        return self::importFromCsvReader($reader);
+    }
+
+    public function importFromCsvReader(Reader $reader): DataFrame
+    {
+        foreach ($reader->getRecords() as $record) {
+            $newRecord = [];
+
+            if ($this->mapping !== null || $this->onlyColumns !== null) {
+                foreach ($record as $k => $v) {
+                    if ($this->onlyColumns !== null && !\in_array($k, $this->onlyColumns, true)) {
+                        continue;
+                    }
+
+                    if (\array_key_exists($k, $this->mapping)) {
+                        if (!\is_string($this->mapping[$k]) || trim($this->mapping[$k]) === '') {
+                            continue;
+                        }
+
+                        $newRecord[$this->mapping[$k]] = $v;
+                    } else {
+                        $newRecord[$k] = $v;
+                    }
+                }
+            } else {
+                $newRecord = $record;
+            }
+
+            // Columns Renaming (mapping)
+            if ($this->headerOffset === null && $this->columns !== null) {
+                foreach ($newRecord as $k => $v) {
+                    if (\array_key_exists($k, $this->columns) && \is_string($this->columns[$k]) && trim($this->columns[$k]) !== '') {
+                        $newRecord[$this->columns[$k]] = $v;
+                        unset($newRecord[$k]);
                     }
                 }
             }
 
-            unset($fileData[$collineOpt]);
+            $this->df->addRecord($newRecord);
+        }
+
+        return $this->df;
+    }
+
+    public function saveToFile(mixed $file, bool $overwrite = false, bool $writeHeader = true): void
+    {
+        if ($file instanceof SplFileInfo) {
+            $file = Writer::createFromFileObject($file);
+        } elseif ($file instanceof Writer) {
+            // Do nothing
+        } elseif (\is_string($file)) {
+            if (file_exists($file) && !$overwrite) {
+                throw new FileExistsException("Write failed. File {$file} exists.");
+            }
+
+            $file = Writer::createFromPath($file, 'w+');
+        } elseif (\is_resource($file)) {
+            $file = Writer::createFromStream($file);
         } else {
-            $columns = $columnsOpt;
+            throw new NotYetImplementedException('Invalid File');
         }
 
-        $fileData = $includeRegexOpt ? preg_grep($includeRegexOpt, $fileData) : $fileData;
-        $fileData = $excludeRegexOpt ? preg_grep($excludeRegexOpt, $fileData, \PREG_GREP_INVERT) : $fileData;
+        // Header
+        $writeHeader && $file->insertOne($this->df->columnsNames());
 
-        /**
-         * Parses each trimmed line with str_getcsv as an associative array
-         * Skips lines which trim to empty string
-         */
-        foreach ($fileData as $i => $line) {
-            $line = trim($line);
-
-            $line = str_getcsv($line, $sepOpt, $quoteOpt, $escapeOpt);
-
-            if (\count($columns) != \count($line)) {
-                throw new InvalidSelectException("Column count of line {$i} does not match column count of header.");
-            }
-
-            $fileData[$i] = array_map('trim', $this->applyColMapToRowKeys($line, $columns));
-        }
-
-        $fileData = array_values($fileData);
-
-        return $fileData;
-    }
-
-    /**
-     * Will rename the associative array key for a row to its isometric column value. This is done because row elements
-     * initially have no associative array key, but the column array has already been transformed based on user
-     * specification, or the column line of the CSV file.
-     * @param  array $row
-     * @param  array $columns
-     * @return array
-     * @since  0.1.0
-     */
-    private function applyColMapToRowKeys(array $row, array $columns)
-    {
-        $newRow = [];
-
-        foreach ($row as $i => $column) {
-            if ($columns[$i] === null) {
-                /* Skip colums which are associated to null, because they represent row elements which the user
-                 * does not wish to load from their file.
-                 */
-                continue;
-            }
-
-            // Assign the row element an associative key equal to the column it relates to.
-            $newRow[$columns[$i]] = $column;
-        }
-
-        return $newRow;
-    }
-
-    private function scrubRawData($fileData, $options)
-    {
-        $options = Options::setDefaultOptions($options, $this->defaultOptions);
-        $nlsepOpt = $options['nlsep'];
-
-        $fileData = trim($fileData);
-
-        // Remove non-ASCII characters from each line of the file
-        $fileData = preg_replace('/[^[:ascii:]]/', '', $fileData);
-        $fileData = str_replace("\f", '', $fileData); // remove form feed
-
-        $fileData = preg_split("/\r\n|\n|\r|{$nlsepOpt}/", $fileData);
-
-        foreach ($fileData as $i => &$line) {
-            try {
-                $inputEncoding = mb_detect_encoding($line, mb_detect_order(), true);
-                $line = iconv($inputEncoding, 'UTF-8', $line);
-            } catch (\Exception $e) {
-                throw new \Exception("Detected illegal character {$i}: {$line}");
-            }
-        }
-
-        // Remove whitespace/empty lines
-        $fileData = preg_grep('/^\s*$/', $fileData, \PREG_GREP_INVERT);
-
-        return $fileData;
-    }
-
-    /**
-     * Auto detects the delimiter used in a given CSV file from a list of given delimiters.
-     *
-     * @param array $data
-     * @return int|mixed|null|string
-     */
-    private function autoDetectDelimiter(array $data)
-    {
-        $delimiters = [
-            ',',
-            '\t',
-            ';',
-            '|',
-            ':',
-        ];
-
-        $results = [];
-
-        $rowCount = 0;
-        foreach ($data as $row) {
-            $rowCount += 1;
-
-            foreach ($delimiters as $delimiter) {
-                $fields = preg_split('/[' . $delimiter . ']/', $row);
-
-                if (\count($fields) > 1) {
-                    $results[$delimiter] = $results[$delimiter] ?? 0;
-                    $results[$delimiter] += 1;
-                }
-            }
-
-            if ($rowCount === 5) {
-                break;
-            }
-        }
-
-        $delimiter = null;
-        $highestCount = 0;
-        foreach ($results as $result => $count) {
-            if ($count > $highestCount) {
-                $highestCount = $count;
-                $delimiter = $result;
-            }
-        }
-
-        if ($delimiter === null) {
-            throw new RuntimeException("Error: Could not auto-detect CSV delimiter. Please specify 'sep' option where loading CSV.");
-        }
-
-        return $delimiter;
-    }
-
-    /**
-     * Saves the provided two-dimensional array to the file which the CSV class was instantiated with.
-     * Options include:
-     *      sep:       The CSV separator (default: ,)
-     *      quote:     The character used to specify literal quoted segments (default: ")
-     *      overwrite: Boolean option for specifying whether a file which exists should be overwritten (default: false)
-     * @param  array $data
-     * @param  array $options
-     * @throws FileExistsException
-     * @throws \MammothPHP\WoollyM\Exceptions\UnknownOptionException
-     * @since  0.1.0
-     */
-    public function saveFile(array $data, array $options = []): void
-    {
-        $fileName = $this->fileName;
-        $options = Options::setDefaultOptions($options, $this->defaultOptions);
-
-        $overwriteOpt = $options['overwrite'];
-        $sepOpt = $options['sep'] ?? ',';
-        $quoteOpt = $options['quote'];
-        $escapeOpt = $options['escape'];
-
-        if (file_exists($fileName) && $overwriteOpt === false) {
-            throw new FileExistsException("Write failed. File {$fileName} exists.");
-        }
-
-        $file = fopen($fileName, 'w');
-
-        $columns = array_keys($data[0]);
-        fputcsv($file, $columns, $sepOpt, $quoteOpt, $escapeOpt);
-
-        foreach ($data as $row) {
-            fputcsv($file, $row);
-        }
-
-        fclose($file);
+        // Records
+        $file->insertAll($this->df);
     }
 }

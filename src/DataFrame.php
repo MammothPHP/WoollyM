@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace MammothPHP\WoollyM;
 
 use MammothPHP\WoollyM\Exceptions\FileExistsException;
-use MammothPHP\WoollyM\IO\{CSV, CSV2, FWF, HTML, JSON, SQL, XLSX};
+use MammothPHP\WoollyM\IO\{CSV, FWF, HTML, JSON, SQL, XLSX};
 use PDO;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
@@ -44,15 +44,15 @@ class DataFrame extends DataFrameCore
      */
     public static function fromCSV(
         mixed $input,
-        string $delimiter = CSV2::DEFAULT_DELIMITER,
-        string $enclosure = CSV2::DEFAULT_ENCLOSURE,
-        string $escape = CSV2::DEFAULT_ESCAPE,
-        ?int $headerOffset = CSV2::DEFAULT_HEADER_OFFSET,
+        string $delimiter = CSV::DEFAULT_DELIMITER,
+        string $enclosure = CSV::DEFAULT_ENCLOSURE,
+        string $escape = CSV::DEFAULT_ESCAPE,
+        ?int $headerOffset = CSV::DEFAULT_HEADER_OFFSET,
         ?array $columns = null,
         ?array $onlyColumns = null,
         ?array $mapping = null,
     ): self {
-        $csv = new CSV2(new self);
+        $csv = new CSV(new self);
 
         $csv->delimiter = $delimiter;
         $csv->enclosure = $enclosure;
@@ -70,9 +70,9 @@ class DataFrame extends DataFrameCore
      */
     public static function fromTSV(
         mixed $input,
-        string $enclosure = CSV2::DEFAULT_ENCLOSURE,
-        string $escape = CSV2::DEFAULT_ESCAPE,
-        ?int $headerOffset = CSV2::DEFAULT_HEADER_OFFSET,
+        string $enclosure = CSV::DEFAULT_ENCLOSURE,
+        string $escape = CSV::DEFAULT_ESCAPE,
+        ?int $headerOffset = CSV::DEFAULT_HEADER_OFFSET,
         ?array $columns = null,
         ?array $onlyColumns = null,
         ?array $mapping = null,
@@ -100,11 +100,11 @@ class DataFrame extends DataFrameCore
         string $file,
         bool $overwrite = false,
         bool $writeHeader = true,
-        string $delimiter = CSV2::DEFAULT_DELIMITER,
-        string $enclosure = CSV2::DEFAULT_ENCLOSURE,
-        string $escape = CSV2::DEFAULT_ESCAPE,
+        string $delimiter = CSV::DEFAULT_DELIMITER,
+        string $enclosure = CSV::DEFAULT_ENCLOSURE,
+        string $escape = CSV::DEFAULT_ESCAPE,
     ): self {
-        $csv = new CSV2($this);
+        $csv = new CSV($this);
 
         $csv->delimiter = $delimiter;
         $csv->enclosure = $enclosure;
