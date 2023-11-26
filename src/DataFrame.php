@@ -66,6 +66,29 @@ class DataFrame extends DataFrameCore
     }
 
     /**
+     * Factory method for creating a DataFrame from a TSV file.
+     */
+    public static function fromTSV(
+        mixed $input,
+        string $enclosure = CSV2::DEFAULT_ENCLOSURE,
+        string $escape = CSV2::DEFAULT_ESCAPE,
+        ?int $headerOffset = CSV2::DEFAULT_HEADER_OFFSET,
+        ?array $columns = null,
+        ?array $onlyColumns = null,
+        ?array $mapping = null,
+    ): self {
+        return self::fromCSV(
+            input: $input,
+            delimiter: "\t",
+            escape: $escape,
+            headerOffset: $headerOffset,
+            columns: $columns,
+            onlyColumns: $onlyColumns,
+            mapping: $mapping
+        );
+    }
+
+    /**
      * Outputs a DataFrame to a CSV file.
      * @param  $fileName
      * @param  array $options

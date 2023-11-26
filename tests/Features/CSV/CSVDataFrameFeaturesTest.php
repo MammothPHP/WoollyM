@@ -106,6 +106,17 @@ test('from csvcol map to null2', function (): void {
     ]);
 });
 
+test('from tsv', function(): void {
+    $fileName = __DIR__ . \DIRECTORY_SEPARATOR . 'TestFiles' . \DIRECTORY_SEPARATOR . 'testTSV.tsv';
+
+    $df = DataFrame::fromTSV($fileName);
+
+    expect($df->toArray())->toEqual([
+        ['a' => 1, 'b' => 2, 'c' => 3],
+        ['a' => 4, 'b' => 5, 'c' => 6],
+    ]);
+});
+
 test('save csv', function (): void {
     $fileName = __DIR__ . \DIRECTORY_SEPARATOR . 'TestFiles' . \DIRECTORY_SEPARATOR . 'testCSVSave.csv';
     if (file_exists($fileName)) {
