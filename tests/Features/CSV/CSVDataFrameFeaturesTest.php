@@ -106,7 +106,7 @@ test('from csvcol map to null2', function (): void {
     ]);
 });
 
-test('from tsv', function(): void {
+test('from tsv', function (): void {
     $fileName = __DIR__ . \DIRECTORY_SEPARATOR . 'TestFiles' . \DIRECTORY_SEPARATOR . 'testTSV.tsv';
 
     $df = DataFrame::fromTSV($fileName);
@@ -119,18 +119,18 @@ test('from tsv', function(): void {
 
 test('save csv', function (): void {
     $fileName = __DIR__ . \DIRECTORY_SEPARATOR . 'TestFiles' . \DIRECTORY_SEPARATOR . 'testCSVSave.csv';
+
     if (file_exists($fileName)) {
         unlink($fileName);
     }
 
     $df = DataFrame::fromArray([
         ['a' => 1, 'b' => 2, 'c' => 3],
-        ['a' => 4, 'b' => 5, 'c' => 6],
-        ['a' => 7, 'b' => 8, 'c' => 9],
+        ['a' => 4, 'c' => 6, 'b' => 5],
+        ['a' => 7, 'b' => 'hui,t', 'c' => 9],
     ]);
 
-    $q = '"';
-    $df->toCSV($fileName, ['quote' => $q]);
+    $df->toCSV($fileName, overwrite: true, writeHeader: true);
 
     $data = file_get_contents($fileName);
 
@@ -140,7 +140,7 @@ test('save csv', function (): void {
         $this->fail("File should exist but does not: {$fileName}");
     }
 
-    $expected = "a,b,c\n1,2,3\n4,5,6\n7,8,9\n";
+    $expected = "a,b,c\n1,2,3\n4,5,6\n7,\"hui,t\",9\n";
 
-    expect($data)->toEqual($expected);
+    expect($data)->toBe($expected);
 });

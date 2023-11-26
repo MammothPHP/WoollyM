@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace MammothPHP\WoollyM\IO;
 
-use League\Csv\{AbstractCsv, Reader};
+use League\Csv\{AbstractCsv, Reader, Writer};
 use MammothPHP\WoollyM\DataFrame;
-use MammothPHP\WoollyM\Exceptions\NotYetImplementedException;
+use MammothPHP\WoollyM\Exceptions\{FileExistsException, NotYetImplementedException};
 use SplFileInfo;
 use SplFileObject;
 
@@ -131,5 +131,30 @@ class CSV2
         }
 
         return $this->df;
+    }
+
+    public function saveToFile(mixed $file, bool $overwrite = false, bool $writeHeader = true): void
+    {
+        if ($file instanceof SplFileInfo) {
+            $file = Writer::createFromFileObject($file);
+        } elseif ($file instanceof Writer) {
+            // Do nothing
+        } elseif (\is_string($file)) {
+            if (file_exists($file) && !$overwrite) {
+                throw new FileExistsException("Write failed. File {$file} exists.");
+            }
+
+            $file = Writer::createFromPath($file, 'w+');
+        } elseif (\is_resource($file)) {
+            $file = Writer::createFromStream($file);
+        } else {
+            throw new NotYetImplementedException('Invalid File');
+        }
+
+        // Header
+        $writeHeader && $file->insertOne($this->df->columnsNames());
+
+        // Records
+        $file->insertAll($this->df);
     }
 }

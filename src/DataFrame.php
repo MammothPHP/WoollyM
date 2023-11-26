@@ -96,10 +96,21 @@ class DataFrame extends DataFrameCore
      * @throws \MammothPHP\WoollyM\Exceptions\FileExistsException
      * @since  0.1.0
      */
-    public function toCSV(string $fileName, array $options = []): self
-    {
-        $csv = new CSV($fileName);
-        $csv->saveFile($this->toArray(), $options);
+    public function toCSV(
+        string $file,
+        bool $overwrite = false,
+        bool $writeHeader = true,
+        string $delimiter = CSV2::DEFAULT_DELIMITER,
+        string $enclosure = CSV2::DEFAULT_ENCLOSURE,
+        string $escape = CSV2::DEFAULT_ESCAPE,
+    ): self {
+        $csv = new CSV2($this);
+
+        $csv->delimiter = $delimiter;
+        $csv->enclosure = $enclosure;
+        $csv->escape = $escape;
+
+        $csv->saveToFile(file: $file, overwrite: $overwrite, writeHeader: $writeHeader);
 
         return $this;
     }
