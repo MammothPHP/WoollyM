@@ -1,6 +1,6 @@
 <p align="center">
     <picture>
-        <img alt="" width="40%" src="wollym_logo.svg">
+        <img alt="" width="40%" src="woollym_logo.svg">
     </picture>
 </p>
 

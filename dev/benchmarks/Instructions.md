@@ -2,4 +2,4 @@
 
 ``` composer require --dev phpbench/phpbench ```
 
-``` ./vendor/bin/phpbench run Benchmarks/SimpleUsageBench.php --report=default ```
+``` ./vendor/bin/phpbench run dev/benchmarks/StressTestBench.php --report=default ```

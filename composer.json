@@ -1,8 +1,8 @@
 {
-  "name": "archon/dataframe",
-  "description": "Archon: PHP Data Analysis Library",
-  "keywords": ["data", "data analysis", "sql", "csv", "database", "excel"],
-  "homepage": "https://github.com/HWGehring/Archon",
+  "name": "mammothphp/woollym",
+  "description": "WoollyM: PHP Data Analysis Library",
+  "keywords": ["data", "data analysis", "sql", "csv", "database"],
+  "homepage": "https://github.com/MammothPHP/WoollyM",
   "type": "library",
   "license": "BSD-3-Clause",
   "require": {
@@ -11,7 +11,7 @@
     "ext-pdo_sqlite": "*",
     "gajus/dindent": "dev-master",
     "phpoffice/phpspreadsheet": "^1.29",
-    "league/csv": "^9.0"
+    "league/csv": "^9.11"
   },
   "require-dev": {
     "laravel/pint": "^1.13",

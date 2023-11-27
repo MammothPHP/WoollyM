@@ -3,7 +3,6 @@
 ## Dev 2023-10-06
 
 PHPBench (1.2.14) running benchmarks... #standwithukraine
-with configuration file: /Users/julien/Archon/phpbench.json
 with PHP version 8.2.10, xdebug ✔, opcache ✔
 
 \IntensiveUsageBench

@@ -13,7 +13,7 @@ class IntensiveUsageBench
     #[Bench\OutputTimeUnit('milliseconds')]
     public function benchSimpleStressTest1(): void
     {
-        $df = DataFrame::fromArray($model = [[
+        $df = DataFrame::fromArray([$model = [
             'columnName1' => 0,
             'columnName2' => 1,
             'columnName3' => 2,
