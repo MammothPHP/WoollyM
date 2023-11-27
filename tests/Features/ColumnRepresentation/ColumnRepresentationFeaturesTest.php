@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use MammothPHP\WoollyM\{DataFrame, DataFrameCore};
+use MammothPHP\WoollyM\{DataFrame, DataFrameModifiers};
 use MammothPHP\WoollyM\Exceptions\InvalidSelectException;
 
 beforeEach(function (): void {
@@ -64,7 +64,7 @@ it('remove himself', function (): void {
     $colB = $this->df->col('b');
     $return = $colB->remove();
 
-    expect($return)->toBeInstanceOf(DataFrameCore::class);
+    expect($return)->toBeInstanceOf(DataFrameModifiers::class);
     expect($return->columns())->toHaveCount(2);
 
     expect(fn() => $return->col('b'))->toThrow(InvalidSelectException::class);

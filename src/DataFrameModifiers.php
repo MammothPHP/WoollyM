@@ -6,32 +6,14 @@ namespace MammothPHP\WoollyM;
 
 use MammothPHP\WoollyM\Exceptions\DataFrameException;
 use Closure;
-use Countable;
 use Exception;
-use Iterator;
-use ArrayAccess;
 use MammothPHP\WoollyM\DataDrivers\SortableDriverInterface;
 use MammothPHP\WoollyM\DataDrivers\DriversExceptions\SortNotSupportedByDriverException;
 use MammothPHP\WoollyM\Statements\{ColumnRepresentation, Select, SelectAll};
 use PDO;
 
-abstract class DataFrameCore extends DataFrameAccessor implements ArrayAccess, Countable, Iterator
+abstract class DataFrameModifiers extends DataFrameAccessors
 {
-    /* *****************************************************************************************************************
-     ******************************************** Stats ****************************************************************
-     ******************************************************************************************************************/
-
-    public function head(int $length = 5, int $offset = 0, array|string|null $columns = null): array
-    {
-        if (\is_string($columns)) {
-            $columns = [$columns];
-        }
-
-        $select = ($columns === null) ? $this->selectAll() : $this->select(...$columns);
-
-        return $select->limit($length, $offset)->toArray();
-    }
-
     /* *****************************************************************************************************************
      ******************************************* Modifiers ********************************************
      ******************************************************************************************************************/
@@ -172,7 +154,7 @@ abstract class DataFrameCore extends DataFrameAccessor implements ArrayAccess, C
 
         $driver = $pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
         if ($driver === 'sqlite') {
-            $sqlColumns = implode(', ', $this->columnIndexes);
+            $sqlColumns = implode(', ', $this->columnsNames());
         // @codeCoverageIgnoreStart
         } elseif ($driver === 'mysql') {
             $sqlColumns = implode(' VARCHAR(255), ', $this->columnIndexes) . ' VARCHAR(255)';

@@ -7,7 +7,7 @@ namespace MammothPHP\WoollyM\Statements;
 use BadMethodCallException;
 use Closure;
 use Iterator;
-use MammothPHP\WoollyM\{DataFrame, DataFrameCore};
+use MammothPHP\WoollyM\{DataFrame, DataFrameModifiers};
 use MammothPHP\WoollyM\Exceptions\{InvalidSelectException, NotYetImplementedException, PropertyNotExistException};
 use MammothPHP\WoollyM\Stats\Modules;
 use WeakMap;
@@ -40,7 +40,7 @@ class Select implements Iterator
         $this->select = clone $this->select;
     }
 
-    public function getLinkedDataFrame(): DataFrameCore
+    public function getLinkedDataFrame(): DataFrame
     {
         $this->isAliveOrThrowInvalidSelectException();
 

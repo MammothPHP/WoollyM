@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace MammothPHP\WoollyM\Statements;
 
 use Closure;
-use MammothPHP\WoollyM\{ColumnIndex, DataFrame, DataFrameCore, DataType};
+use MammothPHP\WoollyM\{ColumnIndex, DataFrame, DataType};
 use MammothPHP\WoollyM\Exceptions\DataFrameException;
 use Override;
 use Stringable;
@@ -88,7 +88,7 @@ class ColumnRepresentation extends FixedSelect implements Stringable
         return $this;
     }
 
-    public function remove(): DataFrameCore
+    public function remove(): DataFrame
     {
         return $this->getLinkedDataFrame()->removeColumn($this->getName());
     }

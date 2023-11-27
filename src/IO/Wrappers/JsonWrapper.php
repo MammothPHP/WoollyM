@@ -12,7 +12,7 @@ trait JsonWrapper
     /**
      * Factory method for instantiating a DataFrame from a JSON string.
      */
-    public static function fromJSON($jsonString, array $options = []): DataFrame
+    public static function fromJSON($jsonString, array $options = []): self
     {
         $json = new JSON;
         $data = $json->decodeJSON($jsonString, $options);

@@ -6,7 +6,8 @@ namespace MammothPHP\WoollyM;
 
 use MammothPHP\WoollyM\IO\Wrappers\{CsvWrapper, FwfWrapper, HtmlWrapper, JsonWrapper, SqlWrapper, XlsxWrapper};
 
-class DataFrame extends DataFrameCore
+// Hierarchy: DataFramePrimitives > DataFrameAccessors > DataFrameModifiers > DataFrameStatements > DataFrameHelpers
+class DataFrame extends DataFrameHelpers
 {
     use CsvWrapper;
     use FwfWrapper;

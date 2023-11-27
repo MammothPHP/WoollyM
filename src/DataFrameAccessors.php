@@ -10,7 +10,7 @@ use Iterator;
 use ArrayAccess;
 use MammothPHP\WoollyM\Statements\ColumnRepresentation;
 
-abstract class DataFrameAccessor extends DataFramePrimitive implements ArrayAccess, Countable, Iterator
+abstract class DataFrameAccessors extends DataFramePrimitives implements ArrayAccess, Countable, Iterator
 {
     /* *****************************************************************************************************************
      ******************************************** Abstract *************************************************************

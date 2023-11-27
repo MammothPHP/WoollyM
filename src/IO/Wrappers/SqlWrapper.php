@@ -13,7 +13,7 @@ trait SqlWrapper
     /**
      * Factory method for instantiating a DataFrame from a SQL query.
      */
-    public static function fromSQL(string $sqlQuery, PDO $pdo): DataFrame
+    public static function fromSQL(string $sqlQuery, PDO $pdo): self
     {
         $sql = new SQL($pdo);
         $data = $sql->select($sqlQuery);
@@ -27,6 +27,6 @@ trait SqlWrapper
     public function toSQL($tableName, PDO $pdo, array $options = []): void
     {
         $sql = new SQL($pdo);
-        $sql->insertInto($tableName, $this->columnIndexes, $this->toArray(), $options);
+        $sql->insertInto($tableName, $this->columnsNames(), $this->toArray(), $options);
     }
 }

@@ -12,7 +12,7 @@ use MammothPHP\WoollyM\DataDrivers\PhpArray\PhpArrayDriver;
 use MammothPHP\WoollyM\Statements\ColumnRepresentation;
 use WeakMap;
 
-abstract class DataFramePrimitive
+abstract class DataFramePrimitives
 {
     public static string $defaultDataDriverClass = PhpArrayDriver::class;
 
@@ -253,8 +253,8 @@ abstract class DataFramePrimitive
 
         $deletedKey = array_search(
             needle: $columnName,
-            haystack: $this->columnIndexes,
-            strict: false
+            haystack: $this->columnsNames(),
+            strict: true
         );
 
         if ($deletedKey !== false) {

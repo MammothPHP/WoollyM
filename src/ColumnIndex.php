@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace MammothPHP\WoollyM;
 
-use Stringable;
 use WeakReference;
 
-class ColumnIndex implements Stringable
+class ColumnIndex
 {
     public readonly WeakReference $df;
     public ?DataType $forcedType = null;
@@ -15,10 +14,5 @@ class ColumnIndex implements Stringable
     public function __construct(public string $name, DataFrame $df)
     {
         $this->df = WeakReference::create($df);
-    }
-
-    public function __toString(): string
-    {
-        return $this->name;
     }
 }

@@ -14,7 +14,7 @@ trait XlsxWrapper
     /**
      * Factory method for creating a DataFrame from an XLSX worksheet.
      */
-    public static function fromXLSX(string $fileName, array $options = []): DataFrame
+    public static function fromXLSX(string $fileName, array $options = []): self
     {
         $xlsx = new XLSX($fileName);
         $data = $xlsx->loadFile($options);
@@ -27,6 +27,6 @@ trait XlsxWrapper
      */
     public function toXLSXWorksheet(Spreadsheet &$excel, string $worksheetTitle): Worksheet
     {
-        return XLSX::saveToWorksheet($excel, $worksheetTitle, $this->toArray(), $this->columnIndexes);
+        return XLSX::saveToWorksheet($excel, $worksheetTitle, $this->toArray(), $this->columnsNames());
     }
 }

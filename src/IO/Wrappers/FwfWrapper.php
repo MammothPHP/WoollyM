@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace MammothPHP\WoollyM\IO\Wrappers;
 
-use MammothPHP\WoollyM\DataFrame;
 use MammothPHP\WoollyM\IO\FWF;
 
 trait FwfWrapper
@@ -12,7 +11,7 @@ trait FwfWrapper
     /**
      * Factory method for creating a DataFrame from a fixed-width file.
      */
-    public static function fromFWF(string $fileName, array $colSpecs, array $options = []): DataFrame
+    public static function fromFWF(string $fileName, array $colSpecs, array $options = []): self
     {
         $fwf = new FWF($fileName);
         $data = $fwf->loadFile($colSpecs, $options);

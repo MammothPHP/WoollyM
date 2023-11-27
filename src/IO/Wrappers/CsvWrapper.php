@@ -69,7 +69,7 @@ trait CsvWrapper
         string $delimiter = CSV::DEFAULT_DELIMITER,
         string $enclosure = CSV::DEFAULT_ENCLOSURE,
         string $escape = CSV::DEFAULT_ESCAPE,
-    ): DataFrame {
+    ): self {
         $csv = new CSV($this);
 
         $csv->delimiter = $delimiter;
