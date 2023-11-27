@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace MammothPHP\WoollyM;
 
 use Closure;
-use MammothPHP\WoollyM\Exceptions\{DataFrameException, MethodNotAvailableInColumnContextException, MethodNotExistException, NotYetImplementedException, PropertyNotExistException};
+use MammothPHP\WoollyM\Exceptions\DataFrameException;
 use Override;
 use Stringable;
 use WeakReference;
 
-class ColumnRepresentation extends Select implements Stringable
+class ColumnRepresentation extends FixedSelect implements Stringable
 {
     protected readonly WeakReference $columnIndex;
 
@@ -149,24 +149,5 @@ class ColumnRepresentation extends Select implements Stringable
     public function setColumnValue(mixed $value): void
     {
         $this->apply(fn(): mixed => $value);
-    }
-
-    // Cancel some Select methods
-    #[Override]
-    public function select(string ...$selections): never
-    {
-        throw new MethodNotAvailableInColumnContextException;
-    }
-
-    #[Override]
-    public function replaceSelect(string ...$selections): never
-    {
-        throw new MethodNotAvailableInColumnContextException;
-    }
-
-    #[Override]
-    public function resetSelect(string ...$selections): never
-    {
-        throw new MethodNotAvailableInColumnContextException;
     }
 }
