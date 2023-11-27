@@ -24,10 +24,15 @@ class Select implements Iterator
 
     public function __construct(DataFrame $df, string ...$selections)
     {
-        $this->df = WeakReference::create($df);
+        $this->setLinkedDataFrame($df);
         $this->resetSelect();
 
         $this->select(...$selections);
+    }
+
+    protected function setLinkedDataFrame(DataFrame $df): void
+    {
+        $this->df = WeakReference::create($df);
     }
 
     public function __clone(): void

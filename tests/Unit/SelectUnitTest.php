@@ -159,7 +159,7 @@ it('keep select all', function (): void {
     $this->df->addColumn('colD');
 
     expect($select->config(SelectParam::SELECT))->toBe(['colA', 'colB', 'colC', 'colD']);
-})->todo(); // Maybe...
+});
 
 it('throw an exception if module method not exist', function (): void {
     $this->df->selectAll()->bidule();
