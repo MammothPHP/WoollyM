@@ -130,7 +130,7 @@ test('save csv', function (): void {
         ['a' => 7, 'b' => 'hui,t', 'c' => 9],
     ]);
 
-    $df->toCSV($fileName, overwrite: true, writeHeader: true);
+    $df->toCSV(file: $fileName, overwrite: true, writeHeader: true);
 
     $data = file_get_contents($fileName);
 
@@ -140,7 +140,45 @@ test('save csv', function (): void {
         $this->fail("File should exist but does not: {$fileName}");
     }
 
-    $expected = "a,b,c\n1,2,3\n4,5,6\n7,\"hui,t\",9\n";
+    $expected = "a,b,c\n" .
+                "1,2,3\n" .
+                "4,5,6\n" .
+                "7,\"hui,t\",9\n";
 
     expect($data)->toBe($expected);
+});
+
+
+test('save csv with traps', function (): void {
+    $df = DataFrame::fromArray([
+        ['a' => 1, 'c' => 3],
+        ['a' => 4, 'c' => 6, 'b' => 5],
+        ['b' => 'hui,t'],
+    ]);
+
+    // Unordered columns
+    $tempFile = new SplTempFileObject;
+    $df->toCSV(file: $tempFile, overwrite: true, writeHeader: true);
+
+    $expected = "a,c,b\n" .
+                "1,3,\n" .
+                "4,6,5\n" .
+                ",,\"hui,t\"\n";
+
+    $tempFile->rewind();
+    expect($tempFile->fread(1024))->toBe($expected);
+
+    // Sort Columns
+    $df->sortColumns();
+
+    $tempFile = new SplTempFileObject;
+    $df->toCSV(file: $tempFile, overwrite: true, writeHeader: true);
+
+    $expected = "a,b,c\n" .
+                "1,,3\n" .
+                "4,5,6\n" .
+                ",\"hui,t\",\n";
+
+    $tempFile->rewind();
+    expect($tempFile->fread(1024))->toBe($expected);
 });

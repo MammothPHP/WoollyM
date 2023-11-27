@@ -24,6 +24,8 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      *********************************************** Core Implementation ***********************************************
      ******************************************************************************************************************/
 
+    public bool $fillInNonExistentsCol = false;
+
     protected DataDriverInterface $data;
     protected array $columnIndexes = [];
     protected readonly WeakMap $columnRepresentations;
@@ -186,8 +188,14 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
     {
         $r = [];
 
-        foreach ($abstractRecord as $k => $v) {
-            $r[$this->columnIndexes[$k]->name] = $v;
+        foreach ($this->columnsNames() as $ck => $cn) {
+            $keyExist = \array_key_exists($ck, $abstractRecord);
+
+            if ($this->fillInNonExistentsCol && !$keyExist) {
+                $r[$cn] = null;
+            } elseif ($keyExist) {
+                $r[$cn] = $abstractRecord[$ck];
+            }
         }
 
         return $r;
@@ -394,15 +402,21 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
 
     /**
      * Adds multiple columns to the DataFrame.
-     *
-     * @internal
-     * @since 1.0.1
      */
     public function addColumns(array $columnNames): self
     {
         foreach ($columnNames as $columnName) {
             $this->addColumn($columnName);
         }
+
+        return $this;
+    }
+
+    public function sortColumns(?Closure $callback = null): self
+    {
+        $callback ??= fn(ColumnIndex $a, ColumnIndex $b): int => $a->name <=> $b->name;
+
+        uasort($this->columnIndexes, $callback);
 
         return $this;
     }

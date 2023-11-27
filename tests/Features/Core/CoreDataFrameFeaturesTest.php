@@ -52,6 +52,29 @@ test('remove column', function (): void {
     expect($df->toArray())->toEqual($expected);
 });
 
+test('sort columns', function (): void {
+    $df = new DataFrame([
+        ['c' => 3, 'b' => 2, 'a' => 1],
+        ['a' => 4, 'b' => 5, 'c' => 6],
+        ['a' => 7, 'b' => 8, 'c' => 9],
+    ]);
+
+    expect($df->columnsNames())->toBe([0 => 'c', 1 => 'b', 2 => 'a']);
+    expect($df->toArray())->toBe([
+        ['c' => 3, 'b' => 2, 'a' => 1],
+        ['c' => 6, 'b' => 5, 'a' => 4],
+        ['c' => 9, 'b' => 8, 'a' => 7],
+    ]);
+
+    $df->sortColumns();
+    expect($df->columnsNames())->toBe([2 => 'a', 1 => 'b', 0 => 'c']);
+    expect($df->toArray())->toBe([
+        ['a' => 1, 'b' => 2, 'c' => 3],
+        ['a' => 4, 'b' => 5, 'c' => 6],
+        ['a' => 7, 'b' => 8, 'c' => 9],
+    ]);
+});
+
 test('for each', function (): void {
     foreach ($this->df as $i => $row) {
         expect($this->input[$i])->toEqual($row);

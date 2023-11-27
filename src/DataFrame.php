@@ -97,7 +97,7 @@ class DataFrame extends DataFrameCore
      * @since  0.1.0
      */
     public function toCSV(
-        string $file,
+        mixed $file,
         bool $overwrite = false,
         bool $writeHeader = true,
         string $delimiter = CSV::DEFAULT_DELIMITER,

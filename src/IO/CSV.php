@@ -136,6 +136,10 @@ class CSV
     public function saveToFile(mixed $file, bool $overwrite = false, bool $writeHeader = true): void
     {
         if ($file instanceof SplFileInfo) {
+            if (!$file instanceof SplFileObject) {
+                $file = $file->openFile('w+');
+            }
+
             $file = Writer::createFromFileObject($file);
         } elseif ($file instanceof Writer) {
             // Do nothing
@@ -155,6 +159,11 @@ class CSV
         $writeHeader && $file->insertOne($this->df->columnsNames());
 
         // Records
+        $previousParameter = $this->df->fillInNonExistentsCol;
+        $this->df->fillInNonExistentsCol = true;
+
         $file->insertAll($this->df);
+
+        $this->df->fillInNonExistentsCol = $previousParameter;
     }
 }
