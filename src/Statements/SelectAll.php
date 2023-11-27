@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace MammothPHP\WoollyM;
+namespace MammothPHP\WoollyM\Statements;
 
+use MammothPHP\WoollyM\DataFrame;
 use Override;
 
 class SelectAll extends FixedSelect

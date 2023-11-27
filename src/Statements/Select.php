@@ -2,11 +2,12 @@
 
 declare(strict_types=1);
 
-namespace MammothPHP\WoollyM;
+namespace MammothPHP\WoollyM\Statements;
 
 use BadMethodCallException;
 use Closure;
 use Iterator;
+use MammothPHP\WoollyM\{DataFrame, DataFrameCore};
 use MammothPHP\WoollyM\Exceptions\{InvalidSelectException, NotYetImplementedException, PropertyNotExistException};
 use MammothPHP\WoollyM\Stats\Modules;
 use WeakMap;
@@ -14,9 +15,8 @@ use WeakReference;
 
 class Select implements Iterator
 {
-    protected WeakReference $df;
+    protected readonly WeakReference $df;
 
-    protected bool $selectAllMode = false;
     protected WeakMap $select;
     protected array $where = [];
     protected ?int $limit = null;

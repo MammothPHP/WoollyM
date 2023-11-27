@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-use MammothPHP\WoollyM\{ColumnIndex, ColumnRepresentation, DataFrame};
+use MammothPHP\WoollyM\{ColumnIndex, DataFrame};
 use MammothPHP\WoollyM\Exceptions\{InvalidSelectException, PropertyNotExistException};
+use MammothPHP\WoollyM\Statements\ColumnRepresentation;
 
 beforeEach(function (): void {
     $this->dataFrame = new DataFrame;

@@ -13,6 +13,7 @@ use ArrayAccess;
 use MammothPHP\WoollyM\DataDrivers\{DataDriverInterface, SortableDriverInterface};
 use MammothPHP\WoollyM\DataDrivers\DriversExceptions\{InvalidDriverClassException, KeyNotExistException, SortNotSupportedByDriverException};
 use MammothPHP\WoollyM\DataDrivers\PhpArray\PhpArrayDriver;
+use MammothPHP\WoollyM\Statements\{ColumnRepresentation, Select, SelectAll};
 use PDO;
 use WeakMap;
 

@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace MammothPHP\WoollyM;
+namespace MammothPHP\WoollyM\Statements;
 
 use Closure;
+use MammothPHP\WoollyM\{ColumnIndex, DataFrame, DataFrameCore, DataType};
 use MammothPHP\WoollyM\Exceptions\DataFrameException;
 use Override;
 use Stringable;
@@ -17,7 +18,7 @@ class ColumnRepresentation extends FixedSelect implements Stringable
     public function __construct(ColumnIndex $columnIndex)
     {
         $this->columnIndex = WeakReference::create($columnIndex);
-        $this->df = WeakReference::create($columnIndex->df->get());
+        $this->setLinkedDataFrame($columnIndex->df->get());
     }
 
     #[Override]

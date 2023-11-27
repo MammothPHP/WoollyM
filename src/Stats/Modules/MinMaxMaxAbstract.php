@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace MammothPHP\WoollyM\Stats\Modules;
 
-use MammothPHP\WoollyM\Select;
+use MammothPHP\WoollyM\Statements\Select;
 use MammothPHP\WoollyM\Stats\{StatsMethodInterface, StatsPropertyInterface};
 
 abstract class MinMaxMaxAbstract implements StatsMethodInterface, StatsPropertyInterface

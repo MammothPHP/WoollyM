@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace MammothPHP\WoollyM\Stats;
 
-use MammothPHP\WoollyM\Select;
+use MammothPHP\WoollyM\Statements\Select;
 
 interface StatsMethodInterface extends StatsInterface
 {

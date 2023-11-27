@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-use MammothPHP\WoollyM\{DataFrame, Select, SelectParam};
+use MammothPHP\WoollyM\DataFrame;
 use MammothPHP\WoollyM\Exceptions\{InvalidSelectException, PropertyNotExistException};
+use MammothPHP\WoollyM\Statements\{Select, SelectParam};
 
 beforeEach(function (): void {
     $this->df = DataFrame::fromArray([

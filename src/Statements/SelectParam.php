@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MammothPHP\WoollyM;
+namespace MammothPHP\WoollyM\Statements;
 
 enum SelectParam
 {
