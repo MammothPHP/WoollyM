@@ -21,11 +21,8 @@ class XLSX
      * Options include:
      *      colrow:    The row of the spreadsheet which contains column data (default: 1)
      *      sheetname: The name of the worksheet to load. Defaults to first worksheet (default: null)
-     * @param  array $options
-     * @return array
      * @throws \MammothPHP\WoollyM\Exceptions\UnknownOptionException
      * @throws \PhpOffice\PhpSpreadsheet\Exception
-     * @since  0.3.0
      */
     public function loadFile(array $options): array
     {
@@ -68,11 +65,7 @@ class XLSX
 
     /**
      * Converts the columns and data passed to an XLSX worksheet and adds that worksheet to an instance of PHPExcel
-     * @param  array $data
-     * @param  array $columns
-     * @return \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet
      * @throws \PhpOffice\PhpSpreadsheet\Exception
-     * @since  0.3.0
      */
     public static function saveToWorksheet(Spreadsheet $excel, string $worksheetTitle, array $data, array $columns): Worksheet
     {

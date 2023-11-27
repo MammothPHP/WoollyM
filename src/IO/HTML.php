@@ -31,11 +31,8 @@ class HTML
      *      id:        Specify the CSS id of the HTML table (default: null)
      *      quote:     Specify the character to use for quoting table CSS class and/or CSS id (default: ')
      *      datatable: Options for rendering the table as a DataTable (@see: http://datatables.net) (default: null)
-     * @param  array $options
-     * @return string
      * @throws NotYetImplementedException
      * @throws \MammothPHP\WoollyM\Exceptions\UnknownOptionException
-     * @since  0.1.0
      */
     public function assembleTable(array $options): string
     {
@@ -108,12 +105,6 @@ class HTML
     /**
      * Assembles the <table> tag with CSS class, CSS id, and/or quote options provided.
      * @internal
-     * @param  $class
-     * @param  $id
-     * @param  $quote
-     * @return string
-     * @return string
-     * @since  0.1.1
      */
     private function assembleOpeningTableTag($class, $id, $quote)
     {
@@ -133,12 +124,7 @@ class HTML
 
     /**
      * Assembles DataTable JavaScript for the rendered HTML table.
-     * @param  $datatableOpt string JSON options for passing into the DataTable. It is the responsibility of the user
      * to create these strings as I do not wish to impose any particular JSON parser on the result.
-     * @param  $idOpt
-     * @param  $quoteOpt
-     * @return string
-     * @since  0.1.1
      */
     private function assembleDataTableScript($datatableOpt, $idOpt, $quoteOpt)
     {
@@ -158,11 +144,6 @@ class HTML
 
     /**
      * Returns a function which implodes and wraps an array around the specified HTML tags.
-     * @param  $leftTag
-     * @param  $implodeTag
-     * @param  $rightTag
-     * @return \Closure
-     * @since  0.1.0
      */
     private function fnWrapArray($leftTag, $implodeTag, $rightTag)
     {
@@ -175,10 +156,6 @@ class HTML
 
     /**
      * Returns a function which wraps a string or an array around the specified HTML tags.
-     * @param  $leftTag
-     * @param  $rightTag
-     * @return \Closure
-     * @since  0.1.0
      */
     private function fnWrapText($leftTag, $rightTag)
     {

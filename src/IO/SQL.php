@@ -29,9 +29,6 @@ class SQL
 
     /**
      * Performs a SQL select, returning an associative array of the results.
-     * @param  $sqlQuery
-     * @return array
-     * @since  0.3.0
      */
     public function select($sqlQuery): array
     {
@@ -44,13 +41,7 @@ class SQL
     /**
      * Performs a SQL insert transaction to provided table, crafting the SQL statement using an array of columns
      * and a two-dimensional array of data.
-     * @param  $tableName
-     * @param  array $columns
-     * @param  array $data
-     * @param  array $options
-     * @return int
      * @throws InvalidSelectException
-     * @since  0.2.0
      */
     public function insertInto($tableName, array $columns, array $data, $options = []): int
     {
@@ -91,13 +82,6 @@ class SQL
     /**
      * Transforms and executes a series of prepared statements from a chunked array.
      * @internal
-     * @param  PDO $pdo
-     * @param  $tableName
-     * @param  array $columns
-     * @param  array $data
-     * @param array $options
-     * @return int
-     * @since  0.2.0
      */
     private function insertChunkedData(PDO $pdo, $tableName, array $columns, array $data, array $options): int
     {
@@ -116,12 +100,6 @@ class SQL
     /**
      * Transforms a table string, array of columns, and array of data into a prepared statement.
      * @internal
-     * @param  $tableName
-     * @param  array $columns
-     * @param  array $data
-     * @param array $options
-     * @return string
-     * @since  0.2.0
      */
     private function createPreparedStatement($tableName, array $columns, array $data, array $options): string
     {
@@ -154,9 +132,6 @@ class SQL
     /**
      * Flattens a two-dimensional array into a one-dimensional array.
      * @internal
-     * @param  array $array
-     * @return array
-     * @since  0.2.0
      */
     private function flattenArray(array $array): array
     {
@@ -173,8 +148,6 @@ class SQL
     /**
      * Identifies any missing columns in the database which we may be attempting to insert.
      *
-     * @param array $columns
-     * @param $tableName
      * @throws InvalidSelectException
      */
     private function identifyAnyMissingColumns(array $columns, $tableName): void

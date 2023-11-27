@@ -204,9 +204,6 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      * Applies a user-defined function to each row of the DataFrame. The parameters of the function include the row
      * being iterated over, and optionally the index. ie: apply(function($el, $ix) { ... })
      *
-     * @param  Closure $f
-     * @return DataFrameCore
-     * @since  0.1.0
      */
     public function apply(Closure $f): self
     {
@@ -253,10 +250,6 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      *          3 => [ 'a' => 1, 'b' => 2, 'c' => 3 ],
      *      ]);
      *
-     * @param  array $map keys are row indices, values are static
-     * @param  $column
-     * @return DataFrameCore
-     * @since  0.1.0
      */
     public function applyIndexMap(array $map, ?string $column = null)
     {
@@ -286,9 +279,6 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      * ie:
      *      $df = $df->array_filter(function($row, $index) { ... });
      *
-     * @param  Closure $f
-     * @return DataFrame
-     * @since  0.1.0
      */
     public function array_filter(Closure $f): self
     {
@@ -300,9 +290,6 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      *
      * Table name will always be 'dataframe'
      *
-     * @param $sql
-     * @param PDO $pdo
-     * @return DataFrame
      * @throws DataFrameException
      */
     public function query(string $sql, ?PDO $pdo = null): self
@@ -348,9 +335,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
     /**
      * Assertion that the DataFrame must have the column specified. If not then an exception is thrown.
      *
-     * @param  $columnName
      * @throws InvalidSelectException
-     * @since  0.1.0
      */
     public function mustHaveColumn(string $columnName): self
     {
@@ -364,9 +349,6 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
     /**
      * Returns a boolean of whether the specified column exists.
      *
-     * @param  $columnName
-     * @return bool
-     * @since  0.1.0
      */
     public function hasColumn(ColumnRepresentation|string $column): bool
     {
@@ -386,8 +368,6 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      * Adds a new column to the DataFrame.
      *
      * @internal
-     * @param $columnName
-     * @since 0.1.0
      */
     public function addColumn(string $columnName): self
     {
@@ -423,8 +403,6 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
     /**
      * Removes a column (and all associated data) from the DataFrame.
      *
-     * @param $columnName
-     * @since 0.1.0
      */
     public function removeColumn(string $columnName): self
     {
@@ -456,7 +434,6 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
     /**
      * Allows user to "array_merge" two DataFrames so that the rows of one are appended to the rows of another.
      *
-     * @return $this
      */
     public function append(DataFrame $df): self
     {
@@ -470,9 +447,6 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
     /**
      * Replaces all occurences within the DataFrame of regex $pattern with string $replacement
      *
-     * @param $pattern
-     * @param $replacement
-     * @return DataFrameCore
      */
     public function preg_replace($pattern, $replacement): self
     {
@@ -492,9 +466,6 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      *          'some_date'   => 'DATE'
      *      ], ['Y-m-d'], 'm/d/Y');
      *
-     * @param array $typeMap
-     * @param null|string $fromDateFormat The date format of the input.
-     * @param null|string $toDateFormat The date format of the output.
      * @throws Exception
      */
     public function convertTypes(array $typeMap, array|string|null $fromDateFormat = null, ?string $toDateFormat = null): self
@@ -513,8 +484,6 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
     /**
      * Returns unique values of given column(s)
      *
-     * @param $columns
-     * @return DataFrame
      */
     public function unique(array|string $columns): self
     {
@@ -549,8 +518,6 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
 
     /**
      * Outputs a DataFrame as a two-dimensional associative array.
-     * @return array
-     * @since 0.1.0
      */
     public function toArray(): array
     {
@@ -566,9 +533,6 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
     /**
      * Sort the rows by its values
      *
-     * @param $by string|string[] Columns to sort the values by
-     * @param $ascending bool Sort the values ascending (or if `false` descending)
-     * @return void
      */
     public function sortValues(array|string $by, bool $ascending = true): void
     {
@@ -603,9 +567,6 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      * Provides isset($df['column']) functionality.
      *
      * @internal
-     * @param  mixed $columnName
-     * @return bool
-     * @since  0.1.0
      */
     public function offsetExists(mixed $index): bool
     {
@@ -618,10 +579,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      *      ie: $fooDF = $df['foo'];
      *
      * @internal
-     * @param  mixed $columnName
-     * @return DataFrame
      * @throws InvalidSelectException
-     * @since  0.1.0
      */
     public function offsetGet(mixed $index): mixed
     {
@@ -659,10 +617,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      *          $df[] = [['gender'=>'Female','name'=>'Luy'],['title'=>'Mr','name'=>'Noah']];
      *
      * @internal
-     * @param  mixed $targetColumn
-     * @param  mixed $rightHandSide
      * @throws DataFrameException
-     * @since  0.1.0
      */
     public function offsetSet(mixed $index, mixed $row): void
     {
@@ -673,9 +628,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      * Allows user to remove columns from the DataFrame using unset.
      *      ie: unset($df['column'])
      *
-     * @param  mixed $offset
      * @throws InvalidSelectException
-     * @since  0.1.0
      */
     public function offsetUnset(mixed $offset): void
     {
@@ -697,8 +650,6 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
     * Return the current element
     *
     * @link   http://php.net/manual/en/iterator.current.php
-    * @return mixed Can return any type.
-    * @since  0.1.0
     */
     public function current(): mixed
     {
@@ -709,8 +660,6 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      * Move forward to next element
      *
      * @link   http://php.net/manual/en/iterator.next.php
-     * @return void Any returned value is ignored.
-     * @since  0.1.0
      */
     public function next(): void
     {
@@ -721,8 +670,6 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      * Return the key of the current element
      *
      * @link   http://php.net/manual/en/iterator.key.php
-     * @return mixed scalar on success, or null on failure.
-     * @since  0.1.0
      */
     public function key(): mixed
     {
@@ -733,9 +680,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      * Checks if current recordKey is valid
      *
      * @link   http://php.net/manual/en/iterator.valid.php
-     * @return boolean The return value will be casted to boolean and then evaluated.
      *                 Returns true on success or false on failure.
-     * @since  0.1.0
      */
     public function valid(): bool
     {
@@ -746,8 +691,6 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      * Rewind the Iterator to the first element
      *
      * @link   http://php.net/manual/en/iterator.rewind.php
-     * @return void Any returned value is ignored.
-     * @since  0.1.0
      */
     public function rewind(): void
     {
@@ -762,10 +705,7 @@ abstract class DataFrameCore implements ArrayAccess, Countable, Iterator
      * Count elements of an object
      *
      * @link   http://php.net/manual/en/countable.count.php
-     * @return int The custom count as an integer.
-     *             The return value is cast to an integer.
-     * @since  0.1.0
-     */
+     *      */
     public function count(): int
     {
         return $this->data->count();

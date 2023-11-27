@@ -15,12 +15,8 @@ class JSON
     /**
      * Encodes a DataFrame array into a JSON string.
      *      pretty: Will "prettify" the rendered JSON (default: false)
-     * @param  array $data
-     * @param  array $options
-     * @return string
      * @throws NotYetImplementedException
      * @throws \MammothPHP\WoollyM\Exceptions\UnknownOptionException
-     * @since  0.4.0
      */
     public function encodeJSON(array $data, array $options): string
     {
@@ -36,13 +32,9 @@ class JSON
 
     /**
      * Decodes a JSON string into a DataFrame array.
-     * @param  $jsonString
-     * @param  array $options
-     * @return mixed
      * @throws \MammothPHP\WoollyM\Exceptions\UnknownOptionException
-     * @since  0.4.0
      */
-    public function decodeJSON($jsonString, array $options)
+    public function decodeJSON(string $jsonString, array $options): mixed
     {
         Options::setDefaultOptions($options, $this->defaultOptions);
 
