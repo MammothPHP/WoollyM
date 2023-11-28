@@ -13,13 +13,6 @@ use MammothPHP\WoollyM\Statements\ColumnRepresentation;
 abstract class DataFrameAccessors extends DataFramePrimitives implements ArrayAccess, Countable, Iterator
 {
     /* *****************************************************************************************************************
-     ******************************************** Abstract *************************************************************
-     ******************************************************************************************************************/
-
-    abstract public function col(string $columnName): ColumnRepresentation;
-
-
-    /* *****************************************************************************************************************
      ******************************************** Array Conversion *****************************************************
      ******************************************************************************************************************/
 
@@ -66,16 +59,6 @@ abstract class DataFrameAccessors extends DataFramePrimitives implements ArrayAc
         // }
 
         // return new DataFrame($data);
-    }
-
-    public function setColumn(string $targetColumn, mixed $rightHandSide): self
-    {
-        $this->addColumn($targetColumn);
-        $this->mustHaveColumn($targetColumn);
-
-        $this->col($targetColumn)->set($rightHandSide);
-
-        return $this;
     }
 
     /**

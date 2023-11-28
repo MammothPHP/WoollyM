@@ -31,6 +31,17 @@ abstract class DataFrameModifiers extends DataFrameAccessors
         return $this;
     }
 
+
+    public function setColumn(string $targetColumn, mixed $rightHandSide): self
+    {
+        $this->addColumn($targetColumn);
+        $this->mustHaveColumn($targetColumn);
+
+        $this->col($targetColumn)->set($rightHandSide);
+
+        return $this;
+    }
+
     public function sortColumns(?Closure $callback = null): self
     {
         $callback ??= fn(ColumnIndex $a, ColumnIndex $b): int => $a->name <=> $b->name;
