@@ -78,7 +78,6 @@ $df->addRecord([
 ]);
 
 // equivalent to
-
 $df[] = [
     'a' => 42,
     'b' => 42,
@@ -109,7 +108,6 @@ $df->updateRecord(
 );
 
 // equivalent to
-
 $df[42] = [
     'a' => 42,
     'b' => 42,
@@ -118,11 +116,8 @@ $df[42] = [
 
 #### Unset Record(s)
 ```php
-$df->updateRecord(position: 42);
-
-// equivalent to
-
-unset($df[42]);
+$df->removeRecord(position: 42);
+unset($df[42]); // equivalent
 
 // equivalent to
 $df->filter(fn(array $record, int $position): bool => $position !== 42);
@@ -132,9 +127,10 @@ $df->filter(fn(array $record, int $position): bool => $position !== 42);
 ### Itarating overs records
 
 #### Counting Records
-Counting rows:
+Counting records:
 ```php
 count($df);
+$df->count(); // equivalent
 ```
 
 #### Iterating over rows:
@@ -161,10 +157,7 @@ $df->addColumn('a');
 
 ```php
 $df->removeColumn('a');
-
-// equivalent to
-
-$df->col('a')->remove();
+$df->col('a')->remove(); // equivalent
 ```
 
 #### Getting column name/objects
@@ -195,11 +188,11 @@ $column->name; // 'a'
 
 #### Rename Column
 ```php
-isset($df[42]['colName']); // true
 $col = $df->col('colName')->rename('newName');
+
 $col->name; // 'newName'
-isset($df[42]['colName']); // false
-isset($df[42]['newName']); // true
+$col->getName(); // 'newName'
+
 ```
 
 #### Get column as DataFrame
