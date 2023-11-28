@@ -56,7 +56,7 @@ class ColumnRepresentation extends FixedSelect implements Stringable
     {
         $this->isAliveOrThrowInvalidSelectException();
 
-        return $this->columnIndex->get()->name;
+        return $this->columnIndex->get()->getName();
     }
 
     #[Override]
@@ -83,7 +83,7 @@ class ColumnRepresentation extends FixedSelect implements Stringable
             $this->type($type);
         }
 
-        $this->columnIndex->get()->forcedType = $type;
+        $this->columnIndex->get()->setForcedType($type);
 
         return $this;
     }
@@ -97,7 +97,7 @@ class ColumnRepresentation extends FixedSelect implements Stringable
     {
         $this->isAliveOrThrowInvalidSelectException();
 
-        $this->columnIndex->get()->name = $to;
+        $this->columnIndex->get()->setName($to);
 
         return $this;
     }
@@ -139,7 +139,7 @@ class ColumnRepresentation extends FixedSelect implements Stringable
     public function apply(Closure $f): void
     {
         $target_df = $this->getLinkedDataFrame();
-        $target_colName = $this->columnIndex->get()->name;
+        $target_colName = $this->columnIndex->get()->getName();
 
         foreach ($target_df as $i => $row) {
             $row[$target_colName] = $f($row[$target_colName] ?? null, $i);

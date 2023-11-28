@@ -15,7 +15,7 @@ beforeEach(function (): void {
 it('has coherent names', function (): void {
     expect($this->columnRepresentation->getName())
         ->toBe((string) $this->columnRepresentation)
-        ->toBe($this->columnIndex->name)
+        ->toBe($this->columnIndex->getName())
         ->toBe($this->columnRepresentation->name)
         ->toBe('col1')
     ;

@@ -142,7 +142,7 @@ class Select implements Iterator
         $r = [];
 
         foreach ($this->select as $col => $v) {
-            $r[] = $col->name;
+            $r[] = $col->getName();
         }
 
         return $r;

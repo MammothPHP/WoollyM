@@ -44,9 +44,10 @@ abstract class DataFrameModifiers extends DataFrameAccessors
 
     public function sortColumns(?Closure $callback = null): self
     {
-        $callback ??= fn(ColumnIndex $a, ColumnIndex $b): int => $a->name <=> $b->name;
+        $callback ??= fn(ColumnIndex $a, ColumnIndex $b): int => $a->getName() <=> $b->getName();
 
         uasort($this->columnIndexes, $callback);
+        $this->clearColumnsCache();
 
         return $this;
     }

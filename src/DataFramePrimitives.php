@@ -28,6 +28,9 @@ abstract class DataFramePrimitives
 
     protected ?Iterator $driverIterator;
 
+    protected ?array $columnNamesCache = null;
+    protected ?array $forcedTypesCache = null;
+
     public function __construct(array $data = [], ?string $dataDriver = null)
     {
         $dataDriver ??= self::$defaultDataDriverClass;
@@ -51,7 +54,7 @@ abstract class DataFramePrimitives
         $this->columnRepresentations = new WeakMap;
 
         foreach ($this->columnIndexes as &$index) {
-            $index = new ColumnIndex($index->name, $this);
+            $index = new ColumnIndex($index->getName(), $this);
             $this->createColumnRepresentation($index);
         }
 
@@ -70,23 +73,30 @@ abstract class DataFramePrimitives
         return $this->data->keyExist($recordKey);
     }
 
-    protected function convertRecordToAbstract(array $rowArray): array
+    protected function convertRecordToAbstract(array $recordArray): array
     {
-        $newRow = [];
+        $newRecord = [];
+        $columns = $this->columnsNames();
+        $forcedTypes = $this->getForcedTypesCache();
 
-        foreach ($rowArray as $rowKey => $rowValue) {
-            $this->addColumn($rowKey);
-
-            if ($type = $this->getColumnIndexObject($rowKey)->forcedType) {
-                $rowValue = $type->convert($rowValue);
+        foreach ($recordArray as $recordKey => $recordValue) {
+            if(!in_array($recordKey, $columns, true)) {
+                $this->addColumn($recordKey);
+                $forcedTypes = $this->getForcedTypesCache();
             }
 
-            $newRow[$this->getColumnKey($rowKey)] = $rowValue;
+            $columnKey = $this->getColumnKey($recordKey);
+
+            if ($type = $forcedTypes[$columnKey]) {
+                $recordValue = $type->convert($recordValue);
+            }
+
+            $newRecord[$columnKey] = $recordValue;
         }
 
-        ksort($newRow, \SORT_NUMERIC);
+        // ksort($newRow, \SORT_NUMERIC); // Degrade Performances
 
-        return $newRow;
+        return $newRecord;
     }
 
     public function countColumns(): int
@@ -107,13 +117,29 @@ abstract class DataFramePrimitives
 
     public function columnsNames(): array
     {
-        return array_map(fn(ColumnRepresentation $col): string => $col->getName(), $this->columns());
+        if ($this->columnNamesCache === null) {
+            $this->columnNamesCache = array_map(fn(ColumnIndex $col): string => $col->getName(), $this->columnIndexes);
+        }
+
+        return $this->columnNamesCache;
+    }
+
+    /*
+     *@internal
+     */
+    public function getForcedTypesCache(): array
+    {
+        if ($this->forcedTypesCache === null) {
+            $this->forcedTypesCache = array_map(fn(ColumnIndex $col): ?DataType => $col->getForcedType(), $this->columnIndexes);
+        }
+
+        return $this->forcedTypesCache;
     }
 
     protected function getColumnKey(string $columnName): int
     {
         foreach ($this->columnIndexes as $columnKey => $column) {
-            if ($column->name === $columnName) {
+            if ($column->getName() === $columnName) {
                 return $columnKey;
             }
         }
@@ -226,9 +252,21 @@ abstract class DataFramePrimitives
         if (!$this->hasColumn($columnName)) {
             $this->columnIndexes[] = $newColumnIndex = new ColumnIndex($columnName, $this);
             $this->createColumnRepresentation($newColumnIndex);
+            $this->clearColumnsCache();
         }
 
         return $this;
+    }
+
+    /**
+     * Reset column cache
+     *
+     * @internal
+     */
+    public function clearColumnsCache(): void
+    {
+        $this->columnNamesCache = null;
+        $this->forcedTypesCache = null;
     }
 
     /**
