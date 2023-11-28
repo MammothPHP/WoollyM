@@ -4,8 +4,24 @@ declare(strict_types=1);
 
 namespace MammothPHP\WoollyM;
 
-abstract class DataFrameHelpers extends DataFrameStatements
+use Countable;
+
+abstract class DataFrameHelpers extends DataFrameStatements implements Countable
 {
+    /* *****************************************************************************************************************
+     ******************************************** Countable Implementation *********************************************
+     ******************************************************************************************************************/
+
+    /**
+     * Count elements of an object
+     *
+     * @link   http://php.net/manual/en/countable.count.php
+     *      */
+    public function count(): int
+    {
+        return $this->data->count();
+    }
+
     /* *****************************************************************************************************************
      ******************************************** Stats ****************************************************************
      ******************************************************************************************************************/

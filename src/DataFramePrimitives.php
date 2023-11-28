@@ -80,7 +80,7 @@ abstract class DataFramePrimitives
         $forcedTypes = $this->getForcedTypesCache();
 
         foreach ($recordArray as $recordKey => $recordValue) {
-            if(!in_array($recordKey, $columns, true)) {
+            if (!\in_array($recordKey, $columns, true)) {
                 $this->addColumn($recordKey);
                 $forcedTypes = $this->getForcedTypesCache();
             }

@@ -5,12 +5,10 @@ declare(strict_types=1);
 namespace MammothPHP\WoollyM;
 
 use MammothPHP\WoollyM\Exceptions\{DataFrameException, InvalidSelectException};
-use Countable;
 use Iterator;
 use ArrayAccess;
-use MammothPHP\WoollyM\Statements\ColumnRepresentation;
 
-abstract class DataFrameAccessors extends DataFramePrimitives implements ArrayAccess, Countable, Iterator
+abstract class DataFrameAccessors extends DataFramePrimitives implements ArrayAccess, Iterator
 {
     /* *****************************************************************************************************************
      ******************************************** Array Conversion *****************************************************
@@ -143,19 +141,5 @@ abstract class DataFrameAccessors extends DataFramePrimitives implements ArrayAc
     public function rewind(): void
     {
         $this->initDriverIterator();
-    }
-
-    /* *****************************************************************************************************************
-     ******************************************** Countable Implementation *********************************************
-     ******************************************************************************************************************/
-
-    /**
-     * Count elements of an object
-     *
-     * @link   http://php.net/manual/en/countable.count.php
-     *      */
-    public function count(): int
-    {
-        return $this->data->count();
     }
 }
