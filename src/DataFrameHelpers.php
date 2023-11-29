@@ -6,7 +6,7 @@ namespace MammothPHP\WoollyM;
 
 use Countable;
 
-abstract class DataFrameHelpers extends DataFrameStatements implements Countable
+abstract class DataFrameHelpers extends DataFrameModifiers implements Countable
 {
     /* *****************************************************************************************************************
      ******************************************** Countable Implementation *********************************************

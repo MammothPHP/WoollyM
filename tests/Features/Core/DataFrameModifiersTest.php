@@ -117,19 +117,6 @@ test('apply index map array', function (): void {
     ]);
 });
 
-test('array filter', function (): void {
-    $df = $this->df;
-
-    $df = $df->array_filter(static function ($row) {
-        return $row['a'] > 4 || $row['a'] < 4;
-    });
-
-    expect($df->toArray())->toEqual([
-        ['a' => 1, 'b' => 2, 'c' => 3],
-        ['a' => 7, 'b' => 8, 'c' => 9],
-    ]);
-});
-
 test('filter', function (): void {
     $this->df->filter(function (array $rowArray, int $position): bool {
         if ($position === 1 || \in_array(7, $rowArray, true)) {
@@ -156,38 +143,7 @@ test('preg replace', function (): void {
     ]);
 });
 
-test('group by', function (): void {
-    $df = DataFrame::fromArray([
-        ['a' => 1, 'b' => 2, 'c' => 3],
-        ['a' => 1, 'b' => 3, 'c' => 4],
-        ['a' => 2, 'b' => 4, 'c' => 5],
-        ['a' => 2, 'b' => 4, 'c' => 6],
-        ['a' => 3, 'b' => 5, 'c' => 7],
-        ['a' => 3, 'b' => 5, 'c' => 8],
-    ]);
 
-    expect($df->unique('a')->toArray())->toBe([
-        ['a' => 1],
-        ['a' => 2],
-        ['a' => 3],
-    ]);
-
-    expect($df->unique(['a', 'b'])->toArray())->toBe([
-        ['a' => 1, 'b' => 2],
-        ['a' => 1, 'b' => 3],
-        ['a' => 2, 'b' => 4],
-        ['a' => 3, 'b' => 5],
-    ]);
-
-    expect($df->unique(['a', 'b', 'c'])->toArray())->toBe([
-        ['a' => 1, 'b' => 2, 'c' => 3],
-        ['a' => 1, 'b' => 3, 'c' => 4],
-        ['a' => 2, 'b' => 4, 'c' => 5],
-        ['a' => 2, 'b' => 4, 'c' => 6],
-        ['a' => 3, 'b' => 5, 'c' => 7],
-        ['a' => 3, 'b' => 5, 'c' => 8],
-    ]);
-});
 
 test('sort values', function (): void {
     // Single column

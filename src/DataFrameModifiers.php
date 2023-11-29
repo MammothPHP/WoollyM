@@ -4,15 +4,12 @@ declare(strict_types=1);
 
 namespace MammothPHP\WoollyM;
 
-use MammothPHP\WoollyM\Exceptions\DataFrameException;
 use Closure;
 use Exception;
 use MammothPHP\WoollyM\DataDrivers\SortableDriverInterface;
 use MammothPHP\WoollyM\DataDrivers\DriversExceptions\SortNotSupportedByDriverException;
-use MammothPHP\WoollyM\Statements\{ColumnRepresentation, Select, SelectAll};
-use PDO;
 
-abstract class DataFrameModifiers extends DataFrameAccessors
+abstract class DataFrameModifiers extends DataFrameStatements
 {
     /* *****************************************************************************************************************
      ******************************************* Modifiers ********************************************
@@ -30,7 +27,6 @@ abstract class DataFrameModifiers extends DataFrameAccessors
 
         return $this;
     }
-
 
     public function setColumn(string $targetColumn, mixed $rightHandSide): self
     {
@@ -114,7 +110,7 @@ abstract class DataFrameModifiers extends DataFrameAccessors
      *      ]);
      *
      */
-    public function applyIndexMap(array $map, ?string $column = null)
+    public function applyIndexMap(array $map, ?string $column = null): self
     {
         return $this->apply(static function (&$row, $i) use ($map, $column) {
             if (isset($map[$i])) {
@@ -133,66 +129,6 @@ abstract class DataFrameModifiers extends DataFrameAccessors
 
             return $row;
         });
-    }
-
-    /**
-     * Filter DataFrame rows using user-defined function. The parameters of the function include the row
-     * being iterated over, and the index.
-     *
-     * ie:
-     *      $df = $df->array_filter(function($row, $index) { ... });
-     *
-     */
-    public function array_filter(Closure $f): self
-    {
-        return DataFrame::fromArray(array_filter($this->toArray(), $f, \ARRAY_FILTER_USE_BOTH));
-    }
-
-    /**
-     * Allows SQL to be used to perform operations on the DataFrame
-     *
-     * Table name will always be 'dataframe'
-     *
-     * @throws DataFrameException
-     */
-    public function query(string $sql, ?PDO $pdo = null): self
-    {
-        $sql = trim($sql);
-        $queryType = trim(strtoupper(strtok($sql, ' ')));
-
-        if ($pdo === null) {
-            $pdo = new PDO('sqlite::memory:');
-        }
-
-        $driver = $pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
-        if ($driver === 'sqlite') {
-            $sqlColumns = implode(', ', $this->columnsNames());
-        // @codeCoverageIgnoreStart
-        } elseif ($driver === 'mysql') {
-            $sqlColumns = implode(' VARCHAR(255), ', $this->columnIndexes) . ' VARCHAR(255)';
-        } else {
-            throw new DataFrameException("{$driver} is not yet supported for DataFrame query.");
-            // @codeCoverageIgnoreEnd
-        }
-
-        $pdo->exec('DROP TABLE IF EXISTS dataframe;');
-        $pdo->exec("CREATE TABLE IF NOT EXISTS dataframe ({$sqlColumns});");
-
-        $df = DataFrame::fromArray($this->toArray());
-        $df->toSQL('dataframe', $pdo);
-
-        if ($queryType === 'SELECT') {
-            $result = $pdo->query($sql);
-        } else {
-            $pdo->exec($sql);
-            $result = $pdo->query('SELECT * FROM dataframe;');
-        }
-
-        $results = $result->fetchAll(PDO::FETCH_ASSOC);
-
-        $pdo->exec('DROP TABLE IF EXISTS dataframe;');
-
-        return DataFrame::fromArray($results);
     }
 
     /**
@@ -222,45 +158,10 @@ abstract class DataFrameModifiers extends DataFrameAccessors
     }
 
     /**
-     * Returns unique values of given column(s)
-     *
-     */
-    public function unique(array|string $columns): self
-    {
-        if (!\is_array($columns)) {
-            $columns = [$columns];
-        }
-
-        $groupedData = [];
-        $uniqueColumns = [];
-        foreach ($this as $row) {
-            $uniqueKey = null;
-            foreach ($columns as $column) {
-                $uniqueKey .= $row[$column];
-            }
-
-            if (isset($uniqueColumns[$uniqueKey])) {
-                continue;
-            } else {
-                $uniqueColumns[$uniqueKey] = true;
-
-                $new_row = [];
-                foreach ($columns as $column) {
-                    $new_row[$column] = $row[$column];
-                }
-
-                $groupedData[] = $new_row;
-            }
-        }
-
-        return DataFrame::fromArray($groupedData);
-    }
-
-    /**
      * Sort the rows by its values
      *
      */
-    public function sortValues(array|string $by, bool $ascending = true): void
+    public function sortValues(array|string $by, bool $ascending = true): self
     {
         if (!$this->data instanceof SortableDriverInterface) {
             throw new SortNotSupportedByDriverException;
@@ -283,29 +184,8 @@ abstract class DataFrameModifiers extends DataFrameAccessors
 
             return 0;
         });
+
+        return $this;
     }
 
-    /* *****************************************************************************************************************
-     ******************************************* Statements ********************************************
-     ******************************************************************************************************************/
-
-    public function select(string ...$selections): Select
-    {
-        return new Select($this, ...$selections);
-    }
-
-    public function selectAll(): SelectAll
-    {
-        return new SelectAll($this);
-    }
-
-    public function col(string $columnName): ColumnRepresentation
-    {
-        return $this->columnRepresentations[$this->getColumnIndexObject($columnName)];
-    }
-
-    public function column(string $columnName): ColumnRepresentation
-    {
-        return $this->col($columnName);
-    }
 }

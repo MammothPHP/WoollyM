@@ -6,7 +6,7 @@ namespace MammothPHP\WoollyM;
 
 use MammothPHP\WoollyM\Statements\{ColumnRepresentation, Select, SelectAll};
 
-abstract class DataFrameStatements extends DataFrameModifiers
+abstract class DataFrameStatements extends DataFrameAccessors
 {
     /* *****************************************************************************************************************
      ******************************************* Statements ********************************************
