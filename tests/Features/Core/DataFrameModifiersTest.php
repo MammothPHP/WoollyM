@@ -13,45 +13,6 @@ beforeEach(function (): void {
     $this->df = DataFrame::fromArray($this->input);
 });
 
-test('to array', function (): void {
-    expect($this->df->toArray())->toEqual($this->input);
-});
-
-test('head', function (): void {
-    expect($this->df->head())->toBe($this->input);
-    expect($this->df->head(2))->toBe(\array_slice($this->input, 0, 2, true));
-    expect($this->df->head(columns: 'b'))->toBe([['b' => 2], ['b' => 5], ['b' => 8]]);
-    expect($this->df->head(length: 1, offset: 1, columns: 'b'))->toBe([1 => ['b' => 5]]);
-    expect($this->df->head(columns: ['b', 'c']))->toBe([
-        ['b' => 2, 'c' => 3],
-        ['b' => 5, 'c' => 6],
-        ['b' => 8, 'c' => 9],
-    ]);
-});
-
-test('columns', function (): void {
-    expect($this->df->columns()[0])->toBe($this->df->col('a'));
-    expect($this->df->columns())->toEqual(['a', 'b', 'c']);
-});
-
-test('columnsNames', function (): void {
-    expect($this->df->columnsNames())->toBe(['a', 'b', 'c']);
-});
-
-
-test('remove column', function (): void {
-    $df = $this->df;
-
-    $df->removeColumn('a');
-    $expected = [
-        ['b' => 2, 'c' => 3],
-        ['b' => 5, 'c' => 6],
-        ['b' => 8, 'c' => 9],
-    ];
-
-    expect($df->toArray())->toEqual($expected);
-});
-
 test('sort columns', function (): void {
     $df = new DataFrame([
         ['c' => 3, 'b' => 2, 'a' => 1],
@@ -75,95 +36,6 @@ test('sort columns', function (): void {
     ]);
 });
 
-test('for each', function (): void {
-    foreach ($this->df as $i => $row) {
-        expect($this->input[$i])->toEqual($row);
-    }
-});
-
-test('addColumn', function (): void {
-    $this->df->addColumn('foo');
-    $this->df->addColumns(['bar', 'Z']);
-
-    expect($this->df->col('foo')->getName('foo'))->toBe('foo');
-    expect($this->df->col('bar')->getName('bar'))->toBe('bar');
-    expect($this->df->col('Z')->getName('Z'))->toBe('Z');
-});
-
-test('column get', function (): void {
-    $df = $this->df->col('a')->get(); // call as method
-
-    expect($df->toArray())->toEqual([['a' => 1], ['a' => 4], ['a' => 7]]);
-});
-
-test('column set value', function (): void {
-    $df = $this->df;
-    $df->col('a')->set(321);
-
-    $expected = [
-        ['a' => 321, 'b' => 2, 'c' => 3],
-        ['a' => 321, 'b' => 5, 'c' => 6],
-        ['a' => 321, 'b' => 8, 'c' => 9],
-    ];
-
-    expect($df->toArray())->toEqual($expected);
-});
-
-test('column set closure', function (): void {
-    $df = $this->df;
-
-    $add = static function ($x) {
-        return static function ($y) use ($x) {
-            return $x + $y;
-        };
-    };
-
-    $df->col('a')->set($add(10));
-    $df->col('b')->set($add(20));
-    $df->col('c')->set($add(30));
-
-    $expected = [
-        ['a' => 11, 'b' => 22, 'c' => 33],
-        ['a' => 14, 'b' => 25, 'c' => 36],
-        ['a' => 17, 'b' => 28, 'c' => 39],
-    ];
-
-    expect($df->toArray())->toEqual($expected);
-});
-
-test('column set dataframe', function (): void {
-    $df = $this->df;
-
-    $df->col('a')->set($df->col('b')->get());
-
-    $expected = [
-        ['a' => 2, 'b' => 2, 'c' => 3],
-        ['a' => 5, 'b' => 5, 'c' => 6],
-        ['a' => 8, 'b' => 8, 'c' => 9],
-    ];
-
-    expect($df->toArray())->toEqual($expected);
-});
-
-test('set new column', function (): void {
-    expect($this->df->hasColumn('d'))->toBeFalse();
-
-    $this->df
-        ->setColumn('d', $this->df->col('c')->get()->apply(static function ($el) {
-            return $el + 1;
-        }));
-
-    expect($this->df->hasColumn('d'))->toBeTrue();
-
-    $expected = [
-        ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4],
-        ['a' => 4, 'b' => 5, 'c' => 6, 'd' => 7],
-        ['a' => 7, 'b' => 8, 'c' => 9, 'd' => 10],
-    ];
-
-    expect($this->df->toArray())->toEqual($expected);
-});
-
 test('apply data frame', function (): void {
     $df = $this->df;
 
@@ -181,39 +53,6 @@ test('apply data frame', function (): void {
     ];
 
     expect($df->toArray())->toEqual($expected);
-});
-
-test('has column', function (): void {
-    expect($this->df->hasColumn('a'))->toBeTrue();
-    expect($this->df->hasColumn('foo'))->toBeFalse();
-});
-
-test('isset and unset', function (): void {
-    expect(isset($this->df[0]))->toBeTrue();
-    expect(isset($this->df[1]))->toBeTrue();
-    expect(isset($this->df[2]))->toBeTrue();
-    expect(isset($this->df[42]))->toBeFalse();
-
-    unset($this->df[1]);
-
-    expect(isset($this->df[0]))->toBeTrue();
-    expect(isset($this->df[1]))->toBeFalse();
-    expect(isset($this->df[2]))->toBeTrue();
-});
-
-test('apply index map values', function (): void {
-    $df = $this->df;
-
-    $df->applyIndexMap([
-        0 => 0,
-        2 => 0,
-    ], 'a');
-
-    expect($df->toArray())->toEqual([
-        ['a' => 0, 'b' => 2, 'c' => 3],
-        ['a' => 4, 'b' => 5, 'c' => 6],
-        ['a' => 0, 'b' => 8, 'c' => 9],
-    ]);
 });
 
 test('apply index map function', function (): void {
@@ -305,38 +144,6 @@ test('filter', function (): void {
     ]);
 });
 
-test('offset set value array', function (): void {
-    $df = $this->df;
-
-    $df[] = ['a' => 10, 'b' => 11, 'c' => 12];
-
-    expect($df->toArray())->toEqual([
-        ['a' => 1, 'b' => 2, 'c' => 3],
-        ['a' => 4, 'b' => 5, 'c' => 6],
-        ['a' => 7, 'b' => 8, 'c' => 9],
-        ['a' => 10, 'b' => 11, 'c' => 12],
-    ]);
-});
-
-test('append', function (): void {
-    $df1 = $this->df;
-    $df2 = clone $this->df;
-
-    // Test that appending an array with less than count of 1 will simply return the original DataFrame
-    expect($df1->append(DataFrame::fromArray([])))->toBe($df1);
-
-    $df1->append($df2);
-
-    expect($df1->toArray())->toEqual([
-        ['a' => 1, 'b' => 2, 'c' => 3],
-        ['a' => 4, 'b' => 5, 'c' => 6],
-        ['a' => 7, 'b' => 8, 'c' => 9],
-        ['a' => 1, 'b' => 2, 'c' => 3],
-        ['a' => 4, 'b' => 5, 'c' => 6],
-        ['a' => 7, 'b' => 8, 'c' => 9],
-    ]);
-});
-
 test('preg replace', function (): void {
     $df1 = $this->df;
 
@@ -379,18 +186,6 @@ test('group by', function (): void {
         ['a' => 2, 'b' => 4, 'c' => 6],
         ['a' => 3, 'b' => 5, 'c' => 7],
         ['a' => 3, 'b' => 5, 'c' => 8],
-    ]);
-});
-
-test('rename', function (): void {
-    $df = $this->df;
-
-    $df->col('a')->rename('foo');
-
-    expect($df->toArray())->toBe([
-        ['foo' => 1, 'b' => 2, 'c' => 3],
-        ['foo' => 4, 'b' => 5, 'c' => 6],
-        ['foo' => 7, 'b' => 8, 'c' => 9],
     ]);
 });
 
@@ -470,4 +265,19 @@ test('sort values', function (): void {
     $unordered_df->sortValues(['b', 'a']);
 
     expect($unordered_df->toArray())->toBe($ordered_df->toArray());
+});
+
+test('apply index map values', function (): void {
+    $df = $this->df;
+
+    $df->applyIndexMap([
+        0 => 0,
+        2 => 0,
+    ], 'a');
+
+    expect($df->toArray())->toEqual([
+        ['a' => 0, 'b' => 2, 'c' => 3],
+        ['a' => 4, 'b' => 5, 'c' => 6],
+        ['a' => 0, 'b' => 8, 'c' => 9],
+    ]);
 });
