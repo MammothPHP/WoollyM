@@ -30,7 +30,7 @@ class SQL
     /**
      * Performs a SQL select, returning an associative array of the results.
      */
-    public function select($sqlQuery): array
+    public function select(string $sqlQuery): array
     {
         $pdo = $this->pdo;
         $query = $pdo->query($sqlQuery);
@@ -43,7 +43,7 @@ class SQL
      * and a two-dimensional array of data.
      * @throws InvalidSelectException
      */
-    public function insertInto($tableName, array $columns, array $data, $options = []): int
+    public function insertInto(string $tableName, array $columns, array $data, $options = []): int
     {
         if (\count($data) === 0) {
             return 0;
@@ -83,7 +83,7 @@ class SQL
      * Transforms and executes a series of prepared statements from a chunked array.
      * @internal
      */
-    private function insertChunkedData(PDO $pdo, $tableName, array $columns, array $data, array $options): int
+    private function insertChunkedData(PDO $pdo, string $tableName, array $columns, array $data, array $options): int
     {
         $affected = 0;
         foreach ($data as $chunk) {
@@ -101,7 +101,7 @@ class SQL
      * Transforms a table string, array of columns, and array of data into a prepared statement.
      * @internal
      */
-    private function createPreparedStatement($tableName, array $columns, array $data, array $options): string
+    private function createPreparedStatement(string $tableName, array $columns, array $data, array $options): string
     {
         $replaceOpt = $options['replace'];
         $ignoreOpt = $options['ignore'];
@@ -150,7 +150,7 @@ class SQL
      *
      * @throws InvalidSelectException
      */
-    private function identifyAnyMissingColumns(array $columns, $tableName): void
+    private function identifyAnyMissingColumns(array $columns, string $tableName): void
     {
         $db_columns = array_column($this->pdo->query("SHOW COLUMNS FROM {$tableName};")->fetchAll(), 'Field');
 

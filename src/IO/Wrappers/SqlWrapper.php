@@ -24,7 +24,7 @@ trait SqlWrapper
     /**
      * Commits a DataFrame to a SQL database.
      */
-    public function toSQL($tableName, PDO $pdo, array $options = []): void
+    public function toSQL(string $tableName, PDO $pdo, array $options = []): void
     {
         $sql = new SQL($pdo);
         $sql->insertInto($tableName, $this->columnsNames(), $this->toArray(), $options);
