@@ -192,9 +192,9 @@ class Select implements Iterator
     public function whereColumnEqual(string $column, mixed $condition): self
     {
         if ($condition instanceof Closure) {
-            $condition = fn(mixed $v): bool => $condition($v[$column]);
+            $condition = static fn(mixed $v): bool => $condition($v[$column]);
         } else {
-            $condition = fn(mixed $v): bool => $condition === $v[$column];
+            $condition = static fn(mixed $v): bool => $condition === $v[$column];
         }
 
         $this->and($condition);
@@ -206,7 +206,7 @@ class Select implements Iterator
     {
         $this->isAliveOrThrowInvalidSelectException();
 
-        $this->where['keyBetween'] = [fn(mixed $v, int $k): bool => $k >= $start && ($k <= $end || $end === null)];
+        $this->where['keyBetween'] = [static fn(mixed $v, int $k): bool => $k >= $start && ($k <= $end || $end === null)];
 
         return $this;
     }
