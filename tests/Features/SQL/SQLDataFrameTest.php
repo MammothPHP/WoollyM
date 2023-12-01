@@ -1,6 +1,8 @@
 <?php
 
 declare(strict_types=1);
+
+use MammothPHP\WoollyM\Builder;
 use MammothPHP\WoollyM\DataFrame;
 
 test('tosql', function (): void {
@@ -57,7 +59,7 @@ test('group by sqlite', function (): void {
         ['a' => 'foo', 'b' => 4],
     ];
 
-    $actual = $df->query('SELECT a, sum(b) AS b FROM dataframe GROUP BY 1 ORDER BY 1 ASC')->toArray();
+    $actual = Builder::query($df, 'SELECT a, sum(b) AS b FROM dataframe GROUP BY 1 ORDER BY 1 ASC')->toArray();
 
     expect($actual)->toBe($expected);
 });
@@ -69,7 +71,7 @@ test('data frame select', function (): void {
         ['a' => 7, 'b' => 8, 'c' => 9],
     ]);
 
-    $df = $df->query("SELECT a, c
+    $df = Builder::query($df, "SELECT a, c
         FROM dataframe
         WHERE a = '4'
           OR b = '2';");
@@ -89,7 +91,7 @@ test('data frame select update', function (): void {
         ['a' => 7, 'b' => 8, 'c' => 9],
     ]);
 
-    $df = $df->query('UPDATE dataframe SET a = c * 2;');
+    $df = Builder::query($df, 'UPDATE dataframe SET a = c * 2;');
 
     $expected = [
         ['a' => 6, 'b' => 2, 'c' => 3],

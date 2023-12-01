@@ -1,6 +1,8 @@
 <?php
 
 declare(strict_types=1);
+
+use MammothPHP\WoollyM\Builder;
 use MammothPHP\WoollyM\DataFrame;
 
 beforeEach(function (): void {
@@ -16,7 +18,7 @@ beforeEach(function (): void {
 test('array filter', function (): void {
     $df = $this->df;
 
-    $df = $df->array_filter(static function ($row) {
+    $df = Builder::array_filter($df, static function ($row) {
         return $row['a'] > 4 || $row['a'] < 4;
     });
 
@@ -36,20 +38,20 @@ test('group by', function (): void {
         ['a' => 3, 'b' => 5, 'c' => 8],
     ]);
 
-    expect($df->unique('a')->toArray())->toBe([
+    expect(Builder::unique($df, 'a')->toArray())->toBe([
         ['a' => 1],
         ['a' => 2],
         ['a' => 3],
     ]);
 
-    expect($df->unique(['a', 'b'])->toArray())->toBe([
+    expect(Builder::unique($df, ['a', 'b'])->toArray())->toBe([
         ['a' => 1, 'b' => 2],
         ['a' => 1, 'b' => 3],
         ['a' => 2, 'b' => 4],
         ['a' => 3, 'b' => 5],
     ]);
 
-    expect($df->unique(['a', 'b', 'c'])->toArray())->toBe([
+    expect(Builder::unique($df, ['a', 'b', 'c'])->toArray())->toBe([
         ['a' => 1, 'b' => 2, 'c' => 3],
         ['a' => 1, 'b' => 3, 'c' => 4],
         ['a' => 2, 'b' => 4, 'c' => 5],

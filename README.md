@@ -302,7 +302,7 @@ $df = DataFrame::fromArray([
     ['a' => 7, 'b' => 8, 'c' => 9],
 ]);
 
-$df = $df->query("
+$df = Builder::query($df, "
 
 SELECT
   a,
@@ -341,7 +341,7 @@ $df = DataFrame::fromArray([
     ['a' => 7, 'b' => 8, 'c' => 9],
 ]);
 
-$df = $df->query("
+$df = Builder::query($df, "
 
 UPDATE dataframe
 SET a = c * 2;
