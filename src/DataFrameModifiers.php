@@ -55,11 +55,11 @@ abstract class DataFrameModifiers extends DataFrameStatements
      */
     public function apply(Closure $f): self
     {
-        if (\count($this->columnIndexes) > 1) {
+        if ($this->countColumns() > 1) {
             foreach ($this as $i => $row) {
                 $this->data->setRecord($i, $this->convertRecordToAbstract($f($row, $i)));
             }
-        } elseif (\count($this->columnIndexes) === 1) {
+        } elseif ($this->countColumns() === 1) {
             foreach ($this as $i => $row) {
                 $this->data->setRecordColumn($i, $this->getColumnKey(key($row)), $f($row[key($row)], $i));
             }

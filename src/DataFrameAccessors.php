@@ -42,7 +42,7 @@ abstract class DataFrameAccessors extends DataFramePrimitives implements ArrayAc
      */
     public function offsetGet(mixed $index): mixed
     {
-        return $this->data->getRecordKey($index);
+        return $this->getRecord($index);
     }
 
     /**
