@@ -37,38 +37,15 @@ abstract class DataFrameAccessors extends DataFramePrimitives implements ArrayAc
     }
 
     /**
-     * Allows user retrieve DataFrame subsets from a two-dimensional array by
-     * simply requesting an element of the instantiated DataFrame.
-     *      ie: $fooDF = $df['foo'];
-     *
      * @internal
      * @throws InvalidSelectException
      */
     public function offsetGet(mixed $index): mixed
     {
         return $this->data->getRecordKey($index);
-
-        // $this->mustHaveColumn($columnName);
-
-        // $data = [];
-
-        // foreach ($this as $row) {
-        //     $data[] = [$columnName => $row[$columnName]];
-        // }
-
-        // return new DataFrame($data);
     }
 
     /**
-     * Allows user set DataFrame columns from a Closure, value, array, or another single-column DataFrame.
-     *      ie:
-     *          $df[$targetColumn] = $rightHandSide
-     *          $df['bar'] = $df['foo'];
-     *          $df['bar'] = $df->foo;
-     *          $df['foo'] = function ($foo) { return $foo + 1; };
-     *          $df['foo'] = 'bar';
-     *          $df[] = [['gender'=>'Female','name'=>'Luy'],['title'=>'Mr','name'=>'Noah']];
-     *
      * @internal
      * @throws DataFrameException
      */

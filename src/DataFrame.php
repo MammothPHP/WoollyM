@@ -47,31 +47,19 @@ class DataFrame extends DataFrameHelpers
      *
      * @throws DataFrameException
      */
-    public function query(string $sql, ?PDO $pdo = null): self
+    public function query(string $sql): self
     {
         $sql = trim($sql);
         $queryType = trim(strtoupper(strtok($sql, ' ')));
 
-        if ($pdo === null) {
-            $pdo = new PDO('sqlite::memory:');
-        }
+        $pdo = new PDO('sqlite::memory:');
 
-        $driver = $pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
-        if ($driver === 'sqlite') {
-            $sqlColumns = implode(', ', $this->columnsNames());
-        // @codeCoverageIgnoreStart
-        } elseif ($driver === 'mysql') {
-            $sqlColumns = implode(' VARCHAR(255), ', $this->columnIndexes) . ' VARCHAR(255)';
-        } else {
-            throw new DataFrameException("{$driver} is not yet supported for DataFrame query.");
-            // @codeCoverageIgnoreEnd
-        }
+        $sqlColumns = implode(', ', $this->columnsNames());
 
         $pdo->exec('DROP TABLE IF EXISTS dataframe;');
         $pdo->exec("CREATE TABLE IF NOT EXISTS dataframe ({$sqlColumns});");
 
-        $df = self::fromArray($this->toArray());
-        $df->toSQL('dataframe', $pdo);
+        $this->toSQL('dataframe', $pdo);
 
         if ($queryType === 'SELECT') {
             $result = $pdo->query($sql);

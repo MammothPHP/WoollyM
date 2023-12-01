@@ -6,7 +6,7 @@ use MammothPHP\WoollyM\DataFrame;
 test('tosql', function (): void {
     $df = DataFrame::fromArray([
         ['a' => 1, 'b' => 2, 'c' => 3],
-        ['a' => 4, 'b' => 5, 'c' => 6],
+        ['a' => 4, 'c' => 6],
         ['a' => 7, 'b' => 8, 'c' => 9],
     ]);
 
@@ -15,7 +15,11 @@ test('tosql', function (): void {
     $pdo->exec('CREATE TABLE testTable (a TEXT, b TEXT, c TEXT);');
     $df->toSQL('testTable', $pdo);
     $result = $pdo->query('SELECT * FROM testTable;')->fetchAll(PDO::FETCH_ASSOC);
+
+    $df->fillInNonExistentsCol = true;
     expect($df->toArray())->toEqual($result);
+    $df->fillInNonExistentsCol = false;
+
     $pdo->exec('DROP TABLE testTable;');
 });
 
@@ -85,8 +89,7 @@ test('data frame select update', function (): void {
         ['a' => 7, 'b' => 8, 'c' => 9],
     ]);
 
-    $df = $df->query('UPDATE dataframe
-        SET a = c * 2;');
+    $df = $df->query('UPDATE dataframe SET a = c * 2;');
 
     $expected = [
         ['a' => 6, 'b' => 2, 'c' => 3],

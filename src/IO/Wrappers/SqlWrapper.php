@@ -16,9 +16,8 @@ trait SqlWrapper
     public static function fromSQL(string $sqlQuery, PDO $pdo): self
     {
         $sql = new SQL($pdo);
-        $data = $sql->select($sqlQuery);
 
-        return new self($data);
+        return $sql->importFromSelect($sqlQuery);
     }
 
     /**
@@ -27,6 +26,6 @@ trait SqlWrapper
     public function toSQL(string $tableName, PDO $pdo, array $options = []): void
     {
         $sql = new SQL($pdo);
-        $sql->insertInto($tableName, $this->columnsNames(), $this->toArray(), $options);
+        $sql->insertInto($tableName, $this, $options);
     }
 }
