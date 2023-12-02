@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace MammothPHP\WoollyM\IO;
 
 use Exception;
-use MammothPHP\WoollyM\Exceptions\NotYetImplementedException;
 use Gajus\Dindent\Indenter;
 use League\Csv\HTMLConverter;
 use MammothPHP\WoollyM\DataFrame;
@@ -19,8 +18,7 @@ abstract class HTML
         ?int $offset = 0,
         ?string $class = null,
         ?string $id = null
-    ): string
-    {
+    ): string {
         $converter = (new HTMLConverter)->table($class ?? '', $id ?? '');
 
         $backupFillInNonExistentsCol = $df->fillInNonExistentsCol;

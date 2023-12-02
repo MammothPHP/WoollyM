@@ -12,10 +12,9 @@ trait JsonWrapper
     /**
      * Factory method for instantiating a DataFrame from a JSON string.
      */
-    public static function fromJSON($jsonString, array $options = []): self
+    public static function fromJSON($jsonString): self
     {
-        $json = new JSON;
-        $data = $json->decodeJSON($jsonString, $options);
+        $data = JSON::decodeJSON($jsonString);
 
         return new self($data);
     }
@@ -23,8 +22,8 @@ trait JsonWrapper
     /**
      * Converts a DataFrame to a JSON string.
      */
-    public function toJSON(array $options = []): string
+    public function toJSON(bool $pretty = false): string
     {
-        return (new JSON)->encodeJSON($this->toArray(), $options);
+        return JSON::encodeJSON($this->toArray(), $pretty);
     }
 }

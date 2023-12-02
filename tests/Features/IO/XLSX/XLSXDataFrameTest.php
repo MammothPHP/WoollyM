@@ -115,9 +115,9 @@ test('to xlsx', function (): void {
 
     // Suppress warning coming from PhpSpreadsheet  date/time nonsense
     // Suppress warning coming from PhpSpreadsheet  date/time nonsense
-    $a = DataFrame::fromXLSX($fileName, ['sheetname' => 'A']);
-    $b = DataFrame::fromXLSX($fileName, ['sheetname' => 'B']);
-    $c = DataFrame::fromXLSX($fileName, ['sheetname' => 'C']);
+    $a = DataFrame::fromXLSX(fileName: $fileName, sheetName: 'A');
+    $b = DataFrame::fromXLSX(fileName: $fileName, sheetName: 'B');
+    $c = DataFrame::fromXLSX(fileName: $fileName, sheetName: 'C');
 
     expect($sheetA)->toEqual($a->toArray());
     expect($sheetB)->toEqual($b->toArray());

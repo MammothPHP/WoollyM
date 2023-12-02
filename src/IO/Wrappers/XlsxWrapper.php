@@ -14,10 +14,10 @@ trait XlsxWrapper
     /**
      * Factory method for creating a DataFrame from an XLSX worksheet.
      */
-    public static function fromXLSX(string $fileName, array $options = []): self
+    public static function fromXLSX(string $fileName, ?string $sheetName = null, int $colRow = 1): self
     {
         $xlsx = new XLSX($fileName);
-        $data = $xlsx->loadFile($options);
+        $data = $xlsx->loadFile(sheetName: $sheetName, colRow: $colRow);
 
         return new self($data);
     }

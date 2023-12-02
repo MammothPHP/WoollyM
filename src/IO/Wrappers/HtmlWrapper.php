@@ -18,8 +18,7 @@ trait HtmlWrapper
         ?int $offset = 0,
         ?string $class = null,
         ?string $id = null
-    ): string
-    {
+    ): string {
         return HTML::convertDataFrameToHtml(df: $this, pretty: $pretty, limit: $limit, offset: $offset, class: $class, id: $id);
     }
 }

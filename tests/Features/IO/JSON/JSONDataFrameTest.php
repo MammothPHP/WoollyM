@@ -50,5 +50,6 @@ test('to pretty j s o n', function (): void {
     $expected .= '        "c": 9' . "\n";
     $expected .= '    }' . "\n";
     $expected .= ']';
-    expect($df->toJSON(['pretty' => true]))->toEqual($expected);
+
+    expect($df->toJSON(pretty: true))->toEqual($expected);
 });

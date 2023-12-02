@@ -13,11 +13,9 @@ use RuntimeException;
 
 class SQL
 {
-    protected array $defaultOptions = [
-        'chunksize' => 500,
-        'replace' => false,
-        'ignore' => false,
-    ];
+    public int $chunkSize = 500;
+    public bool $replace = false;
+    public bool $ignore = false;
 
     protected PDOStatement $preparedStatement;
     protected string $statementCacheKey = '';
@@ -45,7 +43,7 @@ class SQL
      * and a two-dimensional array of data.
      * @throws InvalidSelectException
      */
-    public function insertInto(string $tableName, DataFrame $df, $options = []): int
+    public function insertInto(string $tableName, DataFrame $df): int
     {
         if (\count($df) === 0) {
             return 0;
@@ -62,9 +60,6 @@ class SQL
             throw $ice;
         }
 
-        $options = Options::setDefaultOptions($options, $this->defaultOptions);
-        $chunksizeOpt = $options['chunksize'];
-
         $this->pdo->beginTransaction();
         $affected = 0;
         $chunk = [];
@@ -76,14 +71,14 @@ class SQL
             foreach ($df as $record) {
                 $chunk[] = $record;
 
-                if (\count($chunk) >= $chunksizeOpt) {
-                    $affected += $this->insertChunkedData($tableName, $columns, $chunk, $options);
+                if (\count($chunk) >= $this->chunkSize) {
+                    $affected += $this->insertChunkedData($tableName, $columns, $chunk);
                     $chunk = [];
                 }
             }
 
             if (!empty($chunk)) {
-                $affected += $this->insertChunkedData($tableName, $columns, $chunk, $options);
+                $affected += $this->insertChunkedData($tableName, $columns, $chunk);
             }
         } catch (PDOException $e) {
             $this->pdo->rollBack();
@@ -103,11 +98,11 @@ class SQL
      * Transforms and executes a series of prepared statements from a chunked array.
      * @internal
      */
-    protected function insertChunkedData(string $tableName, array $columns, array $data, array $options): int
+    protected function insertChunkedData(string $tableName, array $columns, array $data): int
     {
         $affected = 0;
 
-        $this->createPreparedStatement($tableName, $columns, \count($data), $options);
+        $this->createPreparedStatement($tableName, $columns, \count($data));
 
         $arg = [];
         foreach ($data as $record) {
@@ -126,18 +121,15 @@ class SQL
      * Transforms a table string, array of columns, and array of data into a prepared statement.
      * @internal
      */
-    protected function createPreparedStatement(string $tableName, array $columns, int $rows, array $options): void
+    protected function createPreparedStatement(string $tableName, array $columns, int $rows): void
     {
-        $replaceOpt = $options['replace'];
-        $ignoreOpt = $options['ignore'];
-
-        $cacheKey = "{$rows}/{$replaceOpt}/{$ignoreOpt}";
+        $cacheKey = "{$rows}/{$this->replace}/{$this->ignore}";
 
         if ($this->statementCacheKey === $cacheKey) {
             return;
         }
 
-        if ($replaceOpt === true && $ignoreOpt === true) {
+        if ($this->replace && $this->ignore) {
             throw new RuntimeException('REPLACE and INSERT IGNORE are mutually exclusive. Please choose only one.');
         }
 
@@ -156,9 +148,9 @@ class SQL
             }
         }
 
-        if ($replaceOpt === true) {
+        if ($this->replace) {
             $insert = 'REPLACE';
-        } elseif ($ignoreOpt === true) {
+        } elseif ($this->ignore === true) {
             $insert = 'INSERT IGNORE';
         } else {
             $insert = 'INSERT';

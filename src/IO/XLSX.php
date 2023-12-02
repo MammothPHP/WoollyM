@@ -9,11 +9,6 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class XLSX
 {
-    private $defaultOptions = [
-        'colrow' => 1,
-        'sheetname' => null,
-    ];
-
     public function __construct(public readonly string $fileName) {}
 
     /**
@@ -24,18 +19,14 @@ class XLSX
      * @throws \MammothPHP\WoollyM\Exceptions\UnknownOptionException
      * @throws \PhpOffice\PhpSpreadsheet\Exception
      */
-    public function loadFile(array $options): array
+    public function loadFile(?string $sheetName = null, int $colRow = 1): array
     {
-        $options = Options::setDefaultOptions($options, $this->defaultOptions);
-        $colRowOpt = $options['colrow'];
-        $sheetNameOpt = $options['sheetname'];
-
         $xlsx = IOFactory::load($this->fileName);
 
-        if ($sheetNameOpt === null) {
+        if ($sheetName === null) {
             $sheet = $xlsx->getActiveSheet();
         } else {
-            $sheet = $xlsx->getSheetByName($sheetNameOpt);
+            $sheet = $xlsx->getSheetByName($sheetName);
         }
 
         $columns = [];
@@ -44,12 +35,12 @@ class XLSX
         $highestColumn = $sheet->getHighestColumn();
         $highestColumn++;
 
-        foreach ($sheet->getRowIterator($colRowOpt) as $i => $row) {
+        foreach ($sheet->getRowIterator($colRow) as $i => $row) {
             for ($column = 'A'; $column != $highestColumn; $column++) {
                 /*
                  * If the current row is the column row then assemble our columns.
                  */
-                if ($i === $colRowOpt) {
+                if ($i === $colRow) {
                     $columns[$column] = $sheet->getCell($column . $i)->__toString();
 
                     continue;
