@@ -14,7 +14,7 @@ beforeEach(function (): void {
     $this->df = DataFrame::fromArray($this->input);
 });
 
-test('clone', function(): void {
+test('clone', function (): void {
     $clone = $this->df->copy()->clone();
 
     expect($clone)->not->toBe($this->df);
