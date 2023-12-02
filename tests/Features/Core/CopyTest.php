@@ -2,8 +2,7 @@
 
 declare(strict_types=1);
 
-use MammothPHP\WoollyM\Builder;
-use MammothPHP\WoollyM\DataFrame;
+use MammothPHP\WoollyM\{Copy, DataFrame};
 
 beforeEach(function (): void {
     $this->input = [
@@ -15,12 +14,21 @@ beforeEach(function (): void {
     $this->df = DataFrame::fromArray($this->input);
 });
 
+test('clone', function(): void {
+    $clone = $this->df->copy()->clone();
+
+    expect($clone)->not->toBe($this->df);
+    expect($clone->toArray())->toBe($this->df->toArray());
+});
+
 test('array filter', function (): void {
     $df = $this->df;
 
-    $df = Builder::array_filter($df, static function ($row) {
+    $df = $df->copy()->array_filter(static function ($row) {
         return $row['a'] > 4 || $row['a'] < 4;
     });
+
+    expect($df)->not->toBe($this->df);
 
     expect($df->toArray())->toEqual([
         ['a' => 1, 'b' => 2, 'c' => 3],
@@ -38,20 +46,24 @@ test('group by', function (): void {
         ['a' => 3, 'b' => 5, 'c' => 8],
     ]);
 
-    expect(Builder::unique($df, 'a')->toArray())->toBe([
+    expect($df->copy()->unique('a')->toArray())->toBe([
         ['a' => 1],
         ['a' => 2],
         ['a' => 3],
     ]);
 
-    expect(Builder::unique($df, ['a', 'b'])->toArray())->toBe([
+    expect($df->copy()->unique(['a', 'b'])->toArray())->toBe([
         ['a' => 1, 'b' => 2],
         ['a' => 1, 'b' => 3],
         ['a' => 2, 'b' => 4],
         ['a' => 3, 'b' => 5],
     ]);
 
-    expect(Builder::unique($df, ['a', 'b', 'c'])->toArray())->toBe([
+    $df = $df->copy()->unique(['a', 'b', 'c']);
+
+    expect($df)->not->toBe($this->df);
+
+    expect($df->toArray())->toBe([
         ['a' => 1, 'b' => 2, 'c' => 3],
         ['a' => 1, 'b' => 3, 'c' => 4],
         ['a' => 2, 'b' => 4, 'c' => 5],

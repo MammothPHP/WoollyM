@@ -4,10 +4,7 @@ declare(strict_types=1);
 
 namespace MammothPHP\WoollyM;
 
-use Closure;
-use MammothPHP\WoollyM\Exceptions\DataFrameException;
 use MammothPHP\WoollyM\IO\Wrappers\{CsvWrapper, FwfWrapper, HtmlWrapper, JsonWrapper, SqlWrapper, XlsxWrapper};
-use PDO;
 
 // Hierarchy: DataFramePrimitives > DataFrameAccessors >  DataFrameStatements > DataFrameModifiers > DataFrameHelpers
 class DataFrame extends DataFrameHelpers

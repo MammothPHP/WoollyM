@@ -7,22 +7,29 @@ namespace MammothPHP\WoollyM;
 use Closure;
 use PDO;
 
-abstract class Builder
+class Copy
 {
+    public function __construct(public readonly DataFrame $df) {}
+
+    public function clone(): DataFrame
+    {
+        return clone $this->df;
+    }
+
     /**
      * Filter DataFrame rows using user-defined function. The parameters of the function include the row
      * being iterated over, and the index.
      */
-    public static function array_filter(DataFrame $fromDataFrame, Closure $f): DataFrame
+    public function array_filter(Closure $f): DataFrame
     {
-        return DataFrame::fromArray(array_filter($fromDataFrame->toArray(), $f, \ARRAY_FILTER_USE_BOTH));
+        return DataFrame::fromArray(array_filter($this->df->toArray(), $f, \ARRAY_FILTER_USE_BOTH));
     }
 
     /**
      * Returns unique values of given column(s)
      *
      */
-    public static function unique(DataFrame $fromDataFrame, array|string $columns): DataFrame
+    public function unique(array|string $columns): DataFrame
     {
         if (!\is_array($columns)) {
             $columns = [$columns];
@@ -30,7 +37,7 @@ abstract class Builder
 
         $groupedData = [];
         $uniqueColumns = [];
-        foreach ($fromDataFrame as $row) {
+        foreach ($this->df as $row) {
             $uniqueKey = null;
             foreach ($columns as $column) {
                 $uniqueKey .= $row[$column];
@@ -60,19 +67,19 @@ abstract class Builder
      *
      * @throws DataFrameException
      */
-    public static function query(DataFrame $fromDataFrame, string $sql): DataFrame
+    public function query(string $sql): DataFrame
     {
         $sql = trim($sql);
         $queryType = trim(strtoupper(strtok($sql, ' ')));
 
         $pdo = new PDO('sqlite::memory:');
 
-        $sqlColumns = implode(', ', $fromDataFrame->columnsNames());
+        $sqlColumns = implode(', ', $this->df->columnsNames());
 
         $pdo->exec('DROP TABLE IF EXISTS dataframe;');
         $pdo->exec("CREATE TABLE IF NOT EXISTS dataframe ({$sqlColumns});");
 
-        $fromDataFrame->toSQL('dataframe', $pdo);
+        $this->df->toSQL('dataframe', $pdo);
 
         if ($queryType === 'SELECT') {
             $result = $pdo->query($sql);
