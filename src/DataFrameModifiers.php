@@ -81,7 +81,7 @@ abstract class DataFrameModifiers extends DataFrameStatements
      * Replaces all occurences within the DataFrame of regex $pattern with string $replacement
      *
      */
-    public function preg_replace($pattern, $replacement): self
+    public function preg_replace(array|string $pattern, array|string $replacement): self
     {
         return $this->apply(static function (array $row) use ($pattern, $replacement) {
             return preg_replace($pattern, $replacement, $row);
@@ -121,22 +121,22 @@ abstract class DataFrameModifiers extends DataFrameStatements
      */
     public function applyIndexMap(array $map, ?string $column = null): self
     {
-        return $this->apply(static function (&$row, $i) use ($map, $column) {
+        return $this->apply(static function (array &$record, int $i) use ($map, $column): array {
             if (isset($map[$i])) {
                 $value = $map[$i];
 
                 if (\is_callable($value) && $column === null) {
-                    $row = $value($row);
+                    $record = $value($record);
                 } elseif (\is_callable($value) && $column !== null) {
-                    $row[$column] = $value($row[$column]);
+                    $record[$column] = $value($record[$column]);
                 } elseif (\is_array($value) && $column === null) {
-                    $row = $value;
+                    $record = $value;
                 } elseif ((\is_string($value) || is_numeric($value) || \is_bool($value)) && $column !== null) {
-                    $row[$column] = $value;
+                    $record[$column] = $value;
                 }
             }
 
-            return $row;
+            return $record;
         });
     }
 

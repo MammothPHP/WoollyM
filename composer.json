@@ -18,7 +18,8 @@
     "pestphp/pest": "^2.20",
     "phpbench/phpbench": "^1.2",
     "nunomaduro/phpinsights": "^2.11",
-    "phploc/phploc": "^2.0"
+    "phploc/phploc": "^2.0",
+    "pestphp/pest-plugin-type-coverage": "^2.5"
   },
   "autoload": {
     "psr-4": { "MammothPHP\\WoollyM\\": "src/"}

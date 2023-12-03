@@ -15,7 +15,7 @@ class FWF
      *      exclude: Blacklist regex to apply to each line of the file (default: null)
      * @throws \MammothPHP\WoollyM\Exceptions\UnknownOptionException
      */
-    public function loadFile(array $colSpecs, ?string $includeRegexOpt = null, ?string $excludeRegexOpt = null)
+    public function loadFile(array $colSpecs, ?string $includeRegexOpt = null, ?string $excludeRegexOpt = null): array
     {
         $fileName = $this->fileName;
 
@@ -32,15 +32,13 @@ class FWF
             $line = $this->applyColSpecs($line, $colSpecs);
         }
 
-        $fileData = array_values($fileData);
-
-        return $fileData;
+        return array_values($fileData);
     }
 
     /**
      * Parses a string of data based on the rules defined in user provided colspecs.
      */
-    private function applyColSpecs($data, array $colSpecs)
+    private function applyColSpecs(string $data, array $colSpecs): array
     {
         $result = [];
 
