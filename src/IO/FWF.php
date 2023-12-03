@@ -6,11 +6,6 @@ namespace MammothPHP\WoollyM\IO;
 
 class FWF
 {
-    private $defaultOptions = [
-        'include' => null,
-        'exclude' => null,
-    ];
-
     public function __construct(public readonly string $fileName) {}
 
     /**
@@ -20,13 +15,9 @@ class FWF
      *      exclude: Blacklist regex to apply to each line of the file (default: null)
      * @throws \MammothPHP\WoollyM\Exceptions\UnknownOptionException
      */
-    public function loadFile(array $colSpecs, array $options = [])
+    public function loadFile(array $colSpecs, ?string $includeRegexOpt = null, ?string $excludeRegexOpt = null)
     {
         $fileName = $this->fileName;
-        $options = Options::setDefaultOptions($options, $this->defaultOptions);
-
-        $includeRegexOpt = $options['include'];
-        $excludeRegexOpt = $options['exclude'];
 
         $fileData = file_get_contents($fileName);
         $fileData = trim($fileData);

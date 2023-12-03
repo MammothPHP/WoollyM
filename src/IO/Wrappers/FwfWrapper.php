@@ -11,10 +11,10 @@ trait FwfWrapper
     /**
      * Factory method for creating a DataFrame from a fixed-width file.
      */
-    public static function fromFWF(string $fileName, array $colSpecs, array $options = []): self
+    public static function fromFWF(string $fileName, array $colSpecs, ?string $includeRegexOpt = null, ?string $excludeRegexOpt = null): self
     {
         $fwf = new FWF($fileName);
-        $data = $fwf->loadFile($colSpecs, $options);
+        $data = $fwf->loadFile(colSpecs: $colSpecs, includeRegexOpt: $includeRegexOpt, excludeRegexOpt: $excludeRegexOpt);
 
         return new self($data);
     }

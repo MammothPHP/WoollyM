@@ -3,7 +3,7 @@
 declare(strict_types=1);
 use MammothPHP\WoollyM\DataFrame;
 
-test('load f w f1', function (): void {
+test('load fwf1', function (): void {
     $fileName = __DIR__ . \DIRECTORY_SEPARATOR . 'TestFiles' . \DIRECTORY_SEPARATOR . 'testFWF.fwf';
 
     /*
@@ -16,12 +16,12 @@ test('load f w f1', function (): void {
     123    tyui   90-12-3456 5678
     xyz    opas   78-90-1234 9012
     */
-    $df = DataFrame::fromFWF($fileName, [
+    $df = DataFrame::fromFWF(fileName: $fileName, colSpecs: [
         'col1' => ['*', 4],
         'col2' => [7, 11],
         'col3' => [14, 24],
         'col4' => [25, '*'],
-    ], ['include' => '/^.{14}\d{2}-\d{2}-\d{4}/']);
+    ], includeRegexOpt: '/^.{14}\d{2}-\d{2}-\d{4}/');
     $testArr = $df->toArray();
 
     $assertion = [
