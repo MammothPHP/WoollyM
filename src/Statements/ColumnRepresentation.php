@@ -126,7 +126,7 @@ class ColumnRepresentation extends FixedSelect implements Stringable
             throw new DataFrameException($msg);
         }
 
-        if (\count($df) != \count($this->getLinkedDataFrame())) {
+        if (\count($df) !== \count($this->getLinkedDataFrame())) {
             $msg = 'Source and target DataFrames must have identical number ';
             $msg .= 'of rows.';
 

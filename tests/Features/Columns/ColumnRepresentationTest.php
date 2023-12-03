@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use MammothPHP\WoollyM\{DataFrame, DataFrameModifiers};
-use MammothPHP\WoollyM\Exceptions\InvalidSelectException;
+use MammothPHP\WoollyM\Exceptions\{DataFrameException, InvalidSelectException};
 
 beforeEach(function (): void {
     $this->df = new DataFrame([
@@ -53,6 +53,18 @@ it('apply dataframe to colone', function (): void {
 
     expect($this->df->toArray())->toBe($this->expected1);
 });
+
+it('cannot apply invalid dataframe with 2 columns', function (): void {
+    $this->df->col('b')->set(
+        new DataFrame([['b' => 42], ['c' => 42], ['b' => 42]])
+    );
+})->throws(DataFrameException::class);
+
+it('cannot apply invalid dataframe with different number of records', function (): void {
+    $this->df->col('b')->set(
+        new DataFrame([['b' => 42], ['b' => 42]])
+    );
+})->throws(DataFrameException::class);
 
 test('set column raw value from property', function (): void {
     $this->df->col('b')->values = 42;

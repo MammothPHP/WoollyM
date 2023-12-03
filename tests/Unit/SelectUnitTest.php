@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use MammothPHP\WoollyM\DataFrame;
-use MammothPHP\WoollyM\Exceptions\{InvalidSelectException, PropertyNotExistException};
+use MammothPHP\WoollyM\Exceptions\{InvalidSelectException, PropertyNotExistException, UnavailableMethodInContext};
 use MammothPHP\WoollyM\Statements\{Select, SelectParam};
 
 beforeEach(function (): void {
@@ -114,6 +114,17 @@ test('reset', function (): void {
     expect($select->config(SelectParam::OFFSET))->toBe(0);
 });
 
+test('selectAll can be reset', function (): void {
+    $c1 = fn() => true;
+    $select = $this->df->selectAll()->where($c1)->and($c1)->or($c1)->limit(4)->offset(5);
+
+    expect($select->reset())->toBe($select);
+
+    expect($select->config(SelectParam::WHERE))->toBe([]);
+    expect($select->config(SelectParam::LIMIT))->toBeNull();
+    expect($select->config(SelectParam::OFFSET))->toBe(0);
+});
+
 it('support cloning (dataFrame tests)', function (): void {
     $select1 = $this->df->select('colA');
     $select2 = clone $select1;
@@ -169,3 +180,11 @@ it('throw an exception if module method not exist', function (): void {
 it('throw an exception if module property not exist', function (): void {
     $this->df->selectAll()->bidule;
 })->throws(PropertyNotExistException::class, 'Call to undefined property bidule');
+
+test('selectAll cannot be reset', function (): void {
+    $this->df->selectAll()->resetSelect();
+})->throws(UnavailableMethodInContext::class);
+
+test('selectAll cannot be replaced', function (): void {
+    $this->df->selectAll()->replaceSelect();
+})->throws(UnavailableMethodInContext::class);
