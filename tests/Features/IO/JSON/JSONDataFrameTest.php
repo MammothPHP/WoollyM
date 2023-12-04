@@ -3,7 +3,7 @@
 declare(strict_types=1);
 use MammothPHP\WoollyM\DataFrame;
 
-test('to j s o n', function (): void {
+test('to json', function (): void {
     $df = DataFrame::fromArray([
         ['a' => 1, 'b' => 2, 'c' => 3],
         ['a' => 4, 'b' => 5, 'c' => 6],
@@ -14,19 +14,23 @@ test('to j s o n', function (): void {
     expect($df->toJSON())->toEqual($expected);
 });
 
-test('from j s o n', function (): void {
-    $df = DataFrame::fromJSON('[{"a":1,"b":2,"c":3},{"a":4,"b":5,"c":6},{"a":7,"b":8,"c":9}]');
-
+test('from json', function (): void {
     $expected = [
         ['a' => 1, 'b' => 2, 'c' => 3],
         ['a' => 4, 'b' => 5, 'c' => 6],
         ['a' => 7, 'b' => 8, 'c' => 9],
     ];
 
+    $filePath = __DIR__.DIRECTORY_SEPARATOR.'TestFiles'.DIRECTORY_SEPARATOR.'input.json';
+
+    $df = DataFrame::fromJsonString(file_get_contents($filePath));
+    expect($df->toArray())->toEqual($expected);
+
+    $df = DataFrame::fromJsonFile($filePath);
     expect($df->toArray())->toEqual($expected);
 });
 
-test('to pretty j s o n', function (): void {
+test('to pretty json', function (): void {
     $df = DataFrame::fromArray([
         ['a' => 1, 'b' => 2, 'c' => 3],
         ['a' => 4, 'b' => 5, 'c' => 6],

@@ -12,11 +12,23 @@ trait JsonWrapper
     /**
      * Factory method for instantiating a DataFrame from a JSON string.
      */
-    public static function fromJSON($jsonString): self
+    public static function fromJsonString(string $jsonString): self
     {
-        $data = JSON::decodeJSON($jsonString);
+        $df = new self;
+        JSON::importFromJsonString($df, $jsonString);
 
-        return new self($data);
+        return $df;
+    }
+
+    /**
+     * Factory method for instantiating a DataFrame from a JSON file.
+     */
+    public static function fromJsonFile(string $jsonString): self
+    {
+        $df = new self;
+        JSON::importFromJsonFile($df, $jsonString);
+
+        return $df;
     }
 
     /**

@@ -11,7 +11,8 @@
     "ext-pdo_sqlite": "*",
     "gajus/dindent": "dev-master",
     "phpoffice/phpspreadsheet": "^1.29",
-    "league/csv": "^9.11"
+    "league/csv": "^9.11",
+    "halaxa/json-machine": "^1.1"
   },
   "require-dev": {
     "laravel/pint": "^1.13",

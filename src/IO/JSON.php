@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace MammothPHP\WoollyM\IO;
 
+use JsonMachine\Items;
+use JsonMachine\JsonDecoder\ExtJsonDecoder;
+use MammothPHP\WoollyM\DataFrame;
 use MammothPHP\WoollyM\Exceptions\NotYetImplementedException;
 
 abstract class JSON
@@ -23,8 +26,22 @@ abstract class JSON
      * Decodes a JSON string into a DataFrame array.
      * @throws \MammothPHP\WoollyM\Exceptions\UnknownOptionException
      */
-    public static function decodeJSON(string $jsonString): mixed
+    public static function importFromJsonFile(DataFrame $df, string $jsonFile): void
     {
-        return json_decode(json: $jsonString, associative: true, flags: \JSON_THROW_ON_ERROR);
+        $jsonItems = Items::fromFile($jsonFile, ['decoder' => new ExtJsonDecoder(true)]);
+        self::importFromJsonItems($df, $jsonItems);
+    }
+
+    public static function importFromJsonString(DataFrame $df, string $jsonFile): void
+    {
+        $jsonItems = Items::fromString($jsonFile, ['decoder' => new ExtJsonDecoder(true)]);
+        self::importFromJsonItems($df, $jsonItems);
+    }
+
+    public static function importFromJsonItems(DataFrame $df, Items $jsonItems): void
+    {
+        foreach($jsonItems as $record) {
+            $df->addRecord($record);
+        }
     }
 }

@@ -49,6 +49,7 @@ trait CsvWrapper
     ): DataFrame {
         return self::fromCSV(
             input: $input,
+            enclosure: $enclosure,
             delimiter: "\t",
             escape: $escape,
             headerOffset: $headerOffset,
