@@ -40,10 +40,10 @@ class PhpArrayDriver implements DataDriverInterface, SortableDriverInterface
     public function setRecordColumn(int $recordKey, int $columnKey, mixed $colValue): void
     {
         if (!$this->keyExist($recordKey)) {
-            $this->setRecord($recordKey, []);
+            $this->setRecord($recordKey, [$columnKey => $colValue]);
+        } else {
+            $this->data[$recordKey][$columnKey] = $colValue;
         }
-
-        $this->data[$recordKey][$columnKey] = $colValue;
     }
 
     public function addRecord(array $recordData): void
