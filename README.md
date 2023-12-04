@@ -1,6 +1,6 @@
 <p align="center">
     <picture>
-        <img alt="" width="40%" src="woollym_logo.svg">
+        <img alt="" width="40%" src="logos/woollym_logo.png">
     </picture>
 </p>
 
@@ -124,7 +124,7 @@ $df->filter(fn(array $record, int $position): bool => $position !== 42);
 ```
 
 
-### Itarating overs records
+### Iterating overs records
 
 #### Counting Records
 Counting records:
