@@ -29,18 +29,18 @@ abstract class JSON
     public static function importFromJsonFile(DataFrame $df, string $jsonFile): void
     {
         $jsonItems = Items::fromFile($jsonFile, ['decoder' => new ExtJsonDecoder(true)]);
-        self::importFromJsonItems($df, $jsonItems);
+        self::importFromJsonItemsIterable($df, $jsonItems);
     }
 
     public static function importFromJsonString(DataFrame $df, string $jsonFile): void
     {
         $jsonItems = Items::fromString($jsonFile, ['decoder' => new ExtJsonDecoder(true)]);
-        self::importFromJsonItems($df, $jsonItems);
+        self::importFromJsonItemsIterable($df, $jsonItems);
     }
 
-    public static function importFromJsonItems(DataFrame $df, Items $jsonItems): void
+    public static function importFromJsonItemsIterable(DataFrame $df, Items $jsonItemsIterable): void
     {
-        foreach ($jsonItems as $record) {
+        foreach ($jsonItemsIterable as $record) {
             $df->addRecord($record);
         }
     }

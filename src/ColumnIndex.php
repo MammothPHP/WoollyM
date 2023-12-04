@@ -6,6 +6,9 @@ namespace MammothPHP\WoollyM;
 
 use WeakReference;
 
+/**
+ * @internal
+ */
 class ColumnIndex
 {
     public readonly WeakReference $df;

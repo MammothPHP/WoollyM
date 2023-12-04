@@ -9,6 +9,10 @@ use Closure;
 use MammothPHP\WoollyM\DataDrivers\DriversExceptions\KeyNotExistException;
 use MammothPHP\WoollyM\DataDrivers\{DataDriverInterface, SortableDriverInterface};
 
+/**
+ *
+ * @internal
+ */
 class PhpArrayDriver implements DataDriverInterface, SortableDriverInterface
 {
     protected array $data = [];

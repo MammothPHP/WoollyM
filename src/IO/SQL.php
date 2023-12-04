@@ -96,7 +96,6 @@ class SQL
 
     /**
      * Transforms and executes a series of prepared statements from a chunked array.
-     * @internal
      */
     protected function insertChunkedData(string $tableName, array $columns, array $data): int
     {
@@ -119,7 +118,6 @@ class SQL
 
     /**
      * Transforms a table string, array of columns, and array of data into a prepared statement.
-     * @internal
      */
     protected function createPreparedStatement(string $tableName, array $columns, int $rows): void
     {

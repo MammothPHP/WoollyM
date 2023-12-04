@@ -147,7 +147,9 @@ abstract class DataFramePrimitives
         throw new InvalidSelectException;
     }
 
-    # Internal only
+    /**
+     * @internal
+     */
     public function getColumnIndexObject(string $columnName): ColumnIndex
     {
         return $this->columnIndexes[$this->getColumnKey($columnName)];
@@ -191,7 +193,7 @@ abstract class DataFramePrimitives
         return $this;
     }
 
-    public function convertAbstractRecordToArray(array $abstractRecord): array
+    protected function convertAbstractRecordToArray(array $abstractRecord): array
     {
         $r = [];
 
@@ -237,15 +239,13 @@ abstract class DataFramePrimitives
         return true;
     }
 
-    public function createColumnRepresentation(ColumnIndex $columnIndex): void
+    protected function createColumnRepresentation(ColumnIndex $columnIndex): void
     {
         $this->columnRepresentations[$columnIndex] = new ColumnRepresentation($columnIndex);
     }
 
     /**
      * Adds a new column to the DataFrame.
-     *
-     * @internal
      */
     public function addColumn(string $columnName): self
     {

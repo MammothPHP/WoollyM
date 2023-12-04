@@ -12,11 +12,6 @@ abstract class DataFrameHelpers extends DataFrameModifiers implements Countable
      ******************************************** Countable Implementation *********************************************
      ******************************************************************************************************************/
 
-    /**
-     * Count elements of an object
-     *
-     * @link   http://php.net/manual/en/countable.count.php
-     *      */
     public function count(): int
     {
         return $this->data->count();

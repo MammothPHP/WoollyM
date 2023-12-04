@@ -21,12 +21,18 @@ class ColumnRepresentation extends FixedSelect implements Stringable
         $this->setLinkedDataFrame($columnIndex->df->get());
     }
 
+    /**
+     * @internal
+     */
     #[Override]
     public function isAlive(): bool
     {
         return $this->columnIndex->get() !== null && parent::isAlive();
     }
 
+    /**
+     * @internal
+     */
     #[Override]
     public function __get(string $name): mixed
     {
@@ -37,7 +43,9 @@ class ColumnRepresentation extends FixedSelect implements Stringable
         return parent::__get($name);
     }
 
-    // Implement property & methods overloading
+    /**
+     * @internal
+     */
     #[Override]
     public function __set(string $name, mixed $value): void
     {

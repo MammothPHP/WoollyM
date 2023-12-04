@@ -58,6 +58,7 @@ abstract class DataFrameAccessors extends DataFramePrimitives implements ArrayAc
      * Allows user to remove columns from the DataFrame using unset.
      *      ie: unset($df['column'])
      *
+     * @internal
      * @throws InvalidSelectException
      */
     public function offsetUnset(mixed $offset): void
@@ -71,7 +72,7 @@ abstract class DataFrameAccessors extends DataFramePrimitives implements ArrayAc
 
     /**
     * Return the current element
-    *
+    * @internal
     * @link   http://php.net/manual/en/iterator.current.php
     */
     public function current(): mixed
@@ -81,7 +82,7 @@ abstract class DataFrameAccessors extends DataFramePrimitives implements ArrayAc
 
     /**
      * Move forward to next element
-     *
+     * @internal
      * @link   http://php.net/manual/en/iterator.next.php
      */
     public function next(): void
@@ -91,7 +92,7 @@ abstract class DataFrameAccessors extends DataFramePrimitives implements ArrayAc
 
     /**
      * Return the key of the current element
-     *
+     * @internal
      * @link   http://php.net/manual/en/iterator.key.php
      */
     public function key(): mixed
@@ -101,7 +102,7 @@ abstract class DataFrameAccessors extends DataFramePrimitives implements ArrayAc
 
     /**
      * Checks if current recordKey is valid
-     *
+     * @internal
      * @link   http://php.net/manual/en/iterator.valid.php
      *                 Returns true on success or false on failure.
      */
@@ -112,7 +113,7 @@ abstract class DataFrameAccessors extends DataFramePrimitives implements ArrayAc
 
     /**
      * Rewind the Iterator to the first element
-     *
+     * @internal
      * @link   http://php.net/manual/en/iterator.rewind.php
      */
     public function rewind(): void

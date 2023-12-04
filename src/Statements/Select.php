@@ -71,11 +71,18 @@ class Select implements Iterator
     // MODULES Implementation
 
     // Implement property & methods overloading
+
+    /**
+     * @internal
+     */
     public function __set(string $name, mixed $value): void
     {
         throw new PropertyNotExistException;
     }
 
+    /**
+     * @internal
+     */
     public function __get(string $name): mixed
     {
         $this->isAliveOrThrowInvalidSelectException();
@@ -87,6 +94,9 @@ class Select implements Iterator
         throw new PropertyNotExistException('Call to undefined property ' . $name);
     }
 
+    /**
+     * @internal
+     */
     public function __isset(string $name): bool
     {
         $this->isAliveOrThrowInvalidSelectException();
@@ -94,6 +104,9 @@ class Select implements Iterator
         return Modules::getStatsPropertyModule($name) ? true : false;
     }
 
+    /**
+     * @internal
+     */
     public function __call(string $name, array $arguments): mixed
     {
         $this->isAliveOrThrowInvalidSelectException();
@@ -286,7 +299,6 @@ class Select implements Iterator
         return $r;
     }
 
-    // Internal
     protected function filterColumn(array $record): array
     {
         return array_filter(
@@ -334,7 +346,7 @@ class Select implements Iterator
     protected int $limitCount = 0;
     protected int $offsetCount = 0;
 
-    public function moveToNextValidRecord(): void
+    protected function moveToNextValidRecord(): void
     {
         if ($this->valid()) {
             if ($this->limit !== null && $this->limitCount >= $this->limit) {
@@ -351,6 +363,9 @@ class Select implements Iterator
         }
     }
 
+    /**
+     * @internal
+     */
     public function rewind(): void
     {
         $this->limitCount = 0;
@@ -359,6 +374,9 @@ class Select implements Iterator
         $this->moveToNextValidRecord();
     }
 
+    /**
+     * @internal
+     */
     public function current(): mixed
     {
         $r = $this->getLinkedDataFrame()->current();
@@ -366,22 +384,34 @@ class Select implements Iterator
         return $this->filterColumn($r);
     }
 
-    public function currentUnfiltered(): array
+    /**
+     * @internal
+     */
+    protected function currentUnfiltered(): array
     {
         return $this->getLinkedDataFrame()->current();
     }
 
+    /**
+     * @internal
+     */
     public function key(): int
     {
         return $this->getLinkedDataFrame()->key();
     }
 
+    /**
+     * @internal
+     */
     public function next(): void
     {
         $this->getLinkedDataFrame()->next();
         $this->moveToNextValidRecord();
     }
 
+    /**
+     * @internal
+     */
     public function valid(): bool
     {
         return $this->getLinkedDataFrame()->valid();

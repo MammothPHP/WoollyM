@@ -40,11 +40,17 @@ abstract class Modules
         return $r instanceof $type->value ? $r : null;
     }
 
+    /**
+     * @internal
+     */
     public static function getStatsPropertyModule(string $property): ?StatsPropertyInterface
     {
         return self::getModule($property, ModuleType::StatsProperty);
     }
 
+    /**
+     * @internal
+     */
     public static function getStatsMethodModule(string $method): ?StatsMethodInterface
     {
         return self::getModule($method, ModuleType::StatsMethod);

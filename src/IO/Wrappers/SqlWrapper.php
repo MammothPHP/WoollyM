@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace MammothPHP\WoollyM\IO\Wrappers;
 
-use MammothPHP\WoollyM\DataFrame;
 use MammothPHP\WoollyM\IO\SQL;
 use PDO;
 

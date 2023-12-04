@@ -117,7 +117,6 @@ abstract class DataFrameModifiers extends DataFrameStatements
      *          2 => function($old_row) { return $new_row; },
      *          3 => [ 'a' => 1, 'b' => 2, 'c' => 3 ],
      *      ]);
-     *
      */
     public function applyIndexMap(array $map, ?string $column = null): self
     {
