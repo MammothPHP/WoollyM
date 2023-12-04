@@ -1,18 +1,28 @@
 <?php
 
 declare(strict_types=1);
+
 use MammothPHP\WoollyM\DataFrame;
+use League\Csv\{Reader, Writer};
+use MammothPHP\WoollyM\Exceptions\DataFrameException;
 
-test('from csv', function (): void {
-    $fileName = __DIR__ . \DIRECTORY_SEPARATOR . 'TestFiles' . \DIRECTORY_SEPARATOR . 'testCSV.csv';
-
-    $df = DataFrame::fromCSV($fileName);
-
-    expect($df->toArray())->toEqual([
+test('from csv', function (Closure $file): void {
+    $expected = [
         ['a' => 1, 'b' => 2, 'c' => 3],
         ['a' => 4, 'b' => 5, 'c' => 6],
-    ]);
-});
+    ];
+
+    $fileName = __DIR__ . \DIRECTORY_SEPARATOR . 'TestFiles' . \DIRECTORY_SEPARATOR . 'testCSV.csv';
+
+    $df = DataFrame::fromCSV($file($fileName));
+    expect($df->toArray())->toEqual($expected);
+})->with([
+    'file path' => fn(string $fileName): string => $fileName,
+    'stream' => fn(string $fileName) => fopen($fileName, 'r'),
+    'reader' => fn(string $fileName): Reader => Reader::createFromPath($fileName)->setHeaderOffset(0),
+    'spl file info' => fn(string $fileName): SplFileInfo => new SplFileInfo($fileName),
+    'string' => fn(string $fileName): string => file_get_contents($fileName),
+]);
 
 test('from csv no header', function (): void {
     $fileName = __DIR__ . \DIRECTORY_SEPARATOR . 'TestFiles' . \DIRECTORY_SEPARATOR . 'testCSV.csv';
@@ -117,7 +127,7 @@ test('from tsv', function (): void {
     ]);
 });
 
-test('save csv', function (): void {
+test('save csv', function (Closure $file): void {
     $fileName = __DIR__ . \DIRECTORY_SEPARATOR . 'TestFiles' . \DIRECTORY_SEPARATOR . 'testCSVSave.csv';
 
     if (file_exists($fileName)) {
@@ -130,7 +140,7 @@ test('save csv', function (): void {
         ['a' => 7, 'b' => 'hui,t', 'c' => 9],
     ]);
 
-    $df->toCSV(file: $fileName, overwrite: true, writeHeader: true);
+    $df->toCSV(file: $file($fileName), overwrite: true, writeHeader: true);
 
     $data = file_get_contents($fileName);
 
@@ -146,8 +156,11 @@ test('save csv', function (): void {
                 "7,\"hui,t\",9\n";
 
     expect($data)->toBe($expected);
-});
-
+})->with([
+    'file path' => fn(string $fileName): string => $fileName,
+    'stream' => fn(string $fileName) => fopen($fileName, 'w+'),
+    'writer' => fn(string $fileName): Writer => Writer::createFromPath($fileName, 'w+'),
+]);
 
 test('save csv with traps', function (): void {
     $df = DataFrame::fromArray([
@@ -182,3 +195,8 @@ test('save csv with traps', function (): void {
     $tempFile->rewind();
     expect($tempFile->fread(1024))->toBe($expected);
 });
+
+test('save to invalid file', function (): void {
+    $df = new DataFrame;
+    $df->toCSV(new stdClass);
+})->throws(DataFrameException::class);

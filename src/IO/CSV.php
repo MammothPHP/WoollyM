@@ -45,7 +45,7 @@ class CSV
         } elseif ($input instanceof Reader) {
             return self::importFromCsvReader($input);
         } elseif (\is_string($input)) {
-            return self::importFromPath($input);
+            return (file_exists($input)) ? self::importFromPath($input) : self::importFromString($input);
         } elseif (\is_resource($input)) {
             return self::importFromStream($input);
         } else {

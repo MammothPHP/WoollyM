@@ -21,7 +21,7 @@ test('from json', function (): void {
         ['a' => 7, 'b' => 8, 'c' => 9],
     ];
 
-    $filePath = __DIR__.DIRECTORY_SEPARATOR.'TestFiles'.DIRECTORY_SEPARATOR.'input.json';
+    $filePath = __DIR__ . \DIRECTORY_SEPARATOR . 'TestFiles' . \DIRECTORY_SEPARATOR . 'input.json';
 
     $df = DataFrame::fromJsonString(file_get_contents($filePath));
     expect($df->toArray())->toEqual($expected);

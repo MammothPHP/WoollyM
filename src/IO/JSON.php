@@ -40,7 +40,7 @@ abstract class JSON
 
     public static function importFromJsonItems(DataFrame $df, Items $jsonItems): void
     {
-        foreach($jsonItems as $record) {
+        foreach ($jsonItems as $record) {
             $df->addRecord($record);
         }
     }
