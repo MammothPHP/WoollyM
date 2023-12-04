@@ -26,7 +26,6 @@ abstract class DataFrameModifiers extends DataFrameStatements
 
     /**
      * Allows user to "array_merge" two DataFrames so that the rows of one are appended to the rows of another.
-     *
      */
     public function append(DataFrame $df): self
     {
@@ -60,7 +59,6 @@ abstract class DataFrameModifiers extends DataFrameStatements
     /**
      * Applies a user-defined function to each row of the DataFrame. The parameters of the function include the row
      * being iterated over, and optionally the index. ie: apply(function($el, $ix) { ... })
-     *
      */
     public function apply(Closure $f): self
     {
@@ -79,7 +77,6 @@ abstract class DataFrameModifiers extends DataFrameStatements
 
     /**
      * Replaces all occurences within the DataFrame of regex $pattern with string $replacement
-     *
      */
     public function preg_replace(array|string $pattern, array|string $replacement): self
     {
@@ -167,7 +164,6 @@ abstract class DataFrameModifiers extends DataFrameStatements
 
     /**
      * Sort the rows by its values
-     *
      */
     public function sortValues(array|string $by, bool $ascending = true): self
     {

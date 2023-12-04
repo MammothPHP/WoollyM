@@ -27,7 +27,6 @@ class Copy
 
     /**
      * Returns unique values of given column(s)
-     *
      */
     public function unique(array|string $columns): DataFrame
     {

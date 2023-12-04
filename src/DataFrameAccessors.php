@@ -71,10 +71,10 @@ abstract class DataFrameAccessors extends DataFramePrimitives implements ArrayAc
      ******************************************************************************************************************/
 
     /**
-    * Return the current element
-    * @internal
-    * @link   http://php.net/manual/en/iterator.current.php
-    */
+     * Return the current element
+     * @internal
+     * @link   http://php.net/manual/en/iterator.current.php
+     */
     public function current(): mixed
     {
         return $this->getRecord($this->key());

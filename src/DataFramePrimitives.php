@@ -124,7 +124,7 @@ abstract class DataFramePrimitives
         return $this->columnNamesCache;
     }
 
-    /*
+    /**
      *@internal
      */
     public function getForcedTypesCache(): array
@@ -228,7 +228,6 @@ abstract class DataFramePrimitives
 
     /**
      * Returns a boolean of whether the specified column exists.
-     *
      */
     public function hasColumn(ColumnRepresentation|string $column): bool
     {
@@ -283,7 +282,6 @@ abstract class DataFramePrimitives
 
     /**
      * Removes a column (and all associated data) from the DataFrame.
-     *
      */
     public function removeColumn(string $columnName): self
     {
