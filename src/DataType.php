@@ -1,12 +1,6 @@
 <?php
 
 declare(strict_types=1);
-/**
- * Created by PhpStorm.
- * User: hgehring
- * Date: 4/30/18
- * Time: 10:33 PM
- */
 
 namespace MammothPHP\WoollyM;
 
@@ -117,7 +111,7 @@ enum DataType
     public static function convertCurrency(string $value): string
     {
         $value = explode('.', $value);
-        $value[1] = $value[1] ?? '00';
+        $value[1] ??= '00';
         $value[0] = ($value[0] == '' || $value[0] == '-') ? '0' : $value[0];
         $value[1] = ($value[1] == '' || $value[1] == '0') ? '00' : $value[1];
 
@@ -138,7 +132,7 @@ enum DataType
     public static function convertAccounting(string $value): string
     {
         $value = explode('.', $value);
-        $value[1] = $value[1] ?? '00';
+        $value[1] ??= '00';
         $value[0] = ($value[0] == '' || $value[0] == '-') ? '0' : $value[0];
         $value[1] = ($value[1] == '' || $value[1] == '0') ? '00' : $value[1];
 
