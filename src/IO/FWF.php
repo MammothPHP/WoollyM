@@ -10,8 +10,8 @@ class FWF
 
     /**
      * Loads the file which the FWF class was instantiated with.
-     * @param $includeRegexOpt Whitelist regex to apply to each line of the file (default: null)
-     * @param $excludeRegexOpt Blacklist regex to apply to each line of the file (default: null)
+     * @param $includeRegexOpt - Whitelist regex to apply to each line of the file (default: null)
+     * @param $excludeRegexOpt - Blacklist regex to apply to each line of the file (default: null)
      * @throws \MammothPHP\WoollyM\Exceptions\UnknownOptionException
      */
     public function loadFile(array $colSpecs, ?string $includeRegexOpt = null, ?string $excludeRegexOpt = null): array

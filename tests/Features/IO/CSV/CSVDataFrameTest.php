@@ -140,7 +140,7 @@ test('save csv', function (Closure $file): void {
         ['a' => 7, 'b' => 'hui,t', 'c' => 9],
     ]);
 
-    $df->toCSV(file: $file($fileName), overwrite: true, writeHeader: true);
+    $df->toCSV(file: $file($fileName), overwriteFile: true, writeHeader: true);
 
     $data = file_get_contents($fileName);
 
@@ -171,7 +171,7 @@ test('save csv with traps', function (): void {
 
     // Unordered columns
     $tempFile = new SplTempFileObject;
-    $df->toCSV(file: $tempFile, overwrite: true, writeHeader: true);
+    $df->toCSV(file: $tempFile, overwriteFile: true, writeHeader: true);
 
     $expected = "a,c,b\n" .
                 "1,3,\n" .
@@ -185,7 +185,7 @@ test('save csv with traps', function (): void {
     $df->sortColumns();
 
     $tempFile = new SplTempFileObject;
-    $df->toCSV(file: $tempFile, overwrite: true, writeHeader: true);
+    $df->toCSV(file: $tempFile, overwriteFile: true, writeHeader: true);
 
     $expected = "a,b,c\n" .
                 "1,,3\n" .

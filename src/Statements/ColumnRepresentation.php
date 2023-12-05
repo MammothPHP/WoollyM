@@ -5,12 +5,16 @@ declare(strict_types=1);
 namespace MammothPHP\WoollyM\Statements;
 
 use Closure;
+use Exception;
 use MammothPHP\WoollyM\{ColumnIndex, DataFrame, DataType};
-use MammothPHP\WoollyM\Exceptions\DataFrameException;
+use MammothPHP\WoollyM\Exceptions\{DataFrameException, InvalidSelectException};
 use Override;
 use Stringable;
 use WeakReference;
 
+/**
+ * A special Select object restricted to a single column, implementing extra columns manipulation methods.
+ */
 class ColumnRepresentation extends FixedSelect implements Stringable
 {
     protected readonly WeakReference $columnIndex;
@@ -21,9 +25,6 @@ class ColumnRepresentation extends FixedSelect implements Stringable
         $this->setLinkedDataFrame($columnIndex->df->get());
     }
 
-    /**
-     * @internal
-     */
     #[Override]
     public function isAlive(): bool
     {
@@ -60,6 +61,10 @@ class ColumnRepresentation extends FixedSelect implements Stringable
         parent::__set($name, $value);
     }
 
+    /**
+     * Return the column name
+     * @throws InvalidSelectException
+     */
     public function getName(): string
     {
         $this->isAliveOrThrowInvalidSelectException();
@@ -78,6 +83,9 @@ class ColumnRepresentation extends FixedSelect implements Stringable
         return $this->getName();
     }
 
+    /**
+     * Convert all colonne data to a specified type
+     */
     public function type(DataType $type, array|string|null $fromDateFormat = null, ?string $toDateFormat = null): self
     {
         $this->apply(fn(mixed $value): mixed => $type->convert($value, $fromDateFormat, $toDateFormat));
@@ -85,6 +93,10 @@ class ColumnRepresentation extends FixedSelect implements Stringable
         return $this;
     }
 
+    /**
+     * @todo
+     * @throws InvalidSelectException
+     */
     public function enforceType(?DataType $type): self
     {
         if ($type !== null) {
@@ -96,11 +108,20 @@ class ColumnRepresentation extends FixedSelect implements Stringable
         return $this;
     }
 
-    public function remove(): DataFrame
+    /**
+     * Remove the column from DataFrame
+     * @throws InvalidSelectException
+     * @throws Exception
+     */
+    public function remove(): void
     {
-        return $this->getLinkedDataFrame()->removeColumn($this->getName());
+        $this->getLinkedDataFrame()->removeColumn($this->getName());
     }
 
+    /**
+     * Rename column
+     * @throws InvalidSelectException
+     */
     public function rename(string $to): self
     {
         $this->isAliveOrThrowInvalidSelectException();
@@ -110,21 +131,33 @@ class ColumnRepresentation extends FixedSelect implements Stringable
         return $this;
     }
 
-    public function set(mixed $value): self
+    /**
+     * Set a value or apply a closure to all value selected.
+     * @param $set - The value to set or the closure to apply.
+     * @throws InvalidSelectException
+     * @throws DataFrameException
+     */
+    public function set(mixed $set): self
     {
         $this->isAliveOrThrowInvalidSelectException();
 
-        if ($value instanceof DataFrame) {
-            $this->setDataFrame($value);
-        } elseif ($value instanceof Closure) {
-            $this->apply($value);
+        if ($set instanceof DataFrame) {
+            $this->setDataFrame($set);
+        } elseif ($set instanceof Closure) {
+            $this->apply($set);
         } else {
-            $this->setColumnValue($value);
+            $this->setColumnValue($set);
         }
 
         return $this;
     }
 
+    /**
+     * Merge DataFrame to the column value from the beginning.
+     * @param $df - Single column dataFrame
+     * @throws DataFrameException
+     * @throws InvalidSelectException
+     */
     private function setDataFrame(DataFrame $df): void
     {
         if ($df->countColumns() !== 1) {
@@ -144,6 +177,10 @@ class ColumnRepresentation extends FixedSelect implements Stringable
         $this->apply(fn(mixed $value, int $position): mixed => current($df->getRecord($position)));
     }
 
+    /**
+     * Apply a closure return to all selected elements.
+     * @throws InvalidSelectException
+     */
     public function apply(Closure $f): void
     {
         $target_df = $this->getLinkedDataFrame();
@@ -155,6 +192,10 @@ class ColumnRepresentation extends FixedSelect implements Stringable
         }
     }
 
+    /**
+     * Set value to all selected elements.
+     * @throws InvalidSelectException
+     */
     public function setColumnValue(mixed $value): void
     {
         $this->apply(fn(): mixed => $value);

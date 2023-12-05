@@ -133,7 +133,7 @@ class CSV
         return $this->df;
     }
 
-    public function saveToFile(mixed $file, bool $overwrite = false, bool $writeHeader = true): void
+    public function saveToFile(mixed $file, bool $overwriteFile = false, bool $writeHeader = true): void
     {
         if ($file instanceof SplFileInfo) {
             if (!$file instanceof SplFileObject) {
@@ -144,7 +144,7 @@ class CSV
         } elseif ($file instanceof Writer) {
             // Do nothing
         } elseif (\is_string($file)) {
-            if (file_exists($file) && !$overwrite) {
+            if (file_exists($file) && !$overwriteFile) {
                 throw new FileExistsException("Write failed. File {$file} exists.");
             }
 

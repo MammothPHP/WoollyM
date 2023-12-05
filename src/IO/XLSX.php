@@ -13,8 +13,8 @@ class XLSX
 
     /**
      * Loads the file which the CSV class was instantiated with.
-     * @param $sheetname The name of the worksheet to load. Defaults to first worksheet (default: null)
-     * @param $colRow The row of the spreadsheet which contains column data (default: 1)
+     * @param $sheetname - The name of the worksheet to load. Defaults to first worksheet (default: null)
+     * @param $colRow - The row of the spreadsheet which contains column data (default: 1)
      * @throws \MammothPHP\WoollyM\Exceptions\UnknownOptionException
      * @throws \PhpOffice\PhpSpreadsheet\Exception
      */

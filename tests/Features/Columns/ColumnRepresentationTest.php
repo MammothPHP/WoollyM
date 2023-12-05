@@ -76,10 +76,9 @@ it('remove himself', function (): void {
     $colB = $this->df->col('b');
     $return = $colB->remove();
 
-    expect($return)->toBeInstanceOf(DataFrameModifiers::class);
-    expect($return->columns())->toHaveCount(2);
+    expect($this->df->columns())->toHaveCount(2);
 
-    expect(fn() => $return->col('b'))->toThrow(InvalidSelectException::class);
+    expect(fn() => $this->df->col('b'))->toThrow(InvalidSelectException::class);
     expect(fn() => $colB->sum())->toThrow(InvalidSelectException::class);
 });
 

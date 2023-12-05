@@ -14,6 +14,16 @@ abstract class FixedSelect extends Select
      * @internal
      */
     #[Override]
+    public function select(string ...$selections): self
+    {
+        throw new UnavailableMethodInContext;
+    }
+
+    /**
+     * @ignore
+     * @internal
+     */
+    #[Override]
     public function replaceSelect(string ...$selections): self
     {
         throw new UnavailableMethodInContext;

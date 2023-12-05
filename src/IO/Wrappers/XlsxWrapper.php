@@ -24,7 +24,7 @@ trait XlsxWrapper
     /**
      * Output a DataFrame as a PHPExcel worksheet.
      */
-    public function toXLSXWorksheet(Spreadsheet &$excel, string $worksheetTitle): Worksheet
+    public function toXLSXWorksheet(Spreadsheet $excel, string $worksheetTitle): Worksheet
     {
         return XLSX::saveToWorksheet($excel, $worksheetTitle, $this->toArray(), $this->columnsNames());
     }

@@ -40,6 +40,10 @@ class Select implements Iterator
         $this->select = clone $this->select;
     }
 
+    /**
+     * Get the Linked DataFrame object
+     * @throws InvalidSelectException
+     */
     public function getLinkedDataFrame(): DataFrame
     {
         $this->isAliveOrThrowInvalidSelectException();
@@ -47,6 +51,9 @@ class Select implements Iterator
         return $this->df->get();
     }
 
+    /**
+     * @return - false if linked dataFrame no longer exist.
+     */
     public function isAlive(): bool
     {
         return $this->df->get() !== null;
@@ -57,6 +64,9 @@ class Select implements Iterator
         $this->isAlive() || throw new InvalidSelectException;
     }
 
+    /**
+     * Get the current filters configuration for this Select object
+     */
     public function config(SelectParam $param): array|int|null
     {
         return match ($param) {
@@ -120,11 +130,22 @@ class Select implements Iterator
 
 
     /// Public API, config
+
+    /**
+     * Reset all filters from this Select object
+     * @throws InvalidSelectException
+     * @throws NotYetImplementedException
+     */
     public function reset(): self
     {
-        return $this->resetSelect()->resetWhere()->resetLimit();
+        return $this->resetSelect()->resetWhere()->resetLimit(); // resetLimit also reset offSet
     }
 
+    /**
+     * Add columns to the Select object
+     * @param $selections - Valid columns names to select
+     * @throws InvalidSelectException
+     */
     public function select(string ...$selections): self
     {
         $this->isAliveOrThrowInvalidSelectException();
@@ -138,11 +159,19 @@ class Select implements Iterator
         return $this;
     }
 
+    /**
+     * Reset and set columns to the select object
+     * @param $selections - Valid columns names to select
+     * @throws InvalidSelectException
+     */
     public function replaceSelect(string ...$selections): self
     {
         return $this->resetSelect()->select(...$selections);
     }
 
+    /**
+     * Unselect all columns from the Select object
+     */
     public function resetSelect(): self
     {
         $this->select = new WeakMap;
@@ -150,6 +179,10 @@ class Select implements Iterator
         return $this;
     }
 
+    /**
+     * Get the selected columns
+     * @return string[]
+     */
     public function getSelect(): array
     {
         $r = [];
@@ -224,6 +257,9 @@ class Select implements Iterator
         return $this;
     }
 
+    /**
+     * Remove all where condition from the select object
+     */
     public function resetWhere(): self
     {
         $this->where = [];
@@ -245,6 +281,9 @@ class Select implements Iterator
         return $this;
     }
 
+    /**
+     * Remove all limit and offset conditions from the select object
+     */
     public function resetLimit(): self
     {
         $this->limit(limit: null, offset: 0);
@@ -265,6 +304,9 @@ class Select implements Iterator
         return $this;
     }
 
+    /**
+     * Remove all offset condition from the select object
+     */
     public function resetOffset(): self
     {
         $this->offset(0);
@@ -286,17 +328,15 @@ class Select implements Iterator
         return $df;
     }
 
+    /**
+     * Convert selection to array
+     * @return array<int,array>
+     */
     public function toArray(): array
     {
         $this->isAliveOrThrowInvalidSelectException();
 
-        $r = [];
-
-        foreach ($this as $key => $record) {
-            $r[$key] = $record;
-        }
-
-        return $r;
+        return iterator_to_array($this);
     }
 
     protected function filterColumn(array $record): array
@@ -328,7 +368,6 @@ class Select implements Iterator
 
         return true;
     }
-
 
     public function countRecords(): int
     {
