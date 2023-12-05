@@ -15,6 +15,9 @@ abstract class DataFrameModifiers extends DataFrameStatements
      ******************************************* Copy ******************************************************************
      ******************************************************************************************************************/
 
+    /**
+     * Return a Copy object, methods will provide new DataFrame objects.
+     */
     public function copy(): Copy
     {
         return new Copy($this);
@@ -25,7 +28,8 @@ abstract class DataFrameModifiers extends DataFrameStatements
      ******************************************************************************************************************/
 
     /**
-     * Allows user to "array_merge" two DataFrames so that the rows of one are appended to the rows of another.
+     * Allows user to "array_merge" two DataFrames so that the rows of one are appended to the rows of current DataFrame object
+     * @param $df - The one to add to the current.
      */
     public function append(DataFrame $df): self
     {
@@ -46,6 +50,11 @@ abstract class DataFrameModifiers extends DataFrameStatements
         return $this;
     }
 
+    /**
+     * Sort column order using a closure. Then retrieve records will respect the new order.
+     * @param $callback - See https://www.php.net/manual/fr/function.uasort.php
+     * @return DataFrameModifiers
+     */
     public function sortColumns(?Closure $callback = null): self
     {
         $callback ??= fn(ColumnIndex $a, ColumnIndex $b): int => $a->getName() <=> $b->getName();
@@ -85,10 +94,15 @@ abstract class DataFrameModifiers extends DataFrameStatements
         });
     }
 
+    /**
+     * Remove record if closure return false
+     * @param $f - ex: fn(array recordData, int $recordKey): bool => ...
+     * @return DataFrameModifiers
+     */
     public function filter(Closure $f): self
     {
-        foreach ($this as $recordKey => $recordArray) {
-            if ($f($recordArray, $recordKey) === false) {
+        foreach ($this as $recordKey => $recordData) {
+            if ($f($recordData, $recordKey) === false) {
                 $this->removeRecord($recordKey);
             }
         }
