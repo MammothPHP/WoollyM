@@ -20,6 +20,10 @@ abstract class DataFramePrimitives
      *********************************************** Core Implementation ***********************************************
      ******************************************************************************************************************/
 
+    /**
+     * If True, returned records systematically behave like all known columns in the DataFrame, not just those it actually contains.
+     * They will have a NULL value indistinguishable from columns actually containing an explicitly declared null value.
+     */
     public bool $fillInNonExistentsCol = false;
 
     protected DataDriverInterface $data;
@@ -31,6 +35,11 @@ abstract class DataFramePrimitives
     protected ?array $columnNamesCache = null;
     protected ?array $forcedTypesCache = null;
 
+    /**
+     * @param array<int,array> $data Array data to ingest
+     * @param $dataDriver - Class of custom driver to use. if null, the PhpArray (in-memory) driver will used.
+     * @throws InvalidDriverClassException
+     */
     public function __construct(array $data = [], ?string $dataDriver = null)
     {
         $dataDriver ??= self::$defaultDataDriverClass;
@@ -68,6 +77,9 @@ abstract class DataFramePrimitives
     }
 
 
+    /**
+     * Check if a record key exist
+     */
     public function recordKeyExist(int $recordKey): bool
     {
         return $this->data->keyExist($recordKey);
@@ -99,11 +111,18 @@ abstract class DataFramePrimitives
         return $newRecord;
     }
 
+    /**
+     * Count unique columns already known
+     */
     public function countColumns(): int
     {
         return \count($this->columnIndexes);
     }
 
+    /**
+     * Return ColumnRepresentation Object extending Select object
+     * @return array<int,ColumnRepresentation>
+     */
     public function columns(): array
     {
         $r = [];
@@ -115,6 +134,10 @@ abstract class DataFramePrimitives
         return $r;
     }
 
+    /**
+     * Get unique columns already known
+     * @return array<int,string>
+     */
     public function columnsNames(): array
     {
         if ($this->columnNamesCache === null) {
@@ -155,11 +178,19 @@ abstract class DataFramePrimitives
         return $this->columnIndexes[$this->getColumnKey($columnName)];
     }
 
+    /**
+     * Get a record by key
+     * @return array<string,array>
+     */
     public function getRecord(int $recordKey): array
     {
         return $this->convertAbstractRecordToArray($this->data->getRecordKey($recordKey));
     }
 
+    /**
+     * Add a record, providing an array indexed by column => value
+     * @param array<string, mixed> $recordArray
+     */
     public function addRecord(array $recordArray): self
     {
         $this->data->addRecord($this->convertRecordToAbstract($recordArray));
@@ -167,6 +198,10 @@ abstract class DataFramePrimitives
         return $this;
     }
 
+    /**
+     * Same as addRecord method, but with an array of many records.
+     * @param array[] $records
+     */
     public function addRecords(array $records): self
     {
         foreach ($records as $oneRow) {
@@ -176,19 +211,24 @@ abstract class DataFramePrimitives
         return $this;
     }
 
-    public function updateRecord(int $recordKey, mixed $recordArray): self
+    /**
+     * Update a record by record key. If key does not exist, record will be created.
+     * @param array<string, mixed>
+     */
+    public function updateRecord(int $recordKey, array $recordArray): self
     {
         $this->data->setRecord($recordKey, $this->convertRecordToAbstract($recordArray));
 
         return $this;
     }
 
+    /**
+     * Remove a record by key
+     * @throws KeyNotExistException
+     */
     public function removeRecord(int $recordKey): self
     {
-        try {
-            $this->data->removeRecord($recordKey);
-        } catch (KeyNotExistException) {
-        }
+        $this->data->removeRecord($recordKey);
 
         return $this;
     }
@@ -244,7 +284,7 @@ abstract class DataFramePrimitives
     }
 
     /**
-     * Adds a new column to the DataFrame.
+     * Adds a new column to the DataFrame. If column already exist, then nothing will happen.
      */
     public function addColumn(string $columnName): self
     {
@@ -270,6 +310,7 @@ abstract class DataFramePrimitives
 
     /**
      * Adds multiple columns to the DataFrame.
+     * @param string[] $columnNames
      */
     public function addColumns(array $columnNames): self
     {

@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace MammothPHP\WoollyM;
 
 use Countable;
-use MammothPHP\WoollyM\Exceptions\InvalidSelectException;
-use MammothPHP\WoollyM\Exceptions\NotYetImplementedException;
+use MammothPHP\WoollyM\Exceptions\{InvalidSelectException, NotYetImplementedException};
 
 abstract class DataFrameHelpers extends DataFrameModifiers implements Countable
 {
@@ -14,9 +13,9 @@ abstract class DataFrameHelpers extends DataFrameModifiers implements Countable
      ******************************************** Countable Implementation *********************************************
      ******************************************************************************************************************/
 
-     /**
-      * Count records
-      */
+    /**
+     * Count records
+     */
     public function count(): int
     {
         return $this->data->count();

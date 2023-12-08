@@ -53,12 +53,11 @@ abstract class DataFrameModifiers extends DataFrameStatements
     /**
      * Sort column order using a closure. Then retrieve records will respect the new order.
      * @param $callback - If null, sort will be alphabetic. For closure, example fn(string $a, string $b): int => $a <=> $b;
-     * @return DataFrameModifiers
      */
     public function sortColumns(?Closure $callback = null): self
     {
         $callback ??= fn(string $a, string $b): int => $a <=> $b;
-        $finalCallback = fn(ColumnIndex $a, ColumnIndex $b):int => $callback($a->getName(), $b->getName()); // protected ColumnIndex leak
+        $finalCallback = fn(ColumnIndex $a, ColumnIndex $b): int => $callback($a->getName(), $b->getName()); // protected ColumnIndex leak
 
         uasort($this->columnIndexes, $finalCallback);
         $this->clearColumnsCache();
@@ -98,7 +97,6 @@ abstract class DataFrameModifiers extends DataFrameStatements
     /**
      * Remove record if closure return false
      * @param $f - ex: fn(array recordData, int $recordKey): bool => ...
-     * @return DataFrameModifiers
      */
     public function filter(Closure $f): self
     {
