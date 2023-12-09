@@ -5,15 +5,25 @@ declare(strict_types=1);
 namespace MammothPHP\WoollyM;
 
 use Closure;
+use MammothPHP\WoollyM\DataDrivers\DataDriverInterface;
 use PDO;
 
 class Copy
 {
+    public ?DataDriverInterface $dataDriver = null;
+
     public function __construct(public readonly DataFrame $df) {}
 
     public function clone(): DataFrame
     {
         return clone $this->df;
+    }
+
+    public function driver(DataDriverInterface $dataDriver): self
+    {
+        $this->dataDriver = $dataDriver;
+
+        return $this;
     }
 
     /**
@@ -22,7 +32,10 @@ class Copy
      */
     public function array_filter(Closure $f): DataFrame
     {
-        return DataFrame::fromArray(array_filter($this->df->toArray(), $f, \ARRAY_FILTER_USE_BOTH));
+        return new DataFrame(
+            data: array_filter($this->df->toArray(), $f, \ARRAY_FILTER_USE_BOTH),
+            dataDriver: $this->dataDriver
+        );
     }
 
     /**
@@ -56,7 +69,7 @@ class Copy
             }
         }
 
-        return DataFrame::fromArray($groupedData);
+        return new DataFrame(data: $groupedData, dataDriver: $this->dataDriver);
     }
 
     /**
@@ -89,6 +102,6 @@ class Copy
 
         $pdo->exec('DROP TABLE IF EXISTS dataframe;');
 
-        return DataFrame::fromArray($results);
+        return new DataFrame(data: $results, dataDriver: $this->dataDriver);
     }
 }

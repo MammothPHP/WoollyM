@@ -40,12 +40,8 @@ class NotSortableDriver implements DataDriverInterface
     }
 }
 
-it('require a valid driver class', function (): void {
-    new DataFrame(dataDriver: InvalidDriverClass::class);
-})->throws(InvalidDriverClassException::class);
-
 test('sort require a compatible driver', function (): void {
-    $df = new DataFrame(dataDriver: NotSortableDriver::class);
+    $df = new DataFrame(dataDriver: new NotSortableDriver);
 
     $df->sortValues('col1');
 })->throws(SortNotSupportedByDriverException::class);

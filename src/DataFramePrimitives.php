@@ -40,13 +40,9 @@ abstract class DataFramePrimitives
      * @param $dataDriver - Class of custom driver to use. if null, the PhpArray (in-memory) driver will used.
      * @throws InvalidDriverClassException
      */
-    public function __construct(array $data = [], ?string $dataDriver = null)
+    public function __construct(array $data = [], ?DataDriverInterface $dataDriver = null)
     {
-        $dataDriver ??= self::$defaultDataDriverClass;
-
-        if (!is_subclass_of($dataDriver, DataDriverInterface::class, true)) {
-            throw new InvalidDriverClassException;
-        }
+        $dataDriver ??= new self::$defaultDataDriverClass;
 
         $this->data = new $dataDriver;
         $this->columnRepresentations = new WeakMap;
