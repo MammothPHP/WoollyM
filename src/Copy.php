@@ -32,7 +32,7 @@ class Copy
      */
     public function array_filter(Closure $f): DataFrame
     {
-        return new DataFrame(
+        return new ($this->df::class)(
             data: array_filter($this->df->toArray(), $f, \ARRAY_FILTER_USE_BOTH),
             dataDriver: $this->dataDriver
         );
@@ -69,7 +69,7 @@ class Copy
             }
         }
 
-        return new DataFrame(data: $groupedData, dataDriver: $this->dataDriver);
+        return new ($this->df::class)(data: $groupedData, dataDriver: $this->dataDriver);
     }
 
     /**
@@ -102,6 +102,6 @@ class Copy
 
         $pdo->exec('DROP TABLE IF EXISTS dataframe;');
 
-        return new DataFrame(data: $results, dataDriver: $this->dataDriver);
+        return new ($this->df::class)(data: $results, dataDriver: $this->dataDriver);
     }
 }
