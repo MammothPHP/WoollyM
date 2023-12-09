@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use MammothPHP\WoollyM\{Copy, DataFrame};
+use MammothPHP\WoollyM\DataFrame;
 
 test('tosql', function (): void {
     $df = DataFrame::fromArray([
