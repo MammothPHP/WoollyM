@@ -77,7 +77,7 @@ abstract class DataFrameAccessors extends DataFramePrimitives implements ArrayAc
      */
     public function current(): mixed
     {
-        return $this->getRecord($this->key());
+        return $this->convertAbstractRecordToArray($this->driverIterator->current());
     }
 
     /**
