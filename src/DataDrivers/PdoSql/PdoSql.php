@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace MammothPHP\WoollyM\DataDrivers\PdoSql;
 
 use ArrayIterator;
-use Exception;
+use Iterator;
+use IteratorAggregate;
 use MammothPHP\WoollyM\DataDrivers\DataDriverInterface;
 use MammothPHP\WoollyM\DataDrivers\DriversExceptions\KeyNotExistException;
 use MammothPHP\WoollyM\Exceptions\{FeatureNotImplementedYet, NotYetImplementedException};
@@ -91,7 +92,35 @@ class PdoSql implements DataDriverInterface
 
     public function getIterator(): Traversable
     {
-        return new ArrayIterator;
+        $stmt = $this->db->query('SELECT * FROM '.$this->escapeTableName().';');
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+
+        $iterator = $stmt->getIterator();
+
+        return new class ($iterator, $this->keyColumn) implements Iterator {
+            public function __construct(public readonly Iterator $iterator, public readonly string $keyColumn)
+            {}
+
+            public function current(): mixed {
+                return $this->iterator->current();
+            }
+
+            public function key(): mixed {
+                return $this->iterator->current()[$this->keyColumn];
+            }
+
+            public function next(): void {
+                $this->iterator->next();
+            }
+
+            public function rewind(): void {
+                $this->iterator->rewind();
+            }
+
+            public function valid(): bool {
+                return $this->iterator->valid();
+            }
+        };
     }
 
     public function getRecordKey(int $recordKey): array

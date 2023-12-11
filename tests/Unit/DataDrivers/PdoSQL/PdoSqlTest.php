@@ -50,3 +50,18 @@ test('update record', function (): void {
     expect($this->df)->toHaveCount(3);
     expect($this->df->getRecord(1))->toBe(['a' => '42', 'b' => null, 'c' => 'foo']);
 });
+
+test('iterator', function (): void {
+    $r = [];
+
+    foreach($this->df as $key => $value) {
+        $r[$key] = $value;
+    }
+
+    expect($r)->toBe([
+        1 => ['a' => '1', 'b' => '2', 'c' => '3'],
+        2 => ['a' => '4', 'b' => null, 'c' => '6'],
+        3 => ['a' => '7', 'b' => '8', 'c' => '9'],
+    ]);
+});
+
