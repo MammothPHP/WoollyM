@@ -9,6 +9,8 @@ use MammothPHP\WoollyM\DataFrame;
 class InvalidDriverClass {}
 class NotSortableDriver implements DataDriverInterface
 {
+    public const string COLUMN_KEY_TYPE = 'int';
+
     public function getRecordKey(int $recordKey): array
     {
         return [];
@@ -18,7 +20,7 @@ class NotSortableDriver implements DataDriverInterface
 
     public function setRecord(int $recordKey, array $recordData): void {}
 
-    public function setRecordColumn(int $recordKey, int $columnKey, mixed $colValue): void {}
+    public function setRecordColumn(int $recordKey, int|string $columnKey, mixed $colValue): void {}
 
     public function addRecord(array $recordData): void {}
 

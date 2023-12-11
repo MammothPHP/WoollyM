@@ -15,7 +15,7 @@ interface DataDriverInterface extends Countable, IteratorAggregate
 
     public function setRecord(int $recordKey, array $recordData): void;
 
-    public function setRecordColumn(int $recordKey, int $columnKey, mixed $colValue): void;
+    public function setRecordColumn(int $recordKey, int|string $columnKey, mixed $colValue): void;
 
     public function addRecord(array $recordData): void;
 

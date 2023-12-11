@@ -27,6 +27,8 @@ abstract class DataFramePrimitives
     public bool $fillInNonExistentsCol = false;
 
     protected DataDriverInterface $data;
+    public readonly bool $driverColumnModeText;
+
     protected array $columnIndexes = [];
     protected readonly WeakMap $columnRepresentations;
 
@@ -44,7 +46,9 @@ abstract class DataFramePrimitives
     {
         $dataDriver ??= new self::$defaultDataDriverClass;
 
-        $this->data = new $dataDriver;
+        $this->data = $dataDriver;
+        $this->driverColumnModeText = $this->data::class::COLUMN_KEY_TYPE === 'name';
+
         $this->columnRepresentations = new WeakMap;
 
         $this->addRecords($data);
@@ -99,7 +103,7 @@ abstract class DataFramePrimitives
                 $recordValue = $type->convert($recordValue);
             }
 
-            $newRecord[$columnKey] = $recordValue;
+            $newRecord[$this->driverColumnModeText ? $recordKey : $columnKey] = $recordValue;
         }
 
         // ksort($newRow, \SORT_NUMERIC); // Degrade Performances
@@ -234,12 +238,14 @@ abstract class DataFramePrimitives
         $r = [];
 
         foreach ($this->columnsNames() as $ck => $cn) {
-            $keyExist = \array_key_exists($ck, $abstractRecord);
+            $key = $this->driverColumnModeText ? $cn : $ck;
+
+            $keyExist = \array_key_exists($key, $abstractRecord);
 
             if ($this->fillInNonExistentsCol && !$keyExist) {
                 $r[$cn] = null;
             } elseif ($keyExist) {
-                $r[$cn] = $abstractRecord[$ck];
+                $r[$cn] = $abstractRecord[$key];
             }
         }
 

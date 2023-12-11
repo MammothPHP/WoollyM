@@ -8,12 +8,15 @@ use ArrayIterator;
 use Closure;
 use MammothPHP\WoollyM\DataDrivers\DriversExceptions\KeyNotExistException;
 use MammothPHP\WoollyM\DataDrivers\{DataDriverInterface, SortableDriverInterface};
+use MammothPHP\WoollyM\Exceptions\DataFrameException;
 
 /**
  * @internal
  */
 class PhpArrayDriver implements DataDriverInterface, SortableDriverInterface
 {
+    public const string COLUMN_KEY_TYPE = 'int';
+
     protected array $data = [];
 
     public function mustHaveValidRecordKey(int $recordKey): void
@@ -40,8 +43,12 @@ class PhpArrayDriver implements DataDriverInterface, SortableDriverInterface
         $this->data[$recordKey] = $recordData;
     }
 
-    public function setRecordColumn(int $recordKey, int $columnKey, mixed $colValue): void
+    public function setRecordColumn(int $recordKey, int|string $columnKey, mixed $colValue): void
     {
+        if (\is_string($columnKey)) {
+            throw new DataFrameException;
+        }
+
         if (!$this->keyExist($recordKey)) {
             $this->setRecord($recordKey, [$columnKey => $colValue]);
         } else {
