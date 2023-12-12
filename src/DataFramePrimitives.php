@@ -71,44 +71,79 @@ abstract class DataFramePrimitives
         $this->driverIterator = null;
     }
 
-    protected function initDriverIterator(): void
-    {
-        $this->driverIterator = $this->data->getIterator();
-    }
+    /* *****************************************************************************************************************
+     ********************************************* Columns *************************************************************
+     ******************************************************************************************************************/
 
+    /* ******************************************* Public Column API **************************************************/
 
     /**
-     * Check if a record key exist
+     * Adds a new column to the DataFrame. If column already exist, then nothing will happen.
      */
-    public function recordKeyExist(int $recordKey): bool
+    public function addColumn(string $columnName): self
     {
-        return $this->data->keyExist($recordKey);
-    }
-
-    protected function convertRecordToAbstract(array $recordArray): array
-    {
-        $newRecord = [];
-        $columns = $this->columnsNames();
-        $forcedTypes = $this->getForcedTypesCache();
-
-        foreach ($recordArray as $recordKey => $recordValue) {
-            if (!\in_array($recordKey, $columns, true)) {
-                $this->addColumn($recordKey);
-                $forcedTypes = $this->getForcedTypesCache();
-            }
-
-            $columnKey = $this->getColumnKey($recordKey);
-
-            if ($type = $forcedTypes[$columnKey]) {
-                $recordValue = $type->convert($recordValue);
-            }
-
-            $newRecord[$this->driverColumnModeText ? $recordKey : $columnKey] = $recordValue;
+        if (!$this->hasColumn($columnName)) {
+            $this->columnIndexes[] = $newColumnIndex = new ColumnIndex($columnName, $this);
+            $this->createColumnRepresentation($newColumnIndex);
+            $this->clearColumnsCache();
         }
 
-        // ksort($newRow, \SORT_NUMERIC); // Degrade Performances
+        return $this;
+    }
 
-        return $newRecord;
+    /**
+     * Adds multiple columns to the DataFrame.
+     * @param string[] $columnNames
+     */
+    public function addColumns(array $columnNames): self
+    {
+        foreach ($columnNames as $columnName) {
+            $this->addColumn($columnName);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Removes a column (and all associated data) from the DataFrame.
+     */
+    public function removeColumn(string $columnName): self
+    {
+        $this->mustHaveColumn($columnName);
+
+        $deletedKey = array_search(
+            needle: $columnName,
+            haystack: $this->columnsNames(),
+            strict: true
+        );
+
+        if ($deletedKey !== false) {
+            unset($this->columnIndexes[$deletedKey]);
+
+            foreach ($this->data as $recordKey => $row) {
+                $row = array_filter(
+                    array: $row,
+                    callback: fn(int $arrayKey): bool => $arrayKey !== $deletedKey,
+                    mode: \ARRAY_FILTER_USE_KEY
+                );
+
+                $this->data->setRecord($recordKey, $row);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * Returns a boolean of whether the specified column exists.
+     */
+    public function hasColumn(ColumnRepresentation|string $column): bool
+    {
+        if (array_search($column, $this->columns()) === false) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -148,16 +183,21 @@ abstract class DataFramePrimitives
     }
 
     /**
-     *@internal
+     * Assertion that the DataFrame must have the column specified. If not then an exception is thrown.
+     *
+     * @throws InvalidSelectException
      */
-    public function getForcedTypesCache(): array
+    public function mustHaveColumn(string $columnName): self
     {
-        if ($this->forcedTypesCache === null) {
-            $this->forcedTypesCache = array_map(fn(ColumnIndex $col): ?DataType => $col->getForcedType(), $this->columnIndexes);
+        if ($this->hasColumn($columnName) === false) {
+            throw new InvalidSelectException("{$columnName} doesn't exist in DataFrame");
         }
 
-        return $this->forcedTypesCache;
+        return $this;
     }
+
+
+    /* ******************************************* Internal Column API ************************************************/
 
     protected function getColumnKey(string $columnName): int
     {
@@ -178,14 +218,27 @@ abstract class DataFramePrimitives
         return $this->columnIndexes[$this->getColumnKey($columnName)];
     }
 
-    /**
-     * Get a record by key
-     * @return array<string,array>
-     */
-    public function getRecord(int $recordKey): array
+    protected function createColumnRepresentation(ColumnIndex $columnIndex): void
     {
-        return $this->convertAbstractRecordToArray($this->data->getRecordKey($recordKey));
+        $this->columnRepresentations[$columnIndex] = new ColumnRepresentation($columnIndex);
     }
+
+    /**
+     * Reset column cache
+     *
+     * @internal
+     */
+    public function clearColumnsCache(): void
+    {
+        $this->columnNamesCache = null;
+        $this->forcedTypesCache = null;
+    }
+
+    /* *****************************************************************************************************************
+     ********************************************* Records *************************************************************
+     ******************************************************************************************************************/
+
+    /* ******************************************* Public Records API *************************************************/
 
     /**
      * Add a record, providing an array indexed by column => value
@@ -233,6 +286,51 @@ abstract class DataFramePrimitives
         return $this;
     }
 
+    /**
+     * Get a record by key
+     * @return array<string,array>
+     */
+    public function getRecord(int $recordKey): array
+    {
+        return $this->convertAbstractRecordToArray($this->data->getRecordKey($recordKey));
+    }
+
+    /**
+     * Check if a record key exist
+     */
+    public function recordKeyExist(int $recordKey): bool
+    {
+        return $this->data->keyExist($recordKey);
+    }
+
+    protected function convertRecordToAbstract(array $recordArray): array
+    {
+        $newRecord = [];
+        $columns = $this->columnsNames();
+        $forcedTypes = $this->getForcedTypesCache();
+
+        foreach ($recordArray as $recordKey => $recordValue) {
+            if (!\in_array($recordKey, $columns, true)) {
+                $this->addColumn($recordKey);
+                $forcedTypes = $this->getForcedTypesCache();
+            }
+
+            $columnKey = $this->getColumnKey($recordKey);
+
+            if ($type = $forcedTypes[$columnKey]) {
+                $recordValue = $type->convert($recordValue);
+            }
+
+            $newRecord[$this->driverColumnModeText ? $recordKey : $columnKey] = $recordValue;
+        }
+
+        // ksort($newRow, \SORT_NUMERIC); // Degrade Performances
+
+        return $newRecord;
+    }
+
+    /* ******************************************* Internal Records API ***********************************************/
+
     protected function convertAbstractRecordToArray(array $abstractRecord): array
     {
         $r = [];
@@ -252,106 +350,19 @@ abstract class DataFramePrimitives
         return $r;
     }
 
-
+    /* *****************************************************************************************************************
+     ********************************************* Type System *********************************************************
+     ******************************************************************************************************************/
 
     /**
-     * Assertion that the DataFrame must have the column specified. If not then an exception is thrown.
-     *
-     * @throws InvalidSelectException
+     *@internal
      */
-    public function mustHaveColumn(string $columnName): self
+    public function getForcedTypesCache(): array
     {
-        if ($this->hasColumn($columnName) === false) {
-            throw new InvalidSelectException("{$columnName} doesn't exist in DataFrame");
+        if ($this->forcedTypesCache === null) {
+            $this->forcedTypesCache = array_map(fn(ColumnIndex $col): ?DataType => $col->getForcedType(), $this->columnIndexes);
         }
 
-        return $this;
+        return $this->forcedTypesCache;
     }
-
-    /**
-     * Returns a boolean of whether the specified column exists.
-     */
-    public function hasColumn(ColumnRepresentation|string $column): bool
-    {
-        if (array_search($column, $this->columns()) === false) {
-            return false;
-        }
-
-        return true;
-    }
-
-    protected function createColumnRepresentation(ColumnIndex $columnIndex): void
-    {
-        $this->columnRepresentations[$columnIndex] = new ColumnRepresentation($columnIndex);
-    }
-
-    /**
-     * Adds a new column to the DataFrame. If column already exist, then nothing will happen.
-     */
-    public function addColumn(string $columnName): self
-    {
-        if (!$this->hasColumn($columnName)) {
-            $this->columnIndexes[] = $newColumnIndex = new ColumnIndex($columnName, $this);
-            $this->createColumnRepresentation($newColumnIndex);
-            $this->clearColumnsCache();
-        }
-
-        return $this;
-    }
-
-    /**
-     * Reset column cache
-     *
-     * @internal
-     */
-    public function clearColumnsCache(): void
-    {
-        $this->columnNamesCache = null;
-        $this->forcedTypesCache = null;
-    }
-
-    /**
-     * Adds multiple columns to the DataFrame.
-     * @param string[] $columnNames
-     */
-    public function addColumns(array $columnNames): self
-    {
-        foreach ($columnNames as $columnName) {
-            $this->addColumn($columnName);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Removes a column (and all associated data) from the DataFrame.
-     */
-    public function removeColumn(string $columnName): self
-    {
-        $this->mustHaveColumn($columnName);
-
-        $deletedKey = array_search(
-            needle: $columnName,
-            haystack: $this->columnsNames(),
-            strict: true
-        );
-
-        if ($deletedKey !== false) {
-            unset($this->columnIndexes[$deletedKey]);
-
-            foreach ($this->data as $recordKey => $row) {
-                $row = array_filter(
-                    array: $row,
-                    callback: fn(int $arrayKey): bool => $arrayKey !== $deletedKey,
-                    mode: \ARRAY_FILTER_USE_KEY
-                );
-
-                $this->data->setRecord($recordKey, $row);
-            }
-        }
-
-        return $this;
-    }
-
-
 }

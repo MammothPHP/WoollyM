@@ -70,6 +70,11 @@ abstract class DataFrameAccessors extends DataFramePrimitives implements ArrayAc
      ********************************************* Iterator Implementation *********************************************
      ******************************************************************************************************************/
 
+    protected function initDriverIterator(): void
+    {
+        $this->driverIterator = $this->data->getIterator();
+    }
+
     /**
      * Return the current element
      * @internal

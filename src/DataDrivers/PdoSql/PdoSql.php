@@ -153,7 +153,6 @@ class PdoSql implements DataDriverInterface
         $columns = implode(',', $columns);
 
         $query = 'INSERT OR REPLACE INTO ' . $this->escapeTableName() . ' (' . $columns . ') VALUES (?' . str_repeat(',?', \count($recordData) - 1) . ')';
-        var_dump($query);
         $this->db->prepare($query)->execute(array_values($recordData));
     }
 
