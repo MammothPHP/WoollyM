@@ -7,7 +7,7 @@ namespace MammothPHP\WoollyM\DataDrivers\PhpArray;
 use ArrayIterator;
 use Closure;
 use MammothPHP\WoollyM\DataDrivers\DriversExceptions\KeyNotExistException;
-use MammothPHP\WoollyM\DataDrivers\{DataDriverInterface, SortableDriverInterface};
+use MammothPHP\WoollyM\DataDrivers\{ColumnKeyType, DataDriverInterface, SortableDriverInterface};
 use MammothPHP\WoollyM\Exceptions\DataFrameException;
 
 /**
@@ -15,8 +15,6 @@ use MammothPHP\WoollyM\Exceptions\DataFrameException;
  */
 class PhpArrayDriver implements DataDriverInterface, SortableDriverInterface
 {
-    public const string COLUMN_KEY_TYPE = 'int';
-
     protected array $data = [];
 
     public function mustHaveValidRecordKey(int $recordKey): void

@@ -9,6 +9,8 @@ use IteratorAggregate;
 
 interface DataDriverInterface extends Countable, IteratorAggregate
 {
+    public const ColumnKeyType COLUMN_KEY_TYPE = ColumnKeyType::COLUMN_KEY;
+
     public function getRecordKey(int $recordKey): array;
 
     // public function getRecordColumn(int $recordKey, int $columnKey): mixed;

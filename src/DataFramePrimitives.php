@@ -6,7 +6,7 @@ namespace MammothPHP\WoollyM;
 
 use Iterator;
 use MammothPHP\WoollyM\Exceptions\InvalidSelectException;
-use MammothPHP\WoollyM\DataDrivers\DataDriverInterface;
+use MammothPHP\WoollyM\DataDrivers\{ColumnKeyType, DataDriverInterface};
 use MammothPHP\WoollyM\DataDrivers\DriversExceptions\{InvalidDriverClassException, KeyNotExistException};
 use MammothPHP\WoollyM\DataDrivers\PhpArray\PhpArrayDriver;
 use MammothPHP\WoollyM\Statements\ColumnRepresentation;
@@ -47,7 +47,7 @@ abstract class DataFramePrimitives
         $dataDriver ??= new self::$defaultDataDriverClass;
 
         $this->data = $dataDriver;
-        $this->driverColumnModeText = $this->data::class::COLUMN_KEY_TYPE === 'name';
+        $this->driverColumnModeText = $this->data::COLUMN_KEY_TYPE === ColumnKeyType::COLUMN_NAME;
 
         $this->columnRepresentations = new WeakMap;
 

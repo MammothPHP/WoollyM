@@ -54,7 +54,7 @@ test('update record', function (): void {
 test('iterator', function (): void {
     $r = [];
 
-    foreach($this->df as $key => $value) {
+    foreach ($this->df as $key => $value) {
         $r[$key] = $value;
     }
 
@@ -64,4 +64,3 @@ test('iterator', function (): void {
         3 => ['a' => '7', 'b' => '8', 'c' => '9'],
     ]);
 });
-

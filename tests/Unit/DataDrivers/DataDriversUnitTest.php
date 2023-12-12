@@ -2,15 +2,13 @@
 
 declare(strict_types=1);
 
-use MammothPHP\WoollyM\DataDrivers\DataDriverInterface;
+use MammothPHP\WoollyM\DataDrivers\{ColumnKeyType, DataDriverInterface};
 use MammothPHP\WoollyM\DataDrivers\DriversExceptions\{InvalidDriverClassException, SortNotSupportedByDriverException};
 use MammothPHP\WoollyM\DataFrame;
 
 class InvalidDriverClass {}
 class NotSortableDriver implements DataDriverInterface
 {
-    public const string COLUMN_KEY_TYPE = 'int';
-
     public function getRecordKey(int $recordKey): array
     {
         return [];

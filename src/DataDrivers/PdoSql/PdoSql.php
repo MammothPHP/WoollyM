@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace MammothPHP\WoollyM\DataDrivers\PdoSql;
 
-use ArrayIterator;
 use Iterator;
-use IteratorAggregate;
-use MammothPHP\WoollyM\DataDrivers\DataDriverInterface;
+use MammothPHP\WoollyM\DataDrivers\{ColumnKeyType, DataDriverInterface};
 use MammothPHP\WoollyM\DataDrivers\DriversExceptions\KeyNotExistException;
 use MammothPHP\WoollyM\Exceptions\{FeatureNotImplementedYet, NotYetImplementedException};
 use PDO;
@@ -19,7 +17,7 @@ use Traversable;
  */
 class PdoSql implements DataDriverInterface
 {
-    public const string COLUMN_KEY_TYPE = 'name';
+    public const ColumnKeyType COLUMN_KEY_TYPE = ColumnKeyType::COLUMN_NAME;
 
     protected readonly PDOStatement $STMT_keyExist;
     protected readonly PDOStatement $STMT_getRecordKey;
@@ -92,32 +90,36 @@ class PdoSql implements DataDriverInterface
 
     public function getIterator(): Traversable
     {
-        $stmt = $this->db->query('SELECT * FROM '.$this->escapeTableName().';');
+        $stmt = $this->db->query('SELECT * FROM ' . $this->escapeTableName() . ';');
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
 
         $iterator = $stmt->getIterator();
 
         return new class ($iterator, $this->keyColumn) implements Iterator {
-            public function __construct(public readonly Iterator $iterator, public readonly string $keyColumn)
-            {}
+            public function __construct(public readonly Iterator $iterator, public readonly string $keyColumn) {}
 
-            public function current(): mixed {
+            public function current(): mixed
+            {
                 return $this->iterator->current();
             }
 
-            public function key(): mixed {
+            public function key(): mixed
+            {
                 return $this->iterator->current()[$this->keyColumn];
             }
 
-            public function next(): void {
+            public function next(): void
+            {
                 $this->iterator->next();
             }
 
-            public function rewind(): void {
+            public function rewind(): void
+            {
                 $this->iterator->rewind();
             }
 
-            public function valid(): bool {
+            public function valid(): bool
+            {
                 return $this->iterator->valid();
             }
         };
