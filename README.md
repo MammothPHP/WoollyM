@@ -35,16 +35,38 @@ composer require mammothphp/woollym
 ### License
  - [BSD-3-Clause](http://opensource.org/licenses/BSD-3-Clause)
 
-## Data Format Examples
+## Instanciation (basic)
 
 ### Instantiating from an array:
 
 ```php
-$df = DataFrame::fromArray([
+$arr = [
     ['a' => 1, 'b' => 2, 'c' => 3],
     ['a' => 4, 'b' => 5, 'c' => 6],
     ['a' => 7, 'b' => 8, 'c' => 9],
-]);
+];
+
+$df = DataFrame::fromArray($arr);
+
+// equivalent
+$df = new DataFrame($arr);
+```
+
+### Instantiating from a source:
+_(documentation overview)_
+
+```php
+$df = DataFrame::fromJsonString($json);
+$df = DataFrame::fromJsonPath($json); 
+
+$df = DataFrame::fromCsv($csvFile); 
+$df = DataFrame::fromTsv($tsvFile); 
+
+$df = DataFrame::fromFwf($fwfFile); 
+
+$df = DataFrame::fromXLSX($xlsxFile);
+$df = DataFrame::fromSql($query, $pdo);
+
 ```
 
 
@@ -93,7 +115,7 @@ $df->addRecord([
 $df[] = [
     'a' => 42,
     'b' => 42,
-]);
+];
 
 
 // Multiples records
@@ -114,8 +136,8 @@ $df->addRecords([
 $df->updateRecord(
     position: 42,
     recordArray: [
-    'a' => 42,
-    'b' => 42,
+      'a' => 42,
+      'b' => 42,
     ]
 );
 
@@ -215,6 +237,71 @@ $df->col('colName')->asDataFrame;
 
 $df->col('colName')->asDataFrame();
 
+```
+
+## The Select Statement
+
+Create a statement containing 2 two columns, where columnB is > 42, limit to 100 rows but start à offset 10.
+
+```php
+$stmt = $df->select('column1','colum2')
+    ->where(fn($record, $recordKey) => $record['columnB'] > 42)
+    ->limit(100)
+    ->offset(10);
+```
+
+Or select all column
+```php
+$stmt = $df->selectAll();
+```
+
+Complex where statement
+```php
+$stmt = $df->selectAll()->where(fn($r) => true)->and(...)->or(...)->or()->and();
+```
+
+is SQL equivalent to:
+```sql
+WHERE contition AND (condition OR condition OR condition) AND condition
+```
+
+Simpler Where clause
+```php
+
+$stmt = $df->selectAll()->whereColumnEqual('colA', 42);
+$stmt = $df->selectAll()->whereKeyBetween(1, 42);
+```
+
+Statement are Traversable
+```php
+foreach($df->selectAll()->where(fn($r) => $r) as $recordKey => $record) {
+    // ...
+}
+```
+
+Get some stats
+```php
+ $stmt->countRecords(); // count number of records in the statement
+
+$stmt->count(); // count each non-null value in record
+$stmt->countDistinct(); // count distinct value in record
+$stmt->size(); // count value in selection including null value
+$stmt->sum(); // sum all value of each records in statement
+$stmt->mean(); // average value
+$stmt->min(); $stmt->max(); // min / max value
+```
+
+Return result as a new DataFrame object
+```php
+$newDf = $stmt->get();
+``````
+
+Or directly to an array
+```php
+$newArr = $stmt->toArray();
+
+// equivalent to (but slower)
+$newArr = $stmt->get()->toArray();
 ```
 
 

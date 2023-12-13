@@ -22,10 +22,10 @@ trait JsonWrapper
     /**
      * Factory method for instantiating a DataFrame from a JSON file.
      */
-    public static function fromJsonFile(string $jsonString): self
+    public static function fromJsonFile(string $jsonPath): self
     {
         $df = new self;
-        JSON::importFromJsonFile($df, $jsonString);
+        JSON::importFromJsonFile($df, $jsonPath);
 
         return $df;
     }
