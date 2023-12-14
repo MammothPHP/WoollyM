@@ -44,7 +44,7 @@ test('from csv no header', function (): void {
     $fileName = __DIR__ . \DIRECTORY_SEPARATOR . 'TestFiles' . \DIRECTORY_SEPARATOR . 'testCSV.csv';
 
     $df = CSV::fromFilePath($fileName)->format(
-        headerOffset: false,
+        headerOffset: null,
         columns: ['x', 'y', 'z']
     )->import();
 

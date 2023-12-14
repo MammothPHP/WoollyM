@@ -26,12 +26,17 @@ class CSV extends Builder
     public const string DEFAULT_ESCAPE = '\\';
     public string $escape = self::DEFAULT_ESCAPE;
 
-    public const int|false DEFAULT_HEADER_OFFSET = 0;
-    public int|false $headerOffset = self::DEFAULT_HEADER_OFFSET;
+    public const ?int DEFAULT_HEADER_OFFSET = 0;
+    public ?int $headerOffset = self::DEFAULT_HEADER_OFFSET;
 
-    public ?array $columns = null; // only if headeroffset is 0
-    public array|false $onlyColumns = false;
-    public ?array $mapping = null;
+    public const ?array DEFAULT_COLUMNS = null;
+    public ?array $columns = self::DEFAULT_COLUMNS; // only if headeroffset is null
+
+    public const array|false DEFAULT_ONLY_COLUMNS = false;
+    public array|false $onlyColumns = self::DEFAULT_ONLY_COLUMNS;
+
+    public const ?array DEFAULT_MAPPING = null;
+    public ?array $mapping = self::DEFAULT_MAPPING;
 
     public static function fromCsvReader(Reader $csvReader): static
     {
@@ -56,36 +61,19 @@ class CSV extends Builder
      * @param $mapping - Change a colonne name to another
      */
     public function format(
-        ?string $delimiter = null,
-        ?string $enclosure = null,
-        ?string $escape = null,
-        int|false|null $headerOffset = null,
-        ?array $columns = null,
-        ?array $mapping = null
+        string $delimiter = self::DEFAULT_DELIMITER,
+        string $enclosure = self::DEFAULT_ENCLOSURE,
+        string $escape = self::DEFAULT_ESCAPE,
+        ?int $headerOffset = self::DEFAULT_HEADER_OFFSET,
+        ?array $columns = self::DEFAULT_COLUMNS,
+        ?array $mapping = self::DEFAULT_MAPPING
     ): static {
-        if ($delimiter) {
-            $this->delimiter = $delimiter;
-        }
-
-        if ($enclosure) {
-            $this->delimiter = $enclosure;
-        }
-
-        if ($escape) {
-            $this->escape = $escape;
-        }
-
-        if ($headerOffset !== null) {
-            $this->headerOffset = $headerOffset;
-        }
-
-        if ($columns) {
-            $this->columns = $columns;
-        }
-
-        if ($mapping) {
-            $this->mapping = $mapping;
-        }
+        $this->delimiter = $delimiter;
+        $this->enclosure = $enclosure;
+        $this->escape = $escape;
+        $this->headerOffset = $headerOffset;
+        $this->columns = $columns;
+        $this->mapping = $mapping;
 
         return $this;
     }
@@ -94,11 +82,9 @@ class CSV extends Builder
      * Filter CSV input
      * @param $onlyColumns - Restrict import to theses columns, as column string name from header or $columns
      */
-    public function filter(array|false|null $onlyColumns): static
+    public function filter(array|false $onlyColumns): static
     {
-        if ($onlyColumns !== null) {
-            $this->onlyColumns = $onlyColumns;
-        }
+        $this->onlyColumns = $onlyColumns;
 
         return $this;
     }
@@ -130,9 +116,8 @@ class CSV extends Builder
         $csv->setEnclosure($this->enclosure);
         $csv->setEscape($this->escape);
 
-        if ($csv instanceof Reader) {
-            $offset = $this->headerOffset === false ? null : $this->headerOffset;
-            $csv->setHeaderOffset($offset);
+        if ($csv instanceof Reader) {;
+            $csv->setHeaderOffset($this->headerOffset);
         }
     }
 
@@ -185,7 +170,7 @@ class CSV extends Builder
             }
 
             // Columns Renaming (mapping)
-            if ($this->headerOffset === false && $this->columns !== null) {
+            if ($this->headerOffset === null && $this->columns !== null) {
                 foreach ($newRecord as $k => $v) {
                     if (\array_key_exists($k, $this->columns) && \is_string($this->columns[$k]) && trim($this->columns[$k]) !== '') {
                         $newRecord[$this->columns[$k]] = $v;

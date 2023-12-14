@@ -7,7 +7,6 @@ namespace MammothPHP\WoollyM\IO;
 use Exception;
 use Gajus\Dindent\Indenter;
 use League\Csv\HTMLConverter;
-use MammothPHP\WoollyM\DataFrame;
 
 class HTML
 {
