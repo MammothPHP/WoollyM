@@ -4,13 +4,11 @@ declare(strict_types=1);
 
 namespace MammothPHP\WoollyM;
 
-use MammothPHP\WoollyM\IO\Wrappers\{CsvWrapper, FwfWrapper, HtmlWrapper, JsonWrapper, SqlWrapper, XlsxWrapper};
+use MammothPHP\WoollyM\IO\Wrappers\{HtmlWrapper, JsonWrapper, SqlWrapper, XlsxWrapper};
 
 // Hierarchy: DataFramePrimitives > DataFrameAccessors >  DataFrameStatements > DataFrameModifiers > DataFrameHelpers
 class DataFrame extends DataFrameHelpers
 {
-    use CsvWrapper;
-    use FwfWrapper;
     use HtmlWrapper;
     use JsonWrapper;
     use SqlWrapper;

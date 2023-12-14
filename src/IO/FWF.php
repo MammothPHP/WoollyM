@@ -4,31 +4,70 @@ declare(strict_types=1);
 
 namespace MammothPHP\WoollyM\IO;
 
-class FWF
+use MammothPHP\WoollyM\DataFrame;
+
+class FWF extends Builder
 {
-    public function __construct(public readonly string $fileName) {}
+    /**
+     * Colspecs
+     */
+    public array $colSpecs;
+
+    /**
+     * Whitelist regex to apply to each line of the file
+     */
+    public ?string $includeRegexOpt = null;
+
+    /**
+     * Blacklist regex to apply to each line of the file
+     */
+    public ?string $excludeRegexOpt = null;
+
+    /**
+     * Apply formats options
+     */
+    public function format(array $colSpecs): self
+    {
+        $this->colSpecs = $colSpecs;
+
+        return $this;
+    }
+
+    /**
+     * Apply filter options
+     */
+    public function filter(?string $includeRegexOpt = null, ?string $excludeRegexOpt = null): self
+    {
+        $this->includeRegexOpt = $includeRegexOpt;
+        $this->excludeRegexOpt = $excludeRegexOpt;
+
+        return $this;
+    }
+
+    public function import(DataFrame $to = new DataFrame): DataFrame
+    {
+        $data = $this->loadFile(
+            fileData: $this->input ?? $this->convertSplFileToString()
+        );
+
+        return $to->addRecords($data);
+    }
 
     /**
      * Loads the file which the FWF class was instantiated with.
-     * @param $includeRegexOpt - Whitelist regex to apply to each line of the file (default: null)
-     * @param $excludeRegexOpt - Blacklist regex to apply to each line of the file (default: null)
-     * @throws \MammothPHP\WoollyM\Exceptions\UnknownOptionException
      */
-    public function loadFile(array $colSpecs, ?string $includeRegexOpt = null, ?string $excludeRegexOpt = null): array
+    protected function loadFile(string $fileData): array
     {
-        $fileName = $this->fileName;
-
-        $fileData = file_get_contents($fileName);
         $fileData = trim($fileData);
         $fileData = str_replace("\r", '', $fileData);
         $fileData = explode("\n", $fileData);
         $fileData = array_map('rtrim', $fileData);
 
-        $fileData = $includeRegexOpt ? preg_grep($includeRegexOpt, $fileData) : $fileData;
-        $fileData = $excludeRegexOpt ? preg_grep($excludeRegexOpt, $fileData, \PREG_GREP_INVERT) : $fileData;
+        $fileData = $this->includeRegexOpt ? preg_grep($this->includeRegexOpt, $fileData) : $fileData;
+        $fileData = $this->excludeRegexOpt ? preg_grep($this->excludeRegexOpt, $fileData, \PREG_GREP_INVERT) : $fileData;
 
         foreach ($fileData as &$line) {
-            $line = $this->applyColSpecs($line, $colSpecs);
+            $line = $this->applyColSpecs($line, $this->colSpecs);
         }
 
         return array_values($fileData);

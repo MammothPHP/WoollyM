@@ -10,8 +10,13 @@ use MammothPHP\WoollyM\Exceptions\{FileExistsException, NotYetImplementedExcepti
 use SplFileInfo;
 use SplFileObject;
 
-class CSV
+class CSV extends Builder
 {
+    public readonly DataFrame $fromDf;
+
+    public readonly Reader $csvReader;
+    public readonly mixed $ressource;
+
     public const string DEFAULT_DELIMITER = ',';
     public string $delimiter = self::DEFAULT_DELIMITER;
 
@@ -21,85 +26,147 @@ class CSV
     public const string DEFAULT_ESCAPE = '\\';
     public string $escape = self::DEFAULT_ESCAPE;
 
-    public const ?int DEFAULT_HEADER_OFFSET = 0;
-    public ?int $headerOffset = self::DEFAULT_HEADER_OFFSET;
+    public const int|false DEFAULT_HEADER_OFFSET = 0;
+    public int|false $headerOffset = self::DEFAULT_HEADER_OFFSET;
 
-    public ?array $columns = null; // only if headeroffset is null
-    public ?array $onlyColumns = null;
+    public ?array $columns = null; // only if headeroffset is 0
+    public array|false $onlyColumns = false;
     public ?array $mapping = null;
 
-    public function __construct(public readonly DataFrame $df) {}
+    public static function fromCsvReader(Reader $csvReader): static
+    {
+        $builder = new static;
+        $builder->csvReader = $csvReader;
+
+        return $builder;
+    }
+
+    public static function fromStream($stream): static
+    {
+        $builder = new static;
+        $builder->ressource = $stream;
+
+        return $builder;
+    }
+
+    /**
+     * Format options. If a parameter is null, default value or set previous parameter set for object will be applied.
+     * @param $headerOffset - To be 0 if no header line is present, else number of lines to ignore
+     * @param $columns - Ordered array of columns, only if $headerOffset is false
+     * @param $mapping - Change a colonne name to another
+     */
+    public function format(
+        ?string $delimiter = null,
+        ?string $enclosure = null,
+        ?string $escape = null,
+        int|false|null $headerOffset = null,
+        ?array $columns = null,
+        ?array $mapping = null
+    ): static {
+        if ($delimiter) {
+            $this->delimiter = $delimiter;
+        }
+
+        if ($enclosure) {
+            $this->delimiter = $enclosure;
+        }
+
+        if ($escape) {
+            $this->escape = $escape;
+        }
+
+        if ($headerOffset !== null) {
+            $this->headerOffset = $headerOffset;
+        }
+
+        if ($columns) {
+            $this->columns = $columns;
+        }
+
+        if ($mapping) {
+            $this->mapping = $mapping;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Filter CSV input
+     * @param $onlyColumns - Restrict import to theses columns, as column string name from header or $columns
+     */
+    public function filter(array|false|null $onlyColumns): static
+    {
+        if ($onlyColumns !== null) {
+            $this->onlyColumns = $onlyColumns;
+        }
+
+        return $this;
+    }
+
+    public function import(DataFrame $to = new DataFrame): DataFrame
+    {
+        $applyOptions = true;
+
+        if ($this->file ?? false) {
+            self::ReaderFromFileObject($applyOptions);
+        } elseif ($this->input ?? false) {
+            self::ReaderFromString();
+        } elseif ($this->ressource ?? false) {
+            self::ReaderFromStream();
+        }
+
+        if (!($this->csvReader ?? false)) {
+            throw new NotYetImplementedException('Invalid Input');
+        }
+
+        $applyOptions && self::applyOptions($this->csvReader);
+
+        return $this->importFromCsvReader($to);
+    }
 
     protected function applyOptions(AbstractCsv $csv): void
     {
         $csv->setDelimiter($this->delimiter);
         $csv->setEnclosure($this->enclosure);
         $csv->setEscape($this->escape);
-        $csv instanceof Reader && $csv->setHeaderOffset($this->headerOffset);
-    }
 
-    public function importFrom(mixed $input): DataFrame
-    {
-        if ($input instanceof SplFileInfo) {
-            return self::importFromFileObject($input);
-        } elseif ($input instanceof Reader) {
-            return self::importFromCsvReader($input);
-        } elseif (\is_string($input)) {
-            return (file_exists($input)) ? self::importFromPath($input) : self::importFromString($input);
-        } elseif (\is_resource($input)) {
-            return self::importFromStream($input);
-        } else {
-            throw new NotYetImplementedException('Invalid Input');
+        if ($csv instanceof Reader) {
+            $offset = $this->headerOffset === false ? null : $this->headerOffset;
+            $csv->setHeaderOffset($offset);
         }
     }
 
-    public function importFromFileObject(SplFileInfo $file): DataFrame
+    protected function ReaderFromFileObject(bool &$applyOptions): void
     {
-        if (!$file instanceof SplFileObject) {
-            $file = $file->openFile('r');
+        if (!$this->file instanceof SplFileObject) {
+            $file = $this->file->openFile('r');
         }
 
-        $reader = Reader::createFromFileObject($file);
+        $this->csvReader = Reader::createFromFileObject($file);
 
-        if (!($file->getFlags() & SplFileObject::READ_CSV)) {
-            self::applyOptions($reader);
+        if (($file->getFlags() & SplFileObject::READ_CSV)) {
+            $applyOptions = false;
         }
-
-        return self::importFromCsvReader($reader);
     }
 
-    public function importFromPath(string $file): DataFrame
+    protected function ReaderFromString(): void
     {
-        $reader = Reader::createFromPath($file);
-        self::applyOptions($reader);
-
-        return self::importFromCsvReader($reader);
+        $this->csvReader = Reader::createFromString($this->input);
     }
 
-    public function importFromString(string $input): DataFrame
+    protected function ReaderFromStream(): void
     {
-        $reader = Reader::createFromString($input);
-        self::applyOptions($reader);
-
-        return self::importFromCsvReader($reader);
+        $this->csvReader = Reader::createFromStream($this->ressource);
     }
 
-    public function importFromStream($stream): DataFrame
+    protected function importFromCsvReader(DataFrame $to): DataFrame
     {
-        $reader = Reader::createFromStream($stream);
-        self::applyOptions($reader);
-
-        return self::importFromCsvReader($reader);
-    }
-
-    public function importFromCsvReader(Reader $reader): DataFrame
-    {
-        foreach ($reader->getRecords() as $record) {
+        foreach ($this->csvReader->getRecords() as $record) {
             $newRecord = [];
 
-            if ($this->mapping !== null || $this->onlyColumns !== null) {
+            if ($this->mapping !== null || $this->onlyColumns !== false) {
                 foreach ($record as $k => $v) {
-                    if ($this->onlyColumns !== null && !\in_array($k, $this->onlyColumns, true)) {
+                    if ($this->onlyColumns !== false && !\in_array($k, $this->onlyColumns, true)) {
                         continue;
                     }
 
@@ -118,7 +185,7 @@ class CSV
             }
 
             // Columns Renaming (mapping)
-            if ($this->headerOffset === null && $this->columns !== null) {
+            if ($this->headerOffset === false && $this->columns !== null) {
                 foreach ($newRecord as $k => $v) {
                     if (\array_key_exists($k, $this->columns) && \is_string($this->columns[$k]) && trim($this->columns[$k]) !== '') {
                         $newRecord[$this->columns[$k]] = $v;
@@ -127,13 +194,21 @@ class CSV
                 }
             }
 
-            $this->df->addRecord($newRecord);
+            $to->addRecord($newRecord);
         }
 
-        return $this->df;
+        return $to;
     }
 
-    public function saveToFile(mixed $file, bool $overwriteFile = false, bool $writeHeader = true): void
+    public static function fromDataFrame(DataFrame $df): static
+    {
+        $builder = new static;
+        $builder->fromDf = $df;
+
+        return $builder;
+    }
+
+    public function toFile(mixed $file, bool $overwriteFile = false, bool $writeHeader = true): void
     {
         if ($file instanceof SplFileInfo) {
             if (!$file instanceof SplFileObject) {
@@ -156,14 +231,14 @@ class CSV
         }
 
         // Header
-        $writeHeader && $file->insertOne($this->df->columnsNames());
+        $writeHeader && $file->insertOne($this->fromDf->columnsNames());
 
         // Records
-        $previousParameter = $this->df->fillInNonExistentsCol;
-        $this->df->fillInNonExistentsCol = true;
+        $previousParameter = $this->fromDf->fillInNonExistentsCol;
+        $this->fromDf->fillInNonExistentsCol = true;
 
-        $file->insertAll($this->df);
+        $file->insertAll($this->fromDf);
 
-        $this->df->fillInNonExistentsCol = $previousParameter;
+        $this->fromDf->fillInNonExistentsCol = $previousParameter;
     }
 }

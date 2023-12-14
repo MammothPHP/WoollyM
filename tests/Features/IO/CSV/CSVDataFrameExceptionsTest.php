@@ -3,6 +3,7 @@
 declare(strict_types=1);
 use MammothPHP\WoollyM\DataFrame;
 use MammothPHP\WoollyM\Exceptions\{FileExistsException, InvalidSelectException, UnknownOptionException};
+use MammothPHP\WoollyM\IO\CSV;
 
 test('overwrite fail csv', function (): void {
     $fileName = __DIR__ . \DIRECTORY_SEPARATOR . 'TestFiles' . \DIRECTORY_SEPARATOR . 'testCSVOverwrite.csv';
@@ -13,5 +14,5 @@ test('overwrite fail csv', function (): void {
         ['a' => 7, 'b' => 8, 'c' => 9],
     ]);
 
-    $df->toCSV($fileName);
+    CSV::fromDataFrame($df)->toFile($fileName);
 })->throws(FileExistsException::class);

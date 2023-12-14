@@ -5,6 +5,7 @@ declare(strict_types=1);
 use MammothPHP\WoollyM\DataFrame;
 use League\Csv\{Reader, Writer};
 use MammothPHP\WoollyM\Exceptions\DataFrameException;
+use MammothPHP\WoollyM\IO\{CSV, TSV};
 
 test('from csv', function (Closure $file): void {
     $expected = [
@@ -14,7 +15,22 @@ test('from csv', function (Closure $file): void {
 
     $fileName = __DIR__ . \DIRECTORY_SEPARATOR . 'TestFiles' . \DIRECTORY_SEPARATOR . 'testCSV.csv';
 
-    $df = DataFrame::fromCSV($file($fileName));
+    $input = $file($fileName);
+
+    if (\is_resource($input)) {
+        $csv = CSV::fromStream($input);
+    } elseif ($input instanceof SplFileInfo) {
+        $csv = CSV::fromFileInfo($input);
+    } elseif ($input instanceof Reader) {
+        $csv = CSV::fromCsvReader($input);
+    } elseif (file_exists($input)) {
+        $csv = CSV::fromFilePath($input);
+    } else {
+        $csv = CSV::fromString($input);
+    }
+
+    $df = $csv->import();
+
     expect($df->toArray())->toEqual($expected);
 })->with([
     'file path' => fn(string $fileName): string => $fileName,
@@ -27,7 +43,10 @@ test('from csv', function (Closure $file): void {
 test('from csv no header', function (): void {
     $fileName = __DIR__ . \DIRECTORY_SEPARATOR . 'TestFiles' . \DIRECTORY_SEPARATOR . 'testCSV.csv';
 
-    $df = DataFrame::fromCSV(input: $fileName, headerOffset: null, columns: ['x', 'y', 'z']);
+    $df = CSV::fromFilePath($fileName)->format(
+        headerOffset: false,
+        columns: ['x', 'y', 'z']
+    )->import();
 
     expect($df->toArray())->toEqual([
         ['x' => 'a', 'y' => 'b', 'z' => 'c'],
@@ -39,14 +58,11 @@ test('from csv no header', function (): void {
 test('from csvcol map', function (): void {
     $fileName = __DIR__ . \DIRECTORY_SEPARATOR . 'TestFiles' . \DIRECTORY_SEPARATOR . 'testCSV.csv';
 
-    $df = DataFrame::fromCSV(
-        input: $fileName,
-        mapping: [
-            'a' => 'x',
-            'b' => 'y',
-            'c' => 'z',
-        ],
-    );
+    $df = CSV::fromFilePath($fileName)->format(mapping: [
+        'a' => 'x',
+        'b' => 'y',
+        'c' => 'z',
+    ])->import();
 
     expect($df->toArray())->toEqual([
         ['x' => 1, 'y' => 2, 'z' => 3],
@@ -57,38 +73,28 @@ test('from csvcol map', function (): void {
 test('csv mapping alias', function (): void {
     $fileName = __DIR__ . \DIRECTORY_SEPARATOR . 'TestFiles' . \DIRECTORY_SEPARATOR . 'testCSV.csv';
 
-    $df1 = DataFrame::fromCSV(
-        input: $fileName,
-        mapping: [
-            'a' => 'x',
-            'b' => 'y',
-            'c' => 'z',
-        ],
-    );
+    $df1 = CSV::fromFilePath($fileName)->format(mapping: [
+        'a' => 'x',
+        'b' => 'y',
+        'c' => 'z',
+    ])->import();
 
-    $df2 = DataFrame::fromCSV(
-        input: $fileName,
-        mapping: [
-            'a' => 'x',
-            'b' => 'y',
-            'c' => 'z',
-        ],
-    );
+    $df2 = DataFrame::fromArray([
+        ['x' => 1, 'y' => 2, 'z' => 3],
+        ['x' => 4, 'y' => 5, 'z' => 6],
+    ]);
 
-    expect($df2->toArray())->toEqual($df1->toArray());
+    expect($df1->toArray())->toEqual($df2->toArray());
 });
 
 test('from csvcol map to null', function (): void {
     $fileName = __DIR__ . \DIRECTORY_SEPARATOR . 'TestFiles' . \DIRECTORY_SEPARATOR . 'testCSV.csv';
 
-    $df = DataFrame::fromCSV(
-        input: $fileName,
-        mapping: [
-            'a' => 'x',
-            'b' => null,
-            'c' => 'z',
-        ],
-    );
+    $df = CSV::fromFilePath($fileName)->format(mapping: [
+        'a' => 'x',
+        'b' => null,
+        'c' => 'z',
+    ])->import();
 
     expect($df->toArray())->toEqual([
         ['x' => 1, 'z' => 3],
@@ -99,16 +105,15 @@ test('from csvcol map to null', function (): void {
 test('from csvcol map to null2', function (): void {
     $fileName = __DIR__ . \DIRECTORY_SEPARATOR . 'TestFiles' . \DIRECTORY_SEPARATOR . 'testCSV.csv';
 
-    $df = DataFrame::fromCSV(
-        input: $fileName,
-        mapping: [
-            'a' => 'x',
-            'b' => null,
-            'c' => 'z',
-            'doesnt_exist' => 'b',
-            'doesnt_exist_either' => null,
-        ],
-    );
+    $mapping = [
+        'a' => 'x',
+        'b' => null,
+        'c' => 'z',
+        'doesnt_exist' => 'b',
+        'doesnt_exist_either' => null,
+    ];
+
+    $df = CSV::fromFilePath($fileName)->format(mapping: $mapping)->import();
 
     expect($df->toArray())->toEqual([
         ['x' => 1, 'z' => 3],
@@ -119,7 +124,7 @@ test('from csvcol map to null2', function (): void {
 test('from tsv', function (): void {
     $fileName = __DIR__ . \DIRECTORY_SEPARATOR . 'TestFiles' . \DIRECTORY_SEPARATOR . 'testTSV.tsv';
 
-    $df = DataFrame::fromTSV($fileName);
+    $df = TSV::fromFilePath($fileName)->import();
 
     expect($df->toArray())->toEqual([
         ['a' => 1, 'b' => 2, 'c' => 3],
@@ -140,7 +145,7 @@ test('save csv', function (Closure $file): void {
         ['a' => 7, 'b' => 'hui,t', 'c' => 9],
     ]);
 
-    $df->toCSV(file: $file($fileName), overwriteFile: true, writeHeader: true);
+    CSV::fromDataFrame($df)->toFile(file: $file($fileName), overwriteFile: true, writeHeader: true);
 
     $data = file_get_contents($fileName);
 
@@ -171,7 +176,8 @@ test('save csv with traps', function (): void {
 
     // Unordered columns
     $tempFile = new SplTempFileObject;
-    $df->toCSV(file: $tempFile, overwriteFile: true, writeHeader: true);
+
+    CSV::fromDataFrame($df)->toFile(file: $tempFile, overwriteFile: true, writeHeader: true);
 
     $expected = "a,c,b\n" .
                 "1,3,\n" .
@@ -185,7 +191,7 @@ test('save csv with traps', function (): void {
     $df->sortColumns();
 
     $tempFile = new SplTempFileObject;
-    $df->toCSV(file: $tempFile, overwriteFile: true, writeHeader: true);
+    CSV::fromDataFrame($df)->toFile(file: $tempFile, overwriteFile: true, writeHeader: true);
 
     $expected = "a,b,c\n" .
                 "1,,3\n" .
@@ -197,6 +203,5 @@ test('save csv with traps', function (): void {
 });
 
 test('save to invalid file', function (): void {
-    $df = new DataFrame;
-    $df->toCSV(new stdClass);
+    CSV::fromDataFrame(new DataFrame)->toFile(new stdClass);
 })->throws(DataFrameException::class);
