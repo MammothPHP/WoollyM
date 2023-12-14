@@ -9,10 +9,17 @@ use Gajus\Dindent\Indenter;
 use League\Csv\HTMLConverter;
 use MammothPHP\WoollyM\DataFrame;
 
-abstract class HTML
+class HTML
 {
-    public static function convertDataFrameToHtml(
-        DataFrame $df,
+    use BuilderExport;
+
+    public bool $pretty;
+    public ?int $limit;
+    public ?int $offset;
+    public ?string $class;
+    public ?string $id;
+
+    public function toString(
         bool $pretty = true,
         ?int $limit = null,
         ?int $offset = 0,
@@ -21,16 +28,16 @@ abstract class HTML
     ): string {
         $converter = (new HTMLConverter)->table($class ?? '', $id ?? '');
 
-        $backupFillInNonExistentsCol = $df->fillInNonExistentsCol;
-        $df->fillInNonExistentsCol = true;
+        $backupFillInNonExistentsCol = $this->fromDf->fillInNonExistentsCol;
+        $this->fromDf->fillInNonExistentsCol = true;
 
-        $iterable = $df->selectAll()->limit($limit)->offset($offset);
+        $iterable = $this->fromDf->selectAll()->limit($limit)->offset($offset);
 
         try {
-            $r = $converter->convert($iterable, $df->columnsNames(), $df->columnsNames());
+            $r = $converter->convert($iterable, $this->fromDf->columnsNames(), $this->fromDf->columnsNames());
         } catch (Exception $e) {
         } finally {
-            $df->fillInNonExistentsCol = $backupFillInNonExistentsCol;
+            $this->fromDf->fillInNonExistentsCol = $backupFillInNonExistentsCol;
             ($e ?? null) instanceof Exception && throw $e;
         }
 
