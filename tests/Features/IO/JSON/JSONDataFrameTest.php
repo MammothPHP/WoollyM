@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 use MammothPHP\WoollyM\DataFrame;
+use MammothPHP\WoollyM\IO\JSON;
 
 test('to json', function (): void {
     $df = DataFrame::fromArray([
@@ -11,10 +12,10 @@ test('to json', function (): void {
     ]);
 
     $expected = '[{"a":1,"b":2,"c":3},{"a":4,"b":5,"c":6},{"a":7,"b":8,"c":9}]';
-    expect($df->toJSON())->toEqual($expected);
+    expect(JSON::fromDataFrame($df)->toString())->toEqual($expected);
 });
 
-test('from json', function (): void {
+test('from json', function ($df): void {
     $expected = [
         ['a' => 1, 'b' => 2, 'c' => 3],
         ['a' => 4, 'b' => 5, 'c' => 6],
@@ -23,12 +24,12 @@ test('from json', function (): void {
 
     $filePath = __DIR__ . \DIRECTORY_SEPARATOR . 'TestFiles' . \DIRECTORY_SEPARATOR . 'input.json';
 
-    $df = DataFrame::fromJsonString(file_get_contents($filePath));
+    $df = JSON::fromString(file_get_contents($filePath))->import();
     expect($df->toArray())->toEqual($expected);
-
-    $df = DataFrame::fromJsonFile($filePath);
-    expect($df->toArray())->toEqual($expected);
-});
+})->with([
+    'string' => file_get_contents(__DIR__ . \DIRECTORY_SEPARATOR . 'TestFiles' . \DIRECTORY_SEPARATOR . 'input.json'),
+    'file path' => __DIR__ . \DIRECTORY_SEPARATOR . 'TestFiles' . \DIRECTORY_SEPARATOR . 'input.json',
+]);
 
 test('to pretty json', function (): void {
     $df = DataFrame::fromArray([
@@ -55,5 +56,5 @@ test('to pretty json', function (): void {
     $expected .= '    }' . "\n";
     $expected .= ']';
 
-    expect($df->toJSON(pretty: true))->toEqual($expected);
+    expect(JSON::fromDataFrame($df)->toString(pretty: true))->toEqual($expected);
 });

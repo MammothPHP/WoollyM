@@ -12,7 +12,7 @@ use SplFileObject;
 
 class CSV extends Builder
 {
-    public readonly DataFrame $fromDf;
+    use BuilderExport;
 
     public readonly Reader $csvReader;
     public readonly mixed $ressource;
@@ -198,14 +198,6 @@ class CSV extends Builder
         }
 
         return $to;
-    }
-
-    public static function fromDataFrame(DataFrame $df): static
-    {
-        $builder = new static;
-        $builder->fromDf = $df;
-
-        return $builder;
     }
 
     public function toFile(mixed $file, bool $overwriteFile = false, bool $writeHeader = true): void

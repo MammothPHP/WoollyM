@@ -10,7 +10,6 @@ use MammothPHP\WoollyM\IO\Wrappers\{HtmlWrapper, JsonWrapper, SqlWrapper, XlsxWr
 class DataFrame extends DataFrameHelpers
 {
     use HtmlWrapper;
-    use JsonWrapper;
     use SqlWrapper;
     use XlsxWrapper;
 
