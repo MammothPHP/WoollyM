@@ -7,9 +7,7 @@ namespace MammothPHP\WoollyM\IO;
 use JsonMachine\Items;
 use JsonMachine\JsonDecoder\ExtJsonDecoder;
 use MammothPHP\WoollyM\DataFrame;
-use MammothPHP\WoollyM\Exceptions\FileExistsException;
-use MammothPHP\WoollyM\Exceptions\NotYetImplementedException;
-use MammothPHP\WoollyM\Exceptions\UnknownOptionException;
+use MammothPHP\WoollyM\Exceptions\{FileExistsException, NotYetImplementedException, UnknownOptionException};
 use SplFileInfo;
 
 class JSON extends Builder
@@ -36,9 +34,9 @@ class JSON extends Builder
     }
 
     /**
-     * Encodes a DataFrame array into a JSON file
+     * Encodes a DataFrame into a JSON file
      */
-    public function toFile(string|SplFileInfo $file, bool $overwriteFile = false , bool $pretty = false): void
+    public function toFile(string|SplFileInfo $file, bool $overwriteFile = false, bool $pretty = false): void
     {
         if ($convertedFile = $this->prepareToFileInput($file, $overwriteFile)) {
             $convertedFile->fwrite($this->toString(pretty: $pretty));

@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 use MammothPHP\WoollyM\DataFrame;
+use MammothPHP\WoollyM\IO\XLSX as IOXLSX;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
@@ -9,7 +10,7 @@ test('load xlsx', function (): void {
     $fileName = __DIR__ . \DIRECTORY_SEPARATOR . 'TestFiles' . \DIRECTORY_SEPARATOR . 'test.xlsx';
 
     // Suppress warning coming from PHPExcel date/time nonsense
-    $xlsx = DataFrame::fromXLSX($fileName);
+    $xlsx = IOXLSX::fromFilePath($fileName);
     $xlsx = $xlsx->toArray();
 
     $assertion_array = [
@@ -102,9 +103,9 @@ test('to xlsx', function (): void {
 
     $xlsx = new Spreadsheet;
 
-    $a->toXLSXWorksheet($xlsx, 'A');
-    $b->toXLSXWorksheet($xlsx, 'B');
-    $c->toXLSXWorksheet($xlsx, 'C');
+    IOXLSX::fromDataFrame($a)->toExcelWorksheet(spreadsheet: $xlsx, worksheetTitle: 'A');
+    IOXLSX::fromDataFrame($b)->toExcelWorksheet(spreadsheet: $xlsx, worksheetTitle: 'B');
+    IOXLSX::fromDataFrame($c)->toExcelWorksheet(spreadsheet: $xlsx, worksheetTitle: 'C');
 
     expect($sheetA)->toEqual($a->toArray());
     expect($sheetB)->toEqual($b->toArray());
@@ -115,13 +116,39 @@ test('to xlsx', function (): void {
 
     // Suppress warning coming from PhpSpreadsheet  date/time nonsense
     // Suppress warning coming from PhpSpreadsheet  date/time nonsense
-    $a = DataFrame::fromXLSX(fileName: $fileName, sheetName: 'A');
-    $b = DataFrame::fromXLSX(fileName: $fileName, sheetName: 'B');
-    $c = DataFrame::fromXLSX(fileName: $fileName, sheetName: 'C');
+    $a = IOXLSX::fromFilePath($fileName)->format(sheetName: 'A')->import();
+    $b = IOXLSX::fromFilePath($fileName)->format(sheetName: 'B')->import();
+    $c = IOXLSX::fromFilePath($fileName)->format(sheetName: 'C')->import();
 
     expect($sheetA)->toEqual($a->toArray());
     expect($sheetB)->toEqual($b->toArray());
     expect($sheetC)->toEqual($c->toArray());
+
+    unlink($fileName);
+});
+
+test('to xlsx file', function (): void {
+    $fileName = __DIR__ . \DIRECTORY_SEPARATOR . 'TestFiles' . \DIRECTORY_SEPARATOR . 'test_to.xlsx';
+
+    $sheetA = [
+        [
+            'a' => 'one',
+            'b' => 'two',
+            'c' => 'three',
+        ],
+        [
+            'a' => 'four',
+            'b' => 'five',
+            'c' => 'six',
+        ],
+    ];
+
+    $df1 = new DataFrame($sheetA);
+    IOXLSX::fromDataFrame($df1)->toFile(file: $fileName, overwriteFile: true);
+
+    $df2 = IOXLSX::fromFilePath($fileName)->import();
+
+    expect($df2->toArray())->toBe($df1->toArray())->toBe($sheetA);
 
     unlink($fileName);
 });

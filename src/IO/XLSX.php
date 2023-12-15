@@ -4,12 +4,43 @@ declare(strict_types=1);
 
 namespace MammothPHP\WoollyM\IO;
 
+use MammothPHP\WoollyM\DataFrame;
+use MammothPHP\WoollyM\Exceptions\NotYetImplementedException;
 use PhpOffice\PhpSpreadsheet\{IOFactory, Spreadsheet};
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use PhpOffice\PhpSpreadsheet\Writer\{Xls, Xlsx as WriterXlsx};
+use SplFileInfo;
 
-class XLSX
+class XLSX extends Builder
 {
-    public function __construct(public readonly string $fileName) {}
+    use BuilderExport;
+
+    public const ?string DEFAULT_SHEET_NAME = null;
+    public ?string $sheetName = self::DEFAULT_SHEET_NAME;
+
+    public const int DEFAULT_COLROW = 1;
+    public int $colRow = self::DEFAULT_COLROW;
+
+    public function import(DataFrame $to = new DataFrame): DataFrame
+    {
+        $fileName = $this?->file->getPathname() ?? $this->input ?? false;
+
+        if ($fileName === false) {
+            throw new NotYetImplementedException('Invalid file');
+        }
+
+        $data = $this->loadFile($fileName);
+
+        return new DataFrame($data);
+    }
+
+    public function format(?string $sheetName = self::DEFAULT_SHEET_NAME, int $colRow = self::DEFAULT_COLROW): static
+    {
+        $this->sheetName = $sheetName;
+        $this->colRow = $colRow;
+
+        return $this;
+    }
 
     /**
      * Loads the file which the CSV class was instantiated with.
@@ -18,14 +49,14 @@ class XLSX
      * @throws \MammothPHP\WoollyM\Exceptions\UnknownOptionException
      * @throws \PhpOffice\PhpSpreadsheet\Exception
      */
-    public function loadFile(?string $sheetName = null, int $colRow = 1): array
+    protected function loadFile(string $file): array
     {
-        $xlsx = IOFactory::load($this->fileName);
+        $xlsx = IOFactory::load($file);
 
-        if ($sheetName === null) {
+        if ($this->sheetName === null) {
             $sheet = $xlsx->getActiveSheet();
         } else {
-            $sheet = $xlsx->getSheetByName($sheetName);
+            $sheet = $xlsx->getSheetByName($this->sheetName);
         }
 
         $columns = [];
@@ -34,12 +65,12 @@ class XLSX
         $highestColumn = $sheet->getHighestColumn();
         $highestColumn++;
 
-        foreach ($sheet->getRowIterator($colRow) as $i => $row) {
+        foreach ($sheet->getRowIterator($this->colRow) as $i => $row) {
             for ($column = 'A'; $column != $highestColumn; $column++) {
                 /*
                  * If the current row is the column row then assemble our columns.
                  */
-                if ($i === $colRow) {
+                if ($i === $this->colRow) {
                     $columns[$column] = $sheet->getCell($column . $i)->__toString();
 
                     continue;
@@ -54,14 +85,30 @@ class XLSX
     }
 
     /**
+     * Write an Excel file
+     */
+    public function toFile(string|SplFileInfo $file, bool $overwriteFile = false): void
+    {
+        if ($convertedFile = $this->prepareToFileInput($file, $overwriteFile)) {
+            $spreadsheet = new Spreadsheet;
+            $this->toExcelWorksheet($spreadsheet);
+        } else {
+            throw new NotYetImplementedException('Invalid file');
+        }
+
+        $writer = new WriterXlsx($spreadsheet);
+        $writer->save($convertedFile->getPathname());
+    }
+
+    /**
      * Converts the columns and data passed to an XLSX worksheet and adds that worksheet to an instance of PHPExcel
      * @throws \PhpOffice\PhpSpreadsheet\Exception
      */
-    public static function saveToWorksheet(Spreadsheet $excel, string $worksheetTitle, array $data, array $columns): Worksheet
+    public function toExcelWorksheet(Spreadsheet $spreadsheet, string $worksheetTitle = 'Spread1'): Worksheet
     {
         // Check if this is a brand new spreadsheet
-        if ($excel->getSheetCount() === 1) {
-            $sheet = $excel->getActiveSheet();
+        if ($spreadsheet->getSheetCount() === 1) {
+            $sheet = $spreadsheet->getActiveSheet();
             $sheetName = $sheet->getCodeName();
 
             $colCount = $sheet->getHighestColumn();
@@ -71,19 +118,19 @@ class XLSX
 
             // If this is a brand new spreadsheet then remove the first worksheet
             if ($sheetName === 'Worksheet' && $colCount === 'A' && $rowCount === 1 && $cell === null) {
-                $excel->removeSheetByIndex(0);
+                $spreadsheet->removeSheetByIndex(0);
             }
         }
 
-        $worksheet = new Worksheet($excel, $worksheetTitle);
+        $worksheet = new Worksheet($spreadsheet, $worksheetTitle);
 
-        $wsArray = [$columns];
-        foreach ($data as $row) {
+        $wsArray = [$this->fromDf->columnsNames()];
+        foreach ($this->fromDf as $row) {
             $wsArray[] = array_values($row);
         }
 
         $worksheet->fromArray($wsArray, null, 'A1', false);
-        $excel->addSheet($worksheet);
+        $spreadsheet->addSheet($worksheet);
 
         return $worksheet;
     }

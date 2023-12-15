@@ -147,7 +147,7 @@ test('save csv', function (Closure $file): void {
 
     $input = $file($fileName);
 
-    if (is_resource($input)) {
+    if (\is_resource($input)) {
         CSV::fromDataFrame($df)->toStream(phpStream: $input, writeHeader: true);
     } else {
         CSV::fromDataFrame($df)->toFile(file: $input, overwriteFile: true, writeHeader: true);
