@@ -13,6 +13,12 @@ test('to json', function (): void {
 
     $expected = '[{"a":1,"b":2,"c":3},{"a":4,"b":5,"c":6},{"a":7,"b":8,"c":9}]';
     expect(JSON::fromDataFrame($df)->toString())->toEqual($expected);
+
+    $tempFile = new SplTempFileObject;
+    JSON::fromDataFrame($df)->toFile(file: $tempFile);
+
+    $tempFile->rewind();
+    expect($tempFile->fread(1024))->toBe($expected);
 });
 
 test('from json', function ($df): void {

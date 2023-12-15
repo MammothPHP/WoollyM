@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace MammothPHP\WoollyM\IO;
 
-use League\Csv\{AbstractCsv, Reader, Writer};
+use League\Csv\{AbstractCsv, CannotInsertRecord, Exception, InvalidArgument, Reader, Writer};
 use MammothPHP\WoollyM\DataFrame;
 use MammothPHP\WoollyM\Exceptions\{FileExistsException, NotYetImplementedException};
 use SplFileInfo;
@@ -116,7 +116,7 @@ class CSV extends Builder
         $csv->setEnclosure($this->enclosure);
         $csv->setEscape($this->escape);
 
-        if ($csv instanceof Reader) {;
+        if ($csv instanceof Reader) {
             $csv->setHeaderOffset($this->headerOffset);
         }
     }
@@ -185,36 +185,60 @@ class CSV extends Builder
         return $to;
     }
 
-    public function toFile(mixed $file, bool $overwriteFile = false, bool $writeHeader = true): void
+    /**
+     * Write CSV from dataFrame to a file
+     */
+    public function toFile(string|SplFileInfo|Writer $file, bool $overwriteFile = false, bool $writeHeader = true): void
     {
-        if ($file instanceof SplFileInfo) {
-            if (!$file instanceof SplFileObject) {
-                $file = $file->openFile('w+');
-            }
-
-            $file = Writer::createFromFileObject($file);
-        } elseif ($file instanceof Writer) {
-            // Do nothing
-        } elseif (\is_string($file)) {
-            if (file_exists($file) && !$overwriteFile) {
-                throw new FileExistsException("Write failed. File {$file} exists.");
-            }
-
-            $file = Writer::createFromPath($file, 'w+');
-        } elseif (\is_resource($file)) {
-            $file = Writer::createFromStream($file);
+        if ($file instanceof Writer) {
+            $writer = $file;
+        } elseif ($convertedFile = $this->prepareToFileInput($file, $overwriteFile)) {
+            $writer = Writer::createFromFileObject($convertedFile);
         } else {
             throw new NotYetImplementedException('Invalid File');
         }
 
+        $this->writeCsv($writer, $writeHeader);
+    }
+
+    /**
+     * Write CSV from dataFrame to a stream resource
+     */
+    public function toStream($phpStream, bool $writeHeader = true): void
+    {
+        if (\is_resource($phpStream)) {
+            $writer = Writer::createFromStream($phpStream);
+        } else {
+            throw new NotYetImplementedException('Invalid Stream');
+        }
+
+        $this->writeCsv($writer, $writeHeader);
+    }
+
+    /**
+     * Write CSV from dataFrame to a string
+     */
+    public function toString(bool $writeHeader = true): string
+    {
+        $writer = Writer::createFromString();
+        $this->writeCsv($writer, $writeHeader);
+
+        return $writer->toString();
+    }
+
+    protected function writeCsv(Writer $writer, bool $writeHeader): void
+    {
+        // Options
+        $this->applyOptions($writer);
+
         // Header
-        $writeHeader && $file->insertOne($this->fromDf->columnsNames());
+        $writeHeader && $writer->insertOne($this->fromDf->columnsNames());
 
         // Records
         $previousParameter = $this->fromDf->fillInNonExistentsCol;
         $this->fromDf->fillInNonExistentsCol = true;
 
-        $file->insertAll($this->fromDf);
+        $writer->insertAll($this->fromDf);
 
         $this->fromDf->fillInNonExistentsCol = $previousParameter;
     }

@@ -145,7 +145,13 @@ test('save csv', function (Closure $file): void {
         ['a' => 7, 'b' => 'hui,t', 'c' => 9],
     ]);
 
-    CSV::fromDataFrame($df)->toFile(file: $file($fileName), overwriteFile: true, writeHeader: true);
+    $input = $file($fileName);
+
+    if (is_resource($input)) {
+        CSV::fromDataFrame($df)->toStream(phpStream: $input, writeHeader: true);
+    } else {
+        CSV::fromDataFrame($df)->toFile(file: $input, overwriteFile: true, writeHeader: true);
+    }
 
     $data = file_get_contents($fileName);
 
@@ -171,18 +177,18 @@ test('save csv with traps', function (): void {
     $df = DataFrame::fromArray([
         ['a' => 1, 'c' => 3],
         ['a' => 4, 'c' => 6, 'b' => 5],
-        ['b' => 'hui,t'],
+        ['b' => 'hui;t'],
     ]);
 
     // Unordered columns
     $tempFile = new SplTempFileObject;
 
-    CSV::fromDataFrame($df)->toFile(file: $tempFile, overwriteFile: true, writeHeader: true);
+    CSV::fromDataFrame($df)->format(delimiter: ';')->toFile(file: $tempFile, overwriteFile: true, writeHeader: true);
 
-    $expected = "a,c,b\n" .
-                "1,3,\n" .
-                "4,6,5\n" .
-                ",,\"hui,t\"\n";
+    $expected = "a;c;b\n" .
+                "1;3;\n" .
+                "4;6;5\n" .
+                ";;\"hui;t\"\n";
 
     $tempFile->rewind();
     expect($tempFile->fread(1024))->toBe($expected);
@@ -196,12 +202,29 @@ test('save csv with traps', function (): void {
     $expected = "a,b,c\n" .
                 "1,,3\n" .
                 "4,5,6\n" .
-                ",\"hui,t\",\n";
+                ",hui;t,\n";
 
     $tempFile->rewind();
     expect($tempFile->fread(1024))->toBe($expected);
 });
 
 test('save to invalid file', function (): void {
-    CSV::fromDataFrame(new DataFrame)->toFile(new stdClass);
+    CSV::fromDataFrame(new DataFrame)->toFile(file: __FILE__, overwriteFile: false);
 })->throws(DataFrameException::class);
+
+test('csv to string', function (): void {
+    $df = DataFrame::fromArray([
+        ['a' => 1, 'b' => 2, 'c' => 3],
+        ['a' => 4, 'c' => 6, 'b' => 5],
+        ['a' => 7, 'b' => 'hui,t', 'c' => 9],
+    ]);
+
+    $csv = CSV::fromDataFrame($df)->format(enclosure: "'")->toString();
+
+    expect($csv)->toBe(
+        "a,b,c\n" .
+        "1,2,3\n" .
+        "4,5,6\n" .
+        "7,'hui,t',9\n"
+    );
+});
