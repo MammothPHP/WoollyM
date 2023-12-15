@@ -4,15 +4,17 @@
     </picture>
 </p>
 
-> :warning: _This project is currently at an experimental stage. Production use is not recommended. APIs and functionalities are subject to change at any time without notice. Documentation is still deficient. Help and feedback are most welcome._
-
 > Main Author: [Julien Boudry](https://www.linkedin.com/in/julienboudry/)  
 > License: [BSD-3](LICENSE.txt) - _Please [say hello](https://github.com/MammothPHP/WoollyM/discussions/categories/your-wolly-projects) if you like or use this code!_  
 > Contribute: [Contribute File](CONTRIBUTING.md)   
 > Donation: **₿ [bc1q3jllk3qd9fjvvuqy07tawkv7t6h7qjf55fc2gh](https://blockchair.com/bitcoin/address/bc1q3jllk3qd9fjvvuqy07tawkv7t6h7qjf55fc2gh)** or **[Github Sponsor Page](https://github.com/sponsors/julien-boudry)**  
 > _You can also offer me a bottle of good wine._  
 
-> :gloves: _Wolly was a fork from [archon/dataframe](https://github.com/hwperkins/Archon) project which was very useful and inspiring during development. Today, the internal engine has been almost completely rewritten and the public APIs are radically different and incompatible. A few traces of code and ideas remain, they have been placed by their original author under the BSD-3 license._
+> [!WARNING]
+> This project is currently at an **experimental stage**. Production use is not recommended. APIs and functionalities are subject to **change at any time without notice**. Documentation is still deficient. Help and feedback are most welcome.
+
+> [!NOTE]
+> _Wolly was a fork from [archon/dataframe](https://github.com/hwperkins/Archon) project which was very useful and inspiring during development. Today, the internal engine has been almost completely rewritten and the public APIs are radically different and incompatible. A few traces of code and ideas remain, they have been placed by their original author under the BSD-3 license._
 
 # WoollyM: PHP Dataframes for Data Analysis library
 
