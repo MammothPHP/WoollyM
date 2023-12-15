@@ -58,15 +58,15 @@ $df = new DataFrame($arr);
 _(documentation overview)_
 
 ```php
-$df = DataFrame::fromJsonString($json);
-$df = DataFrame::fromJsonPath($json); 
+$df = JSON::fromFilePath($path)->import(); // memory optimized
+$df = JSON::fromString($json)->import();
 
-$df = DataFrame::fromCsv($csvFile); 
-$df = DataFrame::fromTsv($tsvFile); 
+$df = CSV:fromFilePath($path)->format(delimiter: ',')->import();  // memory optimized
+$df = TSV::fromString($path)->import(); 
 
-$df = DataFrame::fromFwf($fwfFile); 
+$df = FWF::fromFilePath($path)->format($colSpecs)->filter(...)->import(); 
 
-$df = DataFrame::fromXLSX($xlsxFile);
+$df = XLSX::fromFilePath($path)->import();
 $df = DataFrame::fromSql($query, $pdo);
 
 ```
