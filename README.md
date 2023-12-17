@@ -34,8 +34,6 @@ composer require mammothphp/woollym
  - PHP 8.3 or higher
  - php_mbstring extension
 
-### License
- - [BSD-3-Clause](http://opensource.org/licenses/BSD-3-Clause)
 
 ## Instanciation (basic)
 
@@ -153,9 +151,11 @@ $df[42] = [
 #### Unset Record(s)
 ```php
 $df->removeRecord(position: 42);
-unset($df[42]); // equivalent
 
-// equivalent to
+// equivalent
+unset($df[42]);
+
+// also equivalent
 $df->filter(fn(array $record, int $position): bool => $position !== 42);
 ```
 
@@ -171,8 +171,8 @@ $df->count(); // equivalent
 
 #### Iterating over rows:
 ```php
-foreach ($df as $i => $row) {
-   echo $i.': '.implode('-', $row).PHP_EOL;
+foreach ($df as $key => $record) {
+   echo $key.': '.implode('-', $record).PHP_EOL;
 }
 --------------------------
 0: 1-2-3
@@ -218,7 +218,7 @@ $df->columns()
 ```
 
 ```php
-$column = $df->col('a')
+$column = $df->col('a'); // return ColumnRepresentation object
 $column->name; // 'a'
 ```
 
@@ -228,7 +228,6 @@ $col = $df->col('colName')->rename('newName');
 
 $col->name; // 'newName'
 $col->getName(); // 'newName'
-
 ```
 
 #### Get column as DataFrame
@@ -236,9 +235,7 @@ $col->getName(); // 'newName'
 $df->col('colName')->asDataFrame;
 
 // equivalent to
-
 $df->col('colName')->asDataFrame();
-
 ```
 
 ## The Select Statement
@@ -269,7 +266,6 @@ WHERE contition AND (condition OR condition OR condition) AND condition
 
 Simpler Where clause
 ```php
-
 $stmt = $df->selectAll()->whereColumnEqual('colA', 42);
 $stmt = $df->selectAll()->whereKeyBetween(1, 42);
 ```
@@ -281,21 +277,21 @@ foreach($df->selectAll()->where(fn($r) => $r) as $recordKey => $record) {
 }
 ```
 
-Get some stats
+Get some stats _(non-exhaustive documentation)_
 ```php
- $stmt->countRecords(); // count number of records in the statement
+$stmt->countRecords(); // count number of records in the statement
 
-$stmt->count(); // count each non-null value in record
-$stmt->countDistinct(); // count distinct value in record
+$stmt->count(); // count each value in selection
+$stmt->countDistinct(); // count distinct value for of each records in statement
 $stmt->size(); // count value in selection including null value
-$stmt->sum(); // sum all value of each records in statement
-$stmt->mean(); // average value
-$stmt->min(); $stmt->max(); // min / max value
+$stmt->sum(); // sum all numeric value of each records in statement
+$stmt->mean(); // average numeric value in selection
+$stmt->min(); $stmt->max(); // min / max value (numéric)
 ```
 
 Return result as a new DataFrame object
 ```php
-$newDf = $stmt->get();
+$newDf = $df->select('colA','colC')->whereColumnEqual('colB', 42)->get();
 ``````
 
 Or directly to an array
@@ -319,7 +315,7 @@ $df = $df->apply(function ($row, $index) {
 
 ### Applying functions to columns directly:
 ```php
-$df->col('a')->apply(fn (mixed $value, int $position) => $el + 3);
+$df->col('a')->apply(fn (mixed $value, int $position) => $value + 3);
 ```
 
 ### Set value for each record in column
