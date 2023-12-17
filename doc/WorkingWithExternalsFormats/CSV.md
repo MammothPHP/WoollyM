@@ -1,5 +1,48 @@
-### Reading a CSV file:
+## Reading a CSV file:
 
+### Import methods
+```php
+$csvBuilder = CSV::fromFilePath($path);
+$csvBuilder = CSV::fromString($string);
+$csvBuilder = CSV::fromFileFileInfo(SplFileInfo $fileInfo); // or extending FileInfo like SplFileObject
+$csvBuilder = CSV::fromCsvReader(League\Csv\Reader $csvReader);
+$csvBuilder = CSV::fromStream($phpStreamFile);
+```
+
+### Simple import
+```
+x,y,z
+1,2,3
+4,5,6
+7,8,9
+```
+
+```php
+$df = CSV:fromFilePath($path)->import();
+```
+
+### Import to an existing DataFrame
+```php
+CSV:fromFilePath($path)->import(to: $df);
+```
+
+### Shortcut for TSV files
+```php
+$df = TSV:fromFilePath($path)->import();
+```
+
+### Without column
+```
+1,2,3
+4,5,6
+7,8,9
+```
+
+```php
+$df = CSV:fromFilePath($path)->format(headerOffset: null, columns: ['a','b','c'])->import();
+```
+
+### Custom delimiters and mapping:
 ```
 x|y|z
 1|2|3
@@ -8,44 +51,94 @@ x|y|z
 ```
 
 ```php
-$df = DataFrame::fromCSV($fileName, [
-    'sep' => '|',
-    'colmap' => [
-	    'x' => 'a',
-        'y' => 'b',
-        'z' => 'c'
+$df = CSV:fromFilePath($path)
+    ->format(
+        delimiter: '|',
+        mapping: [
+            'x' => 'a',
+            'y' => 'b',
+            'z' => 'c'
+        ]
+    )
+    ->import();
+```
+
+It's interpreted as:
+```
+a,b,c
+1,2,3
+4,5,6
+7,8,9
+```
+
+### Custom enclosure & escape
+```
+x,y
+foo,bar
+\"",",bar
+```
+
+```php
+$df = CSV:fromFilePath($path)
+    ->format(
+        enclosure '"', // is already the default value
+        escape: '\\' // is already the default value
+    )
+    ->import();
+
+$df->toArray();
+[
+    [
+        'x' => 'foo',
+        'y' => 'bar'
+    ],
+    [
+        'x' => '",',
+        'y' => 'bar'
     ]
-]);
+]
 ```
 
-### Writing a CSV file:
-
-```php
-$df->toCSV($fileName);
+### Filter
 ```
-
-```
-"a","b","c"
-"1","2","3"
-"4","5","6"
-"7","8","9"
-```
-
-### Reading a fixed-width file:
-
-```
-foo bar baz
------------
-1   2   3
-4   5   6
-7   8   9
+x|y|z
+1|2|3
+4|5|6
+7|8|9
 ```
 
 ```php
-$df = DataFrame::fromFWF($fileName, [
-	'a' => [0, 1],
-    'b' => [4, 5],
-    'c' => [8, 9]
-], ['include' => '^[0-9]']);
+$df = CSV:fromFilePath($path)->format(delimiter: '|')->filter(onlyColumns: ['x','z'])->import();
+```
 
+Interpret as:
+```
+x|z
+1|3
+4|6
+7|9
+```
+
+
+## Write a CSV file
+
+### Export methods
+
+```php
+$csvBuilder = CSV::fromDataFrame($df)->toFile(string|SplFileInfo|Writer $file); // if string, a stream path
+$csvBuilder = CSV::fromDataFrame($df)->toString($string);
+$csvBuilder = CSV::fromDataFrame($df)->toStream($phpStreamFile);
+```
+
+### Formating options
+Same formating options as import can be applied.
+
+Example:
+```php
+CSV::fromDataFrame($df)->format(delimiter: '|')->toString($string);
+```
+
+### TSV shortcut
+```php
+TSV::fromDataFrame($df)->toString($string);
 ```
