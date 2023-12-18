@@ -4,7 +4,7 @@
 ```php
 $csvBuilder = CSV::fromFilePath($path);
 $csvBuilder = CSV::fromString($string);
-$csvBuilder = CSV::fromFileFileInfo(SplFileInfo $fileInfo); // or extending FileInfo like SplFileObject
+$csvBuilder = CSV::fromFileInfo(SplFileInfo $fileInfo); // or extending FileInfo like SplFileObject
 $csvBuilder = CSV::fromCsvReader(League\Csv\Reader $csvReader);
 $csvBuilder = CSV::fromStream($phpStreamFile);
 ```

@@ -4,7 +4,7 @@
 ```php
 $fwfBuilder = FWF::fromFilePath($path);
 $fwfBuilder = FWF::fromString($string);
-$fwfBuilder = FWF::fromFileFileInfo(SplFileInfo $fileInfo); // or extending FileInfo like SplFileObject
+$fwfBuilder = FWF::fromFileInfo(SplFileInfo $fileInfo); // or extending FileInfo like SplFileObject
 ```
 
 ### Reading
@@ -25,4 +25,9 @@ $df = FWF::fromFilePath($filePath)
     ])
     ->filter($includeRegexOpt: '^[0-9]', $excludeRegexOpt: '%')
     ->import();
+```
+
+### Import to an existing DataFrame
+```php
+FWF:fromFilePath($path)->->format(colSpecs: [...])->import(to: $df);
 ```
