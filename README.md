@@ -52,22 +52,20 @@ $df = DataFrame::fromArray($arr);
 $df = new DataFrame($arr);
 ```
 
-### Instantiating from a source:
-_(documentation overview)_
+### Import or export from/to an external source
+_To limit external the base depencies, some module could require a separate `composer require`. Please consult the instructions for each of needed module._ 
 
-```php
-$df = JSON::fromFilePath($path)->import(); // memory optimized
-$df = JSON::fromString($json)->import();
+| Module | Import | Export | Performances & Limit
+| --- | --- | --- | ---
+| [CSV/TSV](doc/WorkingWithExternalsFormats/CSV.md) | :heavy_check_mark: | :heavy_check_mark: | _Memory and performance optimized. It's a wrapper on top of [league/csv](https://csv.thephpleague.com/)_
+| [FWF](doc/WorkingWithExternalsFormats/FWF.md) | :heavy_check_mark: | :x: | _Limited_
+| [JSON](doc/WorkingWithExternalsFormats/JSON.md) | :heavy_check_mark: | :heavy_check_mark: | _Memory and performance optimized on import only, it's a wrapper on top of [halaxa/json-machine](https://github.com/halaxa/json-machine). Can be limited on export (PHP native Json)_
+| [XSLX Spreadsheet](doc/WorkingWithExternalsFormats/XLSX.md) | :heavy_check_mark: | :heavy_check_mark: | _Optimized wrapper on top of [phpoffice/phpspreadsheet](https://github.com/PHPOffice/PhpSpreadsheet)._ _It may also potentially be able to load older Excel formats by automatically detecting them; but this behavior is untested._
+| [ODF Spreadsheet](doc/WorkingWithExternalsFormats/XLSX.md) | :heavy_check_mark: | :heavy_check_mark: | _Optimized wrapper on top of [phpoffice/phpspreadsheet](https://github.com/PHPOffice/PhpSpreadsheet)_
+| [HTML Table](doc/WorkingWithExternalsFormats/HtmlTable.md) | :x: | :heavy_check_mark: | _Limited_
+| [PDO SQL](doc/WorkingWithExternalsFormats/PDOSql.md) | :heavy_check_mark: | :heavy_check_mark: | _Optimized_
 
-$df = CSV:fromFilePath($path)->format(delimiter: ',')->import();  // memory optimized
-$df = TSV::fromString($path)->import(); 
 
-$df = FWF::fromFilePath($path)->format($colSpecs)->filter(...)->import(); 
-
-$df = XLSX::fromFilePath($path)->import();
-$df = DataFrame::fromSql($query, $pdo);
-
-```
 
 
 ### Extracting the underlying two-dimensional array:

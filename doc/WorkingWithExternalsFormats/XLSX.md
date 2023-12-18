@@ -17,10 +17,17 @@ $df = XLSX:fromFilePath($path)->import();
 XLSX::fromFilePath($path)->import(to: $df);
 ```
 
+### Import from ODF (.ods Open Document Format)
+```php
+// Just use the ODF class instead, all method and options are the same.
+ODF::fromFilePath($path);
+```
+
+
 ### Specify format
 ```php
 $df = XLSX::fromFilePath($path)->format($sheetName = 'results2042', $colRow = 1)->import();
-``````
+```
 
 ```$colRow:``` Parse data after specified line (starting at 1), and consider this line at the header. Set to 0 for no header.
 
@@ -32,4 +39,10 @@ $df = XLSX::fromFilePath($path)->format($sheetName = 'results2042', $colRow = 1)
 ```php
 XLSX::fromDataFrame($df)->toFile(string|SplFileInfo $filePath, bool $overwriteFile = false, string $worksheetTitle = 'DataFrame'): void;
 XLSX::fromDataFrame($df)->toExcelSpreadsheet(PhpOffice\PhpSpreadsheet\Spreadsheet &$spreadsheet, string $worksheetTitle = 'Spread1'): PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+```
+
+### Export to ODF (.ods Open Document Format)
+```php
+// Just use the ODF class instead, all method and options are the same.
+ODF::fromDataFrame();
 ```

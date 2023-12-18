@@ -8,6 +8,7 @@ use MammothPHP\WoollyM\DataFrame;
 use MammothPHP\WoollyM\Exceptions\NotYetImplementedException;
 use PhpOffice\PhpSpreadsheet\{IOFactory, Spreadsheet};
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use PhpOffice\PhpSpreadsheet\Writer\BaseWriter;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx as WriterXlsx;
 use SplFileInfo;
 
@@ -89,6 +90,10 @@ class XLSX extends Builder
         return array_values($data);
     }
 
+    protected function getWriter(Spreadsheet $spreadsheet): BaseWriter {
+        return new WriterXlsx($spreadsheet);
+    }
+
     /**
      * Write an Excel file
      */
@@ -101,7 +106,7 @@ class XLSX extends Builder
             throw new NotYetImplementedException('Invalid file');
         }
 
-        $writer = new WriterXlsx($spreadsheet);
+        $writer = $this->getWriter($spreadsheet);
         $writer->save($convertedFile->getPathname());
     }
 
