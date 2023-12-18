@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 use MammothPHP\WoollyM\DataFrame;
+use MammothPHP\WoollyM\IO\SQL;
 
 test('rollback', function (): void {
     // This test is tricky. We want to assert that a failed commit will roll back the database.
@@ -16,7 +17,8 @@ test('rollback', function (): void {
         ['a' => 4, 'b' => 5, 'c' => 6],
         ['a' => 7, 'b' => 8, 'c' => 9],
     ]);
-    $good->toSQL('testTable', $pdo);
+
+    SQL::fromDataFrame($good)->toPDO($pdo, 'testTable');
 
     // and make sure the output exactly matches the input.
     $result = $pdo->query('SELECT * FROM testTable;')->fetchAll(PDO::FETCH_ASSOC);
@@ -36,7 +38,8 @@ test('rollback', function (): void {
 
     try {
         $this->expectException('PDOException');
-        $bad->toSQL('testTable', $pdo, ['chunksize' => 1]);
+
+        SQL::fromDataFrame($bad)->options(chunkSize: 1)->toPDO($pdo, 'testTable');
     } catch (PDOException $e) {
         /*
          * We throw the original exception back here so that we can perform one

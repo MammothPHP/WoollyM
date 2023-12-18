@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use MammothPHP\WoollyM\DataFrame;
+use MammothPHP\WoollyM\IO\SQL;
 
 test('tosql', function (): void {
     $df = DataFrame::fromArray([
@@ -14,7 +15,7 @@ test('tosql', function (): void {
     $pdo = new PDO('sqlite::memory:');
 
     $pdo->exec('CREATE TABLE testTable (a TEXT, b TEXT, c TEXT);');
-    $df->toSQL('testTable', $pdo);
+    SQL::fromDataFrame($df)->toPDO($pdo, 'testTable');
     $result = $pdo->query('SELECT * FROM testTable;')->fetchAll(PDO::FETCH_ASSOC);
 
     $df->fillInNonExistentsCol = true;
@@ -29,7 +30,7 @@ test('from sql', function (): void {
     $pdo->exec('CREATE TABLE testFromSQL (x TEXT, y TEXT, z TEXT);');
     $pdo->exec('INSERT INTO testFromSQL (x, y, z) VALUES (1, 2, 3), (4, 5, 6), (7, 8, 9);');
 
-    $df = DataFrame::fromSQL('SELECT * FROM testFromSQL;', $pdo);
+    $df = SQL::fromSql($pdo, 'SELECT * FROM testFromSQL;')->import();
 
     $pdo->exec('DROP TABLE testFromSQL;');
 

@@ -1,14 +1,22 @@
-### Querying from a database:
+## Create or import from a SQL Query
 
+With a new DataFrame:
 ```php
-$pdo = new PDO('sqlite::memory:');
-$df = DataFrame::fromSQL('SELECT foo, bar, baz FROM table_name;', $pdo);
+$df = SQL::fromSql($pdo, 'SELECT foo, bar, baz FROM table_name;')->import();
+```
+
+Ton an existing DataFrame:
+```php
+SQL::fromSql($pdo, 'SELECT foo, bar, baz FROM table_name;')->import($df);
 ```
 
 ### Committing to a database:
 
 ```php
-$pdo = new PDO('sqlite::memory:');
-$affected = $df->toSQL('table_name', $pdo);
-echo sprintf('%d rows committed to database.', $affected);
+SQL::fromDataFrame($df)->toPDO($pdo, 'table_name');
+```
+
+With options:
+```php
+SQL::fromDataFrame($df)->options(chunkSize: 10)->toPDO($pdo, 'table_name');
 ```

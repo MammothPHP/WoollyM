@@ -6,6 +6,7 @@ namespace MammothPHP\WoollyM;
 
 use Closure;
 use MammothPHP\WoollyM\DataDrivers\DataDriverInterface;
+use MammothPHP\WoollyM\IO\SQL;
 use PDO;
 
 class Copy
@@ -79,6 +80,7 @@ class Copy
      */
     public function query(string $sql): DataFrame
     {
+        $table = 'dataframe';
         $sql = trim($sql);
         $queryType = trim(strtoupper(strtok($sql, ' ')));
 
@@ -86,21 +88,21 @@ class Copy
 
         $sqlColumns = implode(', ', $this->df->columnsNames());
 
-        $pdo->exec('DROP TABLE IF EXISTS dataframe;');
+        $pdo->exec("DROP TABLE IF EXISTS {$table};");
         $pdo->exec("CREATE TABLE IF NOT EXISTS dataframe ({$sqlColumns});");
 
-        $this->df->toSQL('dataframe', $pdo);
+        SQL::fromDataFrame($this->df)->toPDO($pdo, $table);
 
         if ($queryType === 'SELECT') {
             $result = $pdo->query($sql);
         } else {
             $pdo->exec($sql);
-            $result = $pdo->query('SELECT * FROM dataframe;');
+            $result = $pdo->query("SELECT * FROM {$table};");
         }
 
         $results = $result->fetchAll(PDO::FETCH_ASSOC);
 
-        $pdo->exec('DROP TABLE IF EXISTS dataframe;');
+        $pdo->exec("DROP TABLE IF EXISTS {$table};");
 
         return new ($this->df::class)(data: $results, dataDriver: $this->dataDriver);
     }

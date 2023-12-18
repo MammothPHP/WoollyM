@@ -13,23 +13,39 @@ use RuntimeException;
 
 class SQL
 {
+    use BuilderExport;
+
     public int $chunkSize = 500;
     public bool $replace = false;
     public bool $ignore = false;
 
+    public readonly PDO $pdo;
+    public readonly string $query;
+
     protected PDOStatement $preparedStatement;
     protected string $statementCacheKey = '';
 
-    public function __construct(public readonly PDO $pdo)
+    protected static function configurePdo(PDO $pdo): PDO
     {
-        $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        return $pdo;
     }
 
-    public function importFromSelect(string $sqlQuery, ?DataFrame $df = null): DataFrame
+    public static function fromSql(PDO $pdo, string $query): static
     {
-        $df ??= new DataFrame;
+        self::configurePdo($pdo);
 
-        $stmt = $this->pdo->query($sqlQuery);
+        $builder = new static($query, $pdo);
+        $builder->pdo = self::configurePdo($pdo);
+        $builder->query = $query;
+
+        return $builder;
+    }
+
+    public function import(DataFrame $df = new DataFrame): DataFrame
+    {
+        $stmt = $this->pdo->query($this->query);
 
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $df->addRecord($row);
@@ -38,18 +54,38 @@ class SQL
         return $df;
     }
 
+    public function toPDO(PDO $pdo, string $tableName): void
+    {
+        $this->pdo = self::configurePdo($pdo);
+        $this->insertInto($tableName);
+    }
+
+    /**
+     * @param $chunkSize - Insert chunk size
+     * @param $replace - Use a sql replace statement
+     * @param $ignore - Use a sql ignore statement
+     */
+    public function options(int $chunkSize = 500, bool $replace = false, bool $ignore = false): static
+    {
+        $this->chunkSize = $chunkSize;
+        $this->replace = $replace;
+        $this->ignore = $ignore;
+
+        return $this;
+    }
+
     /**
      * Performs a SQL insert transaction to provided table, crafting the SQL statement using an array of columns
      * and a two-dimensional array of data.
      * @throws InvalidSelectException
      */
-    public function insertInto(string $tableName, DataFrame $df): int
+    protected function insertInto(string $tableName): int
     {
-        if (\count($df) === 0) {
+        if (\count($this->fromDf) === 0) {
             return 0;
         }
 
-        $columns = $df->columnsNames();
+        $columns = $this->fromDf->columnsNames();
 
         try {
             $this->identifyAnyMissingColumns($columns, $tableName);
@@ -65,10 +101,10 @@ class SQL
         $chunk = [];
 
         try {
-            $originalFillNonExistentColOpt = $df->fillInNonExistentsCol;
-            $df->fillInNonExistentsCol = true;
+            $originalFillNonExistentColOpt = $this->fromDf->fillInNonExistentsCol;
+            $this->fromDf->fillInNonExistentsCol = true;
 
-            foreach ($df as $record) {
+            foreach ($this->fromDf as $record) {
                 $chunk[] = $record;
 
                 if (\count($chunk) >= $this->chunkSize) {
@@ -83,7 +119,7 @@ class SQL
         } catch (PDOException $e) {
             $this->pdo->rollBack();
         } finally {
-            $df->fillInNonExistentsCol = $originalFillNonExistentColOpt;
+            $this->fromDf->fillInNonExistentsCol = $originalFillNonExistentColOpt;
 
             ($e ?? null) instanceof PDOException && throw $e;
         }

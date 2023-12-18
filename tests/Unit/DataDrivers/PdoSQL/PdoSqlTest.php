@@ -5,6 +5,7 @@ declare(strict_types=1);
 use MammothPHP\WoollyM\DataDrivers\DriversExceptions\KeyNotExistException;
 use MammothPHP\WoollyM\DataDrivers\PdoSql\PdoSql;
 use MammothPHP\WoollyM\DataFrame;
+use MammothPHP\WoollyM\IO\SQL;
 
 beforeEach(function (): void {
     $tableName = 'testTable';
@@ -17,7 +18,7 @@ beforeEach(function (): void {
 
     $pdo = new PDO('sqlite::memory:');
     $pdo->exec('CREATE TABLE ' . $tableName . ' (id INTEGER PRIMARY KEY, a TEXT, b TEXT, c TEXT);');
-    $this->df->toSQL('testTable', $pdo);
+    SQL::fromDataFrame($this->df)->toPDO($pdo, 'testTable');
 
     $PdoDriver = new PdoSql(db: $pdo, table: $tableName);
 
