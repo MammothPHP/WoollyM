@@ -73,7 +73,10 @@ class XLSX extends Builder
                 /*
                  * If the current row is the column row then assemble our columns.
                  */
-                if ($i === $this->colRow) {
+                if ($i < $this->colRow) {
+                    continue;
+                }
+                elseif ($i === $this->colRow) {
                     $columns[$column] = $sheet->getCell($column . $i)->__toString();
 
                     continue;
