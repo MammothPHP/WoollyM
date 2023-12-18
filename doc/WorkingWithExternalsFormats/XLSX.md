@@ -1,3 +1,8 @@
+## Import Module
+```php
+use MammothPHP\WoollyM\IO\{XLSX, ODF};
+```
+
 ## Reading a XLSX file:
 
 ### Import methods

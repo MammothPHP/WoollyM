@@ -1,3 +1,8 @@
+## Import Module
+```php
+use MammothPHP\WoollyM\IO\SQL;
+```
+
 ## Create or import from a SQL Query
 
 With a new DataFrame:

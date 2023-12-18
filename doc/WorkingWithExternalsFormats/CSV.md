@@ -1,3 +1,8 @@
+## Import Module
+```php
+use MammothPHP\WoollyM\IO\{CSV, TSV};
+```
+
 ## Reading a CSV file:
 
 ### Import methods

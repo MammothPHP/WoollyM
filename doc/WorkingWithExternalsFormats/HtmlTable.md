@@ -1,3 +1,8 @@
+## Import Module
+```php
+use MammothPHP\WoollyM\IO\HTML;
+```
+
 ## Get an HTML table:
 
 ```php

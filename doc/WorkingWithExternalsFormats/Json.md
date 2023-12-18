@@ -1,3 +1,8 @@
+## Import Module
+```php
+use MammothPHP\WoollyM\IO\JSON;
+```
+
 ## Reading a JSON file:
 
 ### Import methods

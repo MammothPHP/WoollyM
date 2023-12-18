@@ -1,3 +1,8 @@
+## Import Module
+```php
+use MammothPHP\WoollyM\IO\FWF;
+```
+
 ### Reading a fixed-width file:
 
 ### Import methods
