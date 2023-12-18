@@ -1,15 +1,24 @@
-### Converting to JSON:
+## Reading a JSON file:
 
+### Import methods
 ```php
-$json = $df->toJSON();
+$JSONBuilder = JSON::fromFilePath($path);
+$JSONBuilder = JSON::fromString($string);
+$JSONBuilder = JSON::fromFileInfo(SplFileInfo $fileInfo); // or extending FileInfo like SplFileObject
 ```
 
-### Creating from JSON:
-
+### Simple import
 ```php
-$df = DataFrame::fromJSON('[
-    {"a": 1, "b": 2, "c": 3},
-    {"a": 4, "b": 5, "c": 6},
-    {"a": 7, "b": 8, "c": 9}
-]');
+$df = JSON::fromFilePath($path)->import();
+```
+
+### Import to an existing DataFrame
+```php
+JSON::fromFilePath($path)->import($df);
+```
+
+## Export to JSON
+```php
+JSON::fromDataFrame($df)->toFile(string|SplFileInfo $file, bool $overwriteFile = false, bool $pretty = false): void; // if string => a stream path
+JSON::fromDataFrame($df)->toString(bool $pretty): string;
 ```

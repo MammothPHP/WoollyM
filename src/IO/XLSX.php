@@ -8,7 +8,7 @@ use MammothPHP\WoollyM\DataFrame;
 use MammothPHP\WoollyM\Exceptions\NotYetImplementedException;
 use PhpOffice\PhpSpreadsheet\{IOFactory, Spreadsheet};
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
-use PhpOffice\PhpSpreadsheet\Writer\{Xls, Xlsx as WriterXlsx};
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx as WriterXlsx;
 use SplFileInfo;
 
 class XLSX extends Builder
@@ -34,6 +34,9 @@ class XLSX extends Builder
         return new DataFrame($data);
     }
 
+    /**
+     * @param $colRow - Parse data after specified line (starting at 1), and consider this line at the header. Set to 0 for no header.
+     */
     public function format(?string $sheetName = self::DEFAULT_SHEET_NAME, int $colRow = self::DEFAULT_COLROW): static
     {
         $this->sheetName = $sheetName;
@@ -87,11 +90,11 @@ class XLSX extends Builder
     /**
      * Write an Excel file
      */
-    public function toFile(string|SplFileInfo $file, bool $overwriteFile = false): void
+    public function toFile(string|SplFileInfo $file, bool $overwriteFile = false, string $worksheetTitle = 'DataFrame'): void
     {
         if ($convertedFile = $this->prepareToFileInput($file, $overwriteFile)) {
             $spreadsheet = new Spreadsheet;
-            $this->toExcelWorksheet($spreadsheet);
+            $this->toExcelSpreadsheet(spreadsheet: $spreadsheet, worksheetTitle: $worksheetTitle);
         } else {
             throw new NotYetImplementedException('Invalid file');
         }
@@ -104,7 +107,7 @@ class XLSX extends Builder
      * Converts the columns and data passed to an XLSX worksheet and adds that worksheet to an instance of PHPExcel
      * @throws \PhpOffice\PhpSpreadsheet\Exception
      */
-    public function toExcelWorksheet(Spreadsheet $spreadsheet, string $worksheetTitle = 'Spread1'): Worksheet
+    public function toExcelSpreadsheet(Spreadsheet $spreadsheet, string $worksheetTitle = 'DataFrame'): Worksheet
     {
         // Check if this is a brand new spreadsheet
         if ($spreadsheet->getSheetCount() === 1) {

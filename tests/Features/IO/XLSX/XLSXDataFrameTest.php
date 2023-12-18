@@ -103,9 +103,9 @@ test('to xlsx', function (): void {
 
     $xlsx = new Spreadsheet;
 
-    IOXLSX::fromDataFrame($a)->toExcelWorksheet(spreadsheet: $xlsx, worksheetTitle: 'A');
-    IOXLSX::fromDataFrame($b)->toExcelWorksheet(spreadsheet: $xlsx, worksheetTitle: 'B');
-    IOXLSX::fromDataFrame($c)->toExcelWorksheet(spreadsheet: $xlsx, worksheetTitle: 'C');
+    IOXLSX::fromDataFrame($a)->toExcelSpreadsheet(spreadsheet: $xlsx, worksheetTitle: 'A');
+    IOXLSX::fromDataFrame($b)->toExcelSpreadsheet(spreadsheet: $xlsx, worksheetTitle: 'B');
+    IOXLSX::fromDataFrame($c)->toExcelSpreadsheet(spreadsheet: $xlsx, worksheetTitle: 'C');
 
     expect($sheetA)->toEqual($a->toArray());
     expect($sheetB)->toEqual($b->toArray());

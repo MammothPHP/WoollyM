@@ -65,7 +65,7 @@ class JSON extends Builder
         $this->jsonItems = Items::fromFile($this->file->getPathname(), ['decoder' => new ExtJsonDecoder(true)]);
     }
 
-    public function itemsFromString(): void
+    protected function itemsFromString(): void
     {
         $this->jsonItems = Items::fromString($this->input, ['decoder' => new ExtJsonDecoder(true)]);
     }

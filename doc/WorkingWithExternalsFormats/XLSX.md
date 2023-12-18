@@ -1,18 +1,35 @@
-### Reading an XLSX spreadsheet:
+## Reading a XLSX file:
 
+### Import methods
 ```php
-$dfA = DataFrame::fromXLSX($fileName, ['sheetname' => 'Sheet A']);
-$dfB = DataFrame::fromXLSX($fileName, ['sheetname' => 'Sheet B']);
-$dfC = DataFrame::fromXLSX($fileName, ['sheetname' => 'Sheet C']);
+$XLSXBuilder = XLSX::fromFilePath($path);
+$XLSXBuilder = XLSX::fromString($string);
+$XLSXBuilder = XLSX::fromFileInfo(SplFileInfo $fileInfo); // or extending FileInfo like SplFileObject
 ```
 
-### Writing an XLSX spreadsheet:
+### Simple import
+```php
+$df = XLSX:fromFilePath($path)->import();
+```
+
+### Import to an existing DataFrame
+```php
+XLSX::fromFilePath($path)->import(to: $df);
+```
+
+### Specify format
+```php
+$df = XLSX::fromFilePath($path)->format($sheetName = 'results2042', $colRow = 1)->import();
+``````
+
+```$colRow:``` Parse data after specified line (starting at 1), and consider this line at the header. Set to 0 for no header.
+
+
+## Export to XLSX
+
+### Export methods
 
 ```php
-$phpExcel = new PHPExcel();
-$dfA->toXLSXWorksheet($phpExcel, 'Sheet A');
-$dfB->toXLSXWorksheet($phpExcel, 'Sheet B');
-$dfC->toXLSXWorksheet($phpExcel, 'Sheet C');
-$writer = new PHPExcel_Writer_Excel2007($phpExcel);
-$writer->save($fileName);
+XLSX::fromDataFrame($df)->toFile(string|SplFileInfo $filePath, bool $overwriteFile = false, string $worksheetTitle = 'DataFrame'): void;
+XLSX::fromDataFrame($df)->toExcelSpreadsheet(PhpOffice\PhpSpreadsheet\Spreadsheet &$spreadsheet, string $worksheetTitle = 'Spread1'): PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 ```

@@ -120,14 +120,14 @@ x|z
 ```
 
 
-## Write a CSV file
+## Export to CSV
 
 ### Export methods
 
 ```php
-$csvBuilder = CSV::fromDataFrame($df)->toFile(string|SplFileInfo|Writer $file); // if string, a stream path
-$csvBuilder = CSV::fromDataFrame($df)->toString($string);
-$csvBuilder = CSV::fromDataFrame($df)->toStream($phpStreamFile);
+CSV::fromDataFrame($df)->toFile(string|SplFileInfo|Writer $file, bool $overwriteFile = false, bool $writeHeader = true): void; // if string, a stream path
+CSV::fromDataFrame($df)->toString(bool $writeHeader = true): string;
+CSV::fromDataFrame($df)->toStream(stream $phpStreamFile, bool $writeHeader = true): void;
 ```
 
 ### Formating options
@@ -135,10 +135,10 @@ Same formating options as import can be applied.
 
 Example:
 ```php
-CSV::fromDataFrame($df)->format(delimiter: '|')->toString($string);
+CSV::fromDataFrame($df)->format(delimiter: '|')->toString();
 ```
 
 ### TSV shortcut
 ```php
-TSV::fromDataFrame($df)->toString($string);
+TSV::fromDataFrame($df)->toString();
 ```
