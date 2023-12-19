@@ -1,6 +1,6 @@
 ## Import Module
 ```php
-use MammothPHP\WoollyM\IO\{XLSX, ODF};
+use MammothPHP\WoollyM\IO\{XLSX, ODS};
 ```
 
 ## Reading a XLSX file:
@@ -25,7 +25,7 @@ XLSX::fromFilePath($path)->import(to: $df);
 ### Import from ODF (.ods Open Document Format)
 ```php
 // Just use the ODF class instead, all method and options are the same.
-ODF::fromFilePath($path);
+ODS::fromFilePath($path);
 ```
 
 
@@ -49,5 +49,5 @@ XLSX::fromDataFrame($df)->toExcelSpreadsheet(PhpOffice\PhpSpreadsheet\Spreadshee
 ### Export to ODF (.ods Open Document Format)
 ```php
 // Just use the ODF class instead, all method and options are the same.
-ODF::fromDataFrame();
+ODS::fromDataFrame();
 ```

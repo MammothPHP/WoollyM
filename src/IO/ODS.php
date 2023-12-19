@@ -7,7 +7,7 @@ namespace MammothPHP\WoollyM\IO;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Ods as WriterOds;
 
-class ODF extends XLSX
+class ODS extends XLSX
 {
     protected function getWriter(Spreadsheet $spreadsheet): WriterOds
     {
