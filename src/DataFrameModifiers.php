@@ -8,6 +8,7 @@ use Closure;
 use Exception;
 use MammothPHP\WoollyM\DataDrivers\SortableDriverInterface;
 use MammothPHP\WoollyM\DataDrivers\DriversExceptions\SortNotSupportedByDriverException;
+use Traversable;
 
 abstract class DataFrameModifiers extends DataFrameStatements
 {
@@ -18,9 +19,9 @@ abstract class DataFrameModifiers extends DataFrameStatements
     /**
      * Return a Copy object, methods will provide new DataFrame objects.
      */
-    public function copy(): Copy
+    public function copy(DataFrame $to = new DataFrame): Copy
     {
-        return new Copy($this);
+        return new Copy($this, $to);
     }
 
     /* *****************************************************************************************************************
@@ -29,11 +30,11 @@ abstract class DataFrameModifiers extends DataFrameStatements
 
     /**
      * Allows user to "array_merge" two DataFrames so that the rows of one are appended to the rows of current DataFrame object
-     * @param $df - The one to add to the current.
+     * @param $iterable - The one to add to the current.
      */
-    public function append(DataFrame $df): self
+    public function append(array|Traversable $iterable): self
     {
-        foreach ($df as $dfRow) {
+        foreach ($iterable as $dfRow) {
             $this->addRecord($dfRow);
         }
 

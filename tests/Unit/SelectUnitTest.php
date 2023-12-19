@@ -139,7 +139,7 @@ it('support cloning (dataFrame tests)', function (): void {
     expect(fn() => $select2->where(fn() => true))->toThrow(InvalidSelectException::class);
     expect(fn() => $select2->limit(42))->toThrow(InvalidSelectException::class);
     expect(fn() => $select2->offset(42))->toThrow(InvalidSelectException::class);
-    expect(fn() => $select2->get())->toThrow(InvalidSelectException::class);
+    expect(fn() => $select2->export())->toThrow(InvalidSelectException::class);
 });
 
 it('support cloning (selections tests)', function (): void {
@@ -153,10 +153,10 @@ it('support cloning (selections tests)', function (): void {
 });
 
 it('can produce a new DataFrame', function (): void {
-    $newDf = $this->df->select('colA', 'colB', 'colC')->get();
+    $newDf = $this->df->select('colA', 'colB', 'colC')->export();
     expect($newDf->toArray())->toEqual($this->df->toArray());
 
-    $newDf = $this->df->select('colA', 'colB')->get();
+    $newDf = $this->df->select('colA', 'colB')->export();
     expect($newDf->toArray())->not->toEqual($this->df->toArray());
 });
 

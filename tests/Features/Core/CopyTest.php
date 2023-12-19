@@ -21,10 +21,10 @@ test('clone', function (): void {
     expect($clone->toArray())->toBe($this->df->toArray());
 });
 
-test('array filter', function (): void {
+test('filter', function (): void {
     $df = $this->df;
 
-    $df = $df->copy()->array_filter(static function ($row) {
+    $df = $df->copy()->filter(static function ($row) {
         return $row['a'] > 4 || $row['a'] < 4;
     });
 
@@ -36,7 +36,7 @@ test('array filter', function (): void {
     ]);
 });
 
-test('group by', function (): void {
+test('unique', function (): void {
     $df = DataFrame::fromArray([
         ['a' => 1, 'b' => 2, 'c' => 3],
         ['a' => 1, 'b' => 3, 'c' => 4],

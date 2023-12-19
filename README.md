@@ -22,6 +22,48 @@ WoollyM is a PHP library for data analysis. It can be used to represent tabular 
 
 Performances are optimized to be as light as possible on RAM during operations (input, output, read, write, stats, copy, clone), this is done using - internally - complex iterators and optimization preferring RAM over speed (even if we try to be fast also). The storage engine uses a modular storage system, if the default PhpArray driver uses RAM, the use of a database driver (such as the PDO driver) theoretically allows you to work on extremely large datasets. Using appropriate drivers, you can also write - for example - directly to the database (add, update) using the Wolly API.
 
+- [WoollyM: PHP Dataframes for Data Analysis library](#woollym-php-dataframes-for-data-analysis-library)
+  - [Installation](#installation)
+    - [Using Composer:](#using-composer)
+    - [Requirements](#requirements)
+  - [Instanciation (basic)](#instanciation-basic)
+    - [Instantiating from an array:](#instantiating-from-an-array)
+    - [Import or export from/to an external source](#import-or-export-fromto-an-external-source)
+    - [Extracting the underlying two-dimensional array:](#extracting-the-underlying-two-dimensional-array)
+  - [Basic Operations](#basic-operations)
+    - [Records](#records)
+      - [Add new records](#add-new-records)
+      - [Edit Record](#edit-record)
+      - [Unset Record(s)](#unset-records)
+    - [Iterating overs records](#iterating-overs-records)
+      - [Counting Records](#counting-records)
+      - [Iterating over rows:](#iterating-over-rows)
+    - [Columns](#columns)
+      - [Add Column / Remove Column](#add-column--remove-column)
+      - [Getting column name/objects](#getting-column-nameobjects)
+      - [Rename Column](#rename-column)
+      - [Get column as DataFrame](#get-column-as-dataframe)
+    - [Data Overview](#data-overview)
+      - [Head](#head)
+  - [Logic and philosophy](#logic-and-philosophy)
+  - [The Select Statement](#the-select-statement)
+  - [Copy](#copy)
+    - [Filter](#filter)
+    - [Unique](#unique)
+  - [Modifiers](#modifiers)
+    - [Applying functions to rows:](#applying-functions-to-rows)
+    - [Applying functions to a selection directly](#applying-functions-to-a-selection-directly)
+    - [Set value for each record in column](#set-value-for-each-record-in-column)
+    - [Set DataFrame (single column) to column](#set-dataframe-single-column-to-column)
+    - [Set Column to Column](#set-column-to-column)
+  - [Types Data](#types-data)
+    - [Convert data to a type (oneshoot)](#convert-data-to-a-type-oneshoot)
+    - [Keep an active conversion for a column](#keep-an-active-conversion-for-a-column)
+      - [Set it](#set-it)
+      - [Remove it](#remove-it)
+  - [Manipulating Data using SQL](#manipulating-data-using-sql)
+
+
 ## Installation
 
 ### Using Composer:
@@ -127,6 +169,20 @@ $df->addRecords([
     'b' => 43,
     ],
 ]);
+
+// Equivalent, but compatible with Iterable, DataFrame, Array
+$otherDf = new DataFrame([
+    [
+    'a' => 42,
+    'b' => 42,
+    ],
+    [
+    'a' => 42,
+    'b' => 43,
+    ],
+]);
+
+$df->append($otherDf);
 ```
 
 #### Edit Record
@@ -216,6 +272,11 @@ $df->columns()
 ```
 
 ```php
+$df->hasColumn('a'); // true / false
+$df->mustHaveColumn('a')->selectAll()... // Throw MammothPHP\WoollyM\Exceptions\InvalidSelectException or return $df
+``
+
+```php
 $column = $df->col('a'); // return ColumnRepresentation object
 $column->name; // 'a'
 ```
@@ -230,13 +291,54 @@ $col->getName(); // 'newName'
 
 #### Get column as DataFrame
 ```php
-$df->col('colName')->asDataFrame;
-
-// equivalent to
-$df->col('colName')->asDataFrame();
+$newDf = $df->col('colName')->import();
 ```
 
+### Data Overview
+
+#### Head
+```php
+$arr = $df->head(length: 3);
+
+// To Be
+[
+    ['a' => 1, 'b' => 2, 'c' => 3],
+    ['a' => 4, 'b' => 5, 'c' => 6],
+    ['a' => 7, 'b' => 8, 'c' => 9],
+]
+
+$arr = $df->head(length: 3, offset: 1, columns:['a','c']);
+
+// To Be
+[
+    ['a' => 4,  'c' => 6],
+    ['a' => 7,  'c' => 9],
+    ['a' => 10, 'c' => 12],
+]
+```
+
+## Logic and philosophy
+
+Three main access paths:
+```php
+$df->select('colNameA')->whereColumnEqual('colB', 42); // Return a new Select object
+$df->copy()->unique(onColumns: 'colA'); // Return a new DataFrame contaning unique value from column A
+$df->append($iterable); // Return $df (self)
+```
+
+* The `Select` object represent a statement to explore au subset of data correspondig to selection and doing stats with thems. You can build them using a SQL-like constructor. They offers some commodity helpers methods ton modify or copy directly the selected data, but it's not it's main purpose.
+* The `Copy` object offer an API to return a NEW DataFrame without modify anything from the original DataFrame. It's also possible to export a Select object to a new dataFrame.
+* Even if it's possible to modify a DataFrame using some methods from the Select object to apply to a selection. Most modifiers are directly accessible from the DataFrame object.
+
+
 ## The Select Statement
+
+**Three variants:**
+```php
+$df->select('colA', 'colB'): Select // Return Select
+$df->selectAll(): SelectAll // With all columns, and keep the * selection in returned select object even if columns are aded or deleted to the dataframe.
+$df->col('colA'): ColunRepresentation // A classic select with extra methods to rename, remove, clone, type the selected column.
+```
 
 Create a statement containing 2 two columns, where columnB is > 42, limit to 100 rows but start à offset 10.
 
@@ -289,29 +391,95 @@ $stmt->min(); $stmt->max(); // min / max value (numéric)
 
 Return result as a new DataFrame object
 ```php
-$newDf = $df->select('colA','colC')->whereColumnEqual('colB', 42)->get();
-``````
+$newDf = $df->select('colA','colC')->whereColumnEqual('colB', 42)->export();
+```
 
 Or directly to an array
 ```php
 $newArr = $stmt->toArray();
 
 // equivalent to (but slower)
-$newArr = $stmt->get()->toArray();
+$newArr = $stmt->export()->toArray();
+```
+
+## Copy
+> [!WARNING]
+> Copy operations are not yet well optimized about memory consumption. Some of them have the potential to do so significantly in the future; others won't really be able to.
+
+> [!NOTE]
+> Clone the DataFrame then use equivalent modifier can be more efficient about memory consumtpion than the copy. Depending of the data-driver used and the PHP Copy-on-write feature. Wolly has a good PHP cloning support.
+
+```php
+// To a new Data Frame
+$df->copy()->....
+
+// To a custom dataFrame (useful for alternatives data-drivers)
+$newDf = new DataFrame(dataDriver: $pdoSqlDriver);
+$df->copy(to: $newDf)->...
 ```
 
 
-## Advanced editions
+### Filter
+```php
+$df = DataFrame::fromArray([
+    ['a' => 1, 'b' => 2, 'c' => 3],
+    ['a' => 4, 'b' => 5, 'c' => 6],
+    ['a' => 7, 'b' => 8, 'c' => 9],
+]);
+
+$df->filter(static function (array $row, int $key) {
+    return $row['a'] > 4 || $row['a'] < 4;
+});
+
+expect($df->toArray())
+    ->toBe([
+        ['a' => 1, 'b' => 2, 'c' => 3],
+        ['a' => 7, 'b' => 8, 'c' => 9],
+    ]);
+```
+
+### Unique
+```php
+    $df = DataFrame::fromArray([
+        ['a' => 1, 'b' => 2, 'c' => 3],
+        ['a' => 1, 'b' => 3, 'c' => 4],
+        ['a' => 2, 'b' => 4, 'c' => 5],
+        ['a' => 2, 'b' => 4, 'c' => 6],
+        ['a' => 3, 'b' => 5, 'c' => 7],
+        ['a' => 3, 'b' => 5, 'c' => 8],
+    ]);
+
+    expect($df->copy()->unique('a')
+        ->toArray())
+        ->toBe([
+            ['a' => 1],
+            ['a' => 2],
+            ['a' => 3],
+        ]
+    );
+
+    expect($df->copy()->unique(['a', 'b'])
+        ->toArray())
+        ->toBe([
+            ['a' => 1, 'b' => 2],
+            ['a' => 1, 'b' => 3],
+            ['a' => 2, 'b' => 4],
+            ['a' => 3, 'b' => 5],
+        ]
+    );
+```
+
+## Modifiers
 
 ### Applying functions to rows:
 ```php
-$df = $df->apply(function ($row, $index) {
+$df->apply(function ($row, $index) {
     $row['a'] = $row['c'] + 1;
     return $row;
 });
 ```
 
-### Applying functions to columns directly:
+### Applying functions to a selection directly
 ```php
 $df->col('a')->apply(fn (mixed $value, int $position) => $value + 3);
 ```
@@ -323,11 +491,7 @@ $df->col('a')->set(42);
 
 ### Set DataFrame (single column) to column
 ```php
-$df->col('a')->set(new Dataframe([
-    [1],
-    [2],
-    [3],
-]));
+$df->col('a')->set(new Dataframe( [[1],[2],[3]] ));
 ```
 
 ### Set Column to Column
@@ -336,39 +500,13 @@ $df->col('a')->set($df->col('b')->asDataFrame);
 ```
 
 
-## Stats modules for a columns
+## Types Data
 
-### Natives Modules
-
-#### Average
-`sum / count` _where count of non empty and numeric properties_
-
-```php
-$df->col('a')->average();
-$df->col('a')->average; # equivalent
-```
-
-#### Count
-Count of non empty and numeric properties.
-
-```php
-$df->col('a')->count();
-$df->col('a')->count; # equivalent
-```
-
-#### Sum
-Where non empty and numeric properties
-
-```php
-$df->col('a')->sum();
-$df->col('a')->sum; # equivalent
-```
-
-### Extend yourself
-_TO DO_
-
-
-## Types
+Two ways:
+1. Oneshoot typing, converting existing data
+2. Permanent typing, converting existing data
+   1. And force futher data to be typed
+   2. Or silently convert untyped futher data
 
 ### Convert data to a type (oneshoot)
 ```php
@@ -389,7 +527,8 @@ $df->col('a')->enforceType(null); # Note that data already converted, only the f
 
 
 
-Manipulating DataFrame using SQL:
+## Manipulating Data using SQL
+
 ```php
 $df = DataFrame::fromArray([
     ['a' => 1, 'b' => 2, 'c' => 3],
@@ -397,36 +536,22 @@ $df = DataFrame::fromArray([
     ['a' => 7, 'b' => 8, 'c' => 9],
 ]);
 
-$df = Builder::query($df, "
-
-SELECT
-  a,
-  b
-FROM dataframe
-WHERE a = '4'
-  OR b = '2';
-
-");
+$df = Builder::query($df, " SELECT
+                            a,
+                            b
+                            FROM dataframe
+                            WHERE a = '4'
+                            OR b = '2';
+                        ");
 
 print_r($df->toArray());
 ```
 
 ```php
-Array
-(
-    [0] => Array
-        (
-            [a] => 1
-            [b] => 2
-        )
-
-    [1] => Array
-        (
-            [a] => 4
-            [b] => 5
-        )
-
-)
+[
+    0 => ['a' => 1, 'b' => 2],
+    1 => ['a' => 4, 'b' => 5]
+]
 ```
 
 ```php
@@ -436,33 +561,16 @@ $df = DataFrame::fromArray([
     ['a' => 7, 'b' => 8, 'c' => 9],
 ]);
 
-$df = Builder::query($df, "
-
-UPDATE dataframe
-SET a = c * 2;
-
-");
+$df = Builder::query($df, ' UPDATE dataframe
+                            SET a = c * 2; ');
 
 print_r($df['a']->to_array());
 ```
 
 ```php
-Array
-(
-    [0] => Array
-        (
-            [a] => 6
-        )
-
-    [1] => Array
-        (
-            [a] => 12
-        )
-
-    [2] => Array
-        (
-            [a] => 18
-        )
-
-)
+[
+    0 => ['a' => 6],
+    1 => ['a' => 12],
+    2 => ['a' => 18]
+]
 ```

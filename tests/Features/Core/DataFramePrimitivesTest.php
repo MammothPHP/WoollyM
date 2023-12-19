@@ -69,7 +69,7 @@ test('set new column', function (): void {
     expect($this->df->hasColumn('d'))->toBeFalse();
 
     $this->df
-        ->setColumn('d', $this->df->col('c')->get()->apply(static function ($el) {
+        ->setColumn('d', $this->df->col('c')->export()->apply(static function ($el) {
             return $el + 1;
         }));
 

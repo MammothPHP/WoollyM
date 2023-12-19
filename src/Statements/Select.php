@@ -315,7 +315,7 @@ class Select implements Iterator
     }
 
 
-    public function get(): DataFrame
+    public function export(): DataFrame
     {
         $this->isAliveOrThrowInvalidSelectException();
 

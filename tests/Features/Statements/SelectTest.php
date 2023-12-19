@@ -15,14 +15,14 @@ beforeEach(function (): void {
 });
 
 it('can use a limit', function (): void {
-    $newDf = $this->df->select('colA', 'colB', 'colC')->limit(2)->get();
+    $newDf = $this->df->select('colA', 'colB', 'colC')->limit(2)->export();
     expect($newDf)->toHaveCount(2);
     expect($newDf->toArray())->toBe([
         ['colA' => 1, 'colB' => 2, 'colC' => 3],
         ['colA' => 4, 'colB' => 5, 'colC' => 6],
     ]);
 
-    $newDf = $this->df->select('colA', 'colB', 'colC')->limit(2, 1)->get();
+    $newDf = $this->df->select('colA', 'colB', 'colC')->limit(2, 1)->export();
     expect($newDf)->toHaveCount(2);
     expect($newDf->toArray())->toBe([
         ['colA' => 4, 'colB' => 5, 'colC' => 6],
@@ -63,7 +63,7 @@ it('count records', function (): void {
 it('can be use a single condition', function (): void {
     $select = $this->df->select('colA', 'colB', 'colC')->where(fn(array $r): bool => $r['colB'] % 2 === 0); // Even numbers in colB only
 
-    expect($select->get()->toArray())->toBe([
+    expect($select->export()->toArray())->toBe([
         ['colA' => 1, 'colB' => 2, 'colC' => 3],
         ['colA' => 7, 'colB' => 8, 'colC' => 9],
         ['colA' => 13, 'colB' => 14, 'colC' => 15],
@@ -84,7 +84,7 @@ it('can use multiple conditions', function (): void {
         ->where(fn(array $r): bool => $r['colB'] % 2 === 0) // Even numbers in colB only
         ->where(fn(array $r): bool => $r['colB'] < 14);
 
-    expect($select1->get()->toArray())->toBe($select2->get()->toArray())->toBe([
+    expect($select1->export()->toArray())->toBe($select2->export()->toArray())->toBe([
         ['colA' => 1, 'colB' => 2, 'colC' => 3],
         ['colA' => 7, 'colB' => 8, 'colC' => 9],
     ]);
@@ -94,7 +94,7 @@ it('cannot match any condition', function (): void {
     $select = $this->df->select('colA', 'colB', 'colC')
         ->and(fn(array $r): bool => $r['colB'] > 14);
 
-    expect($select->get()->toArray())->toBe([]);
+    expect($select->export()->toArray())->toBe([]);
 });
 
 it('can use or condition', function (): void {
@@ -102,7 +102,7 @@ it('can use or condition', function (): void {
         ->where(fn(array $r): bool => $r['colB'] % 2 === 0) // Even numbers in colB only
         ->or(fn(array $r): bool => $r['colA'] === 4);
 
-    expect($select->get()->toArray())->toBe([
+    expect($select->export()->toArray())->toBe([
         ['colA' => 1, 'colB' => 2, 'colC' => 3],
         ['colA' => 4, 'colB' => 5, 'colC' => 6],
         ['colA' => 7, 'colB' => 8, 'colC' => 9],
@@ -114,7 +114,7 @@ it('can use or condition', function (): void {
         ->and(fn(array $r): bool => $r['colA'] % 2 === 0)->or(fn(array $r): bool => $r['colA'] === 13)
         ->and(fn(array $r): bool => $r['colA'] !== 4);
 
-    expect($select->get()->toArray())->toBe([
+    expect($select->export()->toArray())->toBe([
         ['colA' => 10, 'colB' => 11, 'colC' => 12],
         ['colA' => 13, 'colB' => 14, 'colC' => 15],
     ]);
@@ -127,7 +127,7 @@ test('whereColumn', function (): void {
     $select2 = $this->df->select('colA')
         ->whereColumnEqual('colB', fn($v): bool => $v === 8);
 
-    expect($select1->get()->toArray())->toBe($select2->get()->toArray())->toBe([
+    expect($select1->export()->toArray())->toBe($select2->export()->toArray())->toBe([
         ['colA' => 7],
     ]);
 });

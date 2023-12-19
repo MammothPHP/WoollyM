@@ -14,7 +14,7 @@ beforeEach(function (): void {
 });
 
 test('column get', function (): void {
-    $df = $this->df->col('a')->get(); // call as method
+    $df = $this->df->col('a')->export(); // call as method
 
     expect($df->toArray())->toEqual([['a' => 1], ['a' => 4], ['a' => 7]]);
 });
@@ -57,7 +57,7 @@ test('column set closure', function (): void {
 test('column set dataframe', function (): void {
     $df = $this->df;
 
-    $df->col('a')->set($df->col('b')->get());
+    $df->col('a')->set($df->col('b')->export());
 
     $expected = [
         ['a' => 2, 'b' => 2, 'c' => 3],

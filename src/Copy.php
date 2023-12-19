@@ -13,46 +13,36 @@ class Copy
 {
     public ?DataDriverInterface $dataDriver = null;
 
-    public function __construct(public readonly DataFrame $df) {}
+    public function __construct(public readonly DataFrame $df, public readonly DataFrame $to) {}
 
     public function clone(): DataFrame
     {
         return clone $this->df;
     }
 
-    public function driver(DataDriverInterface $dataDriver): self
-    {
-        $this->dataDriver = $dataDriver;
-
-        return $this;
-    }
-
     /**
      * Filter DataFrame rows using user-defined function. The parameters of the function include the row
      * being iterated over, and the index.
      */
-    public function array_filter(Closure $f): DataFrame
+    public function filter(Closure $f): DataFrame
     {
-        return new ($this->df::class)(
-            data: array_filter($this->df->toArray(), $f, \ARRAY_FILTER_USE_BOTH),
-            dataDriver: $this->dataDriver
-        );
+        return $this->to->append(array_filter($this->df->toArray(), $f, \ARRAY_FILTER_USE_BOTH));
     }
 
     /**
      * Returns unique values of given column(s)
      */
-    public function unique(array|string $columns): DataFrame
+    public function unique(array|string $onColumns): DataFrame
     {
-        if (!\is_array($columns)) {
-            $columns = [$columns];
+        if (!\is_array($onColumns)) {
+            $onColumns = [$onColumns];
         }
 
         $groupedData = [];
         $uniqueColumns = [];
         foreach ($this->df as $row) {
             $uniqueKey = null;
-            foreach ($columns as $column) {
+            foreach ($onColumns as $column) {
                 $uniqueKey .= $row[$column];
             }
 
@@ -62,7 +52,7 @@ class Copy
                 $uniqueColumns[$uniqueKey] = true;
 
                 $new_row = [];
-                foreach ($columns as $column) {
+                foreach ($onColumns as $column) {
                     $new_row[$column] = $row[$column];
                 }
 
@@ -70,7 +60,7 @@ class Copy
             }
         }
 
-        return new ($this->df::class)(data: $groupedData, dataDriver: $this->dataDriver);
+        return $this->to->append($groupedData);
     }
 
     /**
@@ -104,6 +94,6 @@ class Copy
 
         $pdo->exec("DROP TABLE IF EXISTS {$table};");
 
-        return new ($this->df::class)(data: $results, dataDriver: $this->dataDriver);
+        return $this->to->append($results);
     }
 }
