@@ -18,7 +18,7 @@
 
 # WoollyM: PHP Dataframes for Data Analysis library
 
-WoollyM is a PHP library for data analysis. It can be used to represent tabular data from various sources _(CSV, database, json, Excel...)_. The unified API can then be used easily to browse, analyze, modify, and export data in a variety of formats, we try to provide a very playful, modern, expressive, and user-friendly interface. This API is also modular and extensible, so you can easily add your own calculation and exploration methods.
+WoollyM is a PHP library for data analysis. It can be used to represent tabular data from various sources _(CSV, database, JSON, Excel...)_. The unified API can then be used easily to browse, analyze, modify, and export data in a variety of formats, we try to provide a very playful, modern, expressive, and user-friendly interface. This API is also modular and extensible, so you can easily add your own calculation and exploration methods.
 
 Performances are optimized to be as light as possible on RAM during operations (input, output, read, write, stats, copy, clone), this is done using - internally - complex iterators and optimization preferring RAM over speed (even if we try to be fast also). The storage engine uses a modular storage system, if the default PhpArray driver uses RAM, the use of a database driver (such as the PDO driver) theoretically allows you to work on extremely large datasets. Using appropriate drivers, you can also write - for example - directly to the database (add, update) using the Wolly API.
 
@@ -26,7 +26,7 @@ Performances are optimized to be as light as possible on RAM during operations (
   - [Installation](#installation)
     - [Using Composer:](#using-composer)
     - [Requirements](#requirements)
-  - [Instanciation (basic)](#instanciation-basic)
+  - [Instantiation (basic)](#instantiation-basic)
     - [Instantiating from an array:](#instantiating-from-an-array)
     - [Import or export from/to an external source](#import-or-export-fromto-an-external-source)
     - [Extracting the underlying two-dimensional array:](#extracting-the-underlying-two-dimensional-array)
@@ -35,7 +35,7 @@ Performances are optimized to be as light as possible on RAM during operations (
       - [Add new records](#add-new-records)
       - [Edit Record](#edit-record)
       - [Unset Record(s)](#unset-records)
-    - [Iterating overs records](#iterating-overs-records)
+    - [Iterating over records](#iterating-over-records)
       - [Counting Records](#counting-records)
       - [Iterating over rows:](#iterating-over-rows)
     - [Columns](#columns)
@@ -45,23 +45,41 @@ Performances are optimized to be as light as possible on RAM during operations (
       - [Get column as DataFrame](#get-column-as-dataframe)
     - [Data Overview](#data-overview)
       - [Head](#head)
-  - [Logic and philosophy](#logic-and-philosophy)
+  - [Logic and Philosophy](#logic-and-philosophy)
   - [The Select Statement](#the-select-statement)
+    - [The three different types of Select statements](#the-three-different-types-of-select-statements)
+    - [Filter \& Limit the Select statements](#filter--limit-the-select-statements)
+    - [Copy from a Select Statement](#copy-from-a-select-statement)
+    - [Aggregate stats function](#aggregate-stats-function)
   - [Copy](#copy)
     - [Filter](#filter)
     - [Unique](#unique)
   - [Modifiers](#modifiers)
-    - [Applying functions to rows:](#applying-functions-to-rows)
-    - [Applying functions to a selection directly](#applying-functions-to-a-selection-directly)
-    - [Set value for each record in column](#set-value-for-each-record-in-column)
-    - [Set DataFrame (single column) to column](#set-dataframe-single-column-to-column)
-    - [Set Column to Column](#set-column-to-column)
+    - [Modification to rows](#modification-to-rows)
+      - [Applying functions to each row](#applying-functions-to-each-row)
+      - [preg\_replace](#preg_replace)
+      - [filter](#filter-1)
+      - [applyIndexMap](#applyindexmap)
+      - [sortValues](#sortvalues)
+      - [setColumn](#setcolumn)
+      - [sortColumn](#sortcolumn)
+    - [Modification to a Selection](#modification-to-a-selection)
+      - [Applying functions to a selection directly](#applying-functions-to-a-selection-directly)
+      - [Set a value for each record in a column](#set-a-value-for-each-record-in-a-column)
+      - [Set DataFrame (single column) to a column](#set-dataframe-single-column-to-a-column)
+      - [Set Column to a Column](#set-column-to-a-column)
   - [Types Data](#types-data)
-    - [Convert data to a type (oneshoot)](#convert-data-to-a-type-oneshoot)
+    - [Convert data to a type (one shot)](#convert-data-to-a-type-one-shot)
     - [Keep an active conversion for a column](#keep-an-active-conversion-for-a-column)
       - [Set it](#set-it)
       - [Remove it](#remove-it)
   - [Manipulating Data using SQL](#manipulating-data-using-sql)
+    - [Copy DataFrame from SQL](#copy-dataframe-from-sql)
+  - [Use Data Driver to explore external sources or to overcome technical limitations on major datasets](#use-data-driver-to-explore-external-sources-or-to-overcome-technical-limitations-on-major-datasets)
+    - [Natively provided drivers](#natively-provided-drivers)
+    - [Aggregate Function optimized on driver side (performance)](#aggregate-function-optimized-on-driver-side-performance)
+    - [Use specific drivers (PdoSql example)](#use-specific-drivers-pdosql-example)
+    - [Implement your custom drivers for WollyM](#implement-your-custom-drivers-for-wollym)
 
 
 ## Installation
@@ -77,7 +95,7 @@ composer require mammothphp/woollym
  - php_mbstring extension
 
 
-## Instanciation (basic)
+## Instantiation (basic)
 
 ### Instantiating from an array:
 
@@ -95,7 +113,9 @@ $df = new DataFrame($arr);
 ```
 
 ### Import or export from/to an external source
-_To limit external the base depencies, some module could require a separate `composer require`. Please consult the instructions for each of needed module._ 
+_To limit external dependencies, some modules could require a separate `composer require`. Please consult the instructions for each of the needed modules.__ 
+
+**>>> [Import/Export modules documentation and examples](doc/WorkingWithExternalsFormats)**
 
 | Module | Import | Export | Performances & Limit
 | --- | --- | --- | ---
@@ -214,7 +234,8 @@ $df->filter(fn(array $record, int $position): bool => $position !== 42);
 ```
 
 
-### Iterating overs records
+
+### Iterating over records
 
 #### Counting Records
 Counting records:
@@ -317,7 +338,7 @@ $arr = $df->head(length: 3, offset: 1, columns:['a','c']);
 ]
 ```
 
-## Logic and philosophy
+## Logic and Philosophy
 
 Three main access paths:
 ```php
@@ -326,20 +347,21 @@ $df->copy()->unique(onColumns: 'colA'); // Return a new DataFrame contaning uniq
 $df->append($iterable); // Return $df (self)
 ```
 
-* The `Select` object represent a statement to explore au subset of data correspondig to selection and doing stats with thems. You can build them using a SQL-like constructor. They offers some commodity helpers methods ton modify or copy directly the selected data, but it's not it's main purpose.
-* The `Copy` object offer an API to return a NEW DataFrame without modify anything from the original DataFrame. It's also possible to export a Select object to a new dataFrame.
+* The `Select` object represents a statement to explore au subset of data corresponding to selection and doing stats with them. You can build them using a SQL-like constructor. They offer some commodity helpers methods to modify or copy directly the selected data, but it's not its main purpose.
+* The `Copy` object offers an API to return a NEW DataFrame without modifying anything from the original DataFrame. It's also possible to export a Select object to a new DataFrame.
 * Even if it's possible to modify a DataFrame using some methods from the Select object to apply to a selection. Most modifiers are directly accessible from the DataFrame object.
 
 
 ## The Select Statement
 
-**Three variants:**
+### The three different types of Select statements
 ```php
 $df->select('colA', 'colB'): Select // Return Select
 $df->selectAll(): SelectAll // With all columns, and keep the * selection in returned select object even if columns are aded or deleted to the dataframe.
 $df->col('colA'): ColunRepresentation // A classic select with extra methods to rename, remove, clone, type the selected column.
 ```
 
+### Filter & Limit the Select statements
 Create a statement containing 2 two columns, where columnB is > 42, limit to 100 rows but start à offset 10.
 
 ```php
@@ -377,29 +399,34 @@ foreach($df->selectAll()->where(fn($r) => $r) as $recordKey => $record) {
 }
 ```
 
-Get some stats _(non-exhaustive documentation)_
-```php
-$stmt->countRecords(); // count number of records in the statement
-
-$stmt->count(); // count each value in selection
-$stmt->countDistinct(); // count distinct value for of each records in statement
-$stmt->size(); // count value in selection including null value
-$stmt->sum(); // sum all numeric value of each records in statement
-$stmt->mean(); // average numeric value in selection
-$stmt->min(); $stmt->max(); // min / max value (numéric)
-```
-
-Return result as a new DataFrame object
+### Copy from a Select Statement
+Return the result as a new DataFrame object:
 ```php
 $newDf = $df->select('colA','colC')->whereColumnEqual('colB', 42)->export();
 ```
 
-Or directly to an array
+Or directly to an array:
 ```php
 $newArr = $stmt->toArray();
 
 // equivalent to (but slower)
 $newArr = $stmt->export()->toArray();
+```
+
+### Aggregate stats function
+_(non-exhaustive documentation)_
+
+```php
+$stmt = $df->selectAll();
+
+$stmt->countRecords(); // count number of records in the statement
+$stmt->count(); // count each value in selection
+$stmt->countDistinct(); // count distinct value for of each records in statement
+$stmt->size(); // count value in selection including null value
+$stmt->sum(); // sum all numeric value of each records in statement
+$stmt->mean(); // average numeric value in selection
+$stmt->min(); // min value (numeric)
+$stmt->max(); // max value (numeric)
 ```
 
 ## Copy
@@ -471,7 +498,9 @@ expect($df->toArray())
 
 ## Modifiers
 
-### Applying functions to rows:
+### Modification to rows
+
+#### Applying functions to each row
 ```php
 $df->apply(function ($row, $index) {
     $row['a'] = $row['c'] + 1;
@@ -479,22 +508,58 @@ $df->apply(function ($row, $index) {
 });
 ```
 
-### Applying functions to a selection directly
+#### preg_replace
+```php
+    $df = new dataFrame([
+        ['a' => 1, 'b' => 2, 'c' => 3],
+        ['a' => 4, 'b' => 5, 'c' => 6],
+        ['a' => 7, 'b' => 8, 'c' => 9],
+    ]);
+    
+    $df->preg_replace('/[1-5]/', 'foo');
+
+    df->toArray();
+    // To Be:
+    [
+        ['a' => 'foo', 'b' => 'foo', 'c' => 'foo'],
+        ['a' => 'foo', 'b' => 'foo', 'c' => 6],
+        ['a' => 7, 'b' => 8, 'c' => 9],
+    ]);
+```
+
+#### filter
+_TO DOCUMENT_
+
+#### applyIndexMap
+_TO DOCUMENT_
+
+#### sortValues
+_TO DOCUMENT_
+
+#### setColumn
+_TO DOCUMENT_
+
+#### sortColumn
+_TO DOCUMENT_
+
+### Modification to a Selection
+
+#### Applying functions to a selection directly
 ```php
 $df->col('a')->apply(fn (mixed $value, int $position) => $value + 3);
 ```
 
-### Set value for each record in column
+#### Set a value for each record in a column
 ```php
 $df->col('a')->set(42);
 ```
 
-### Set DataFrame (single column) to column
+#### Set DataFrame (single column) to a column
 ```php
 $df->col('a')->set(new Dataframe( [[1],[2],[3]] ));
 ```
 
-### Set Column to Column
+#### Set Column to a Column
 ```php
 $df->col('a')->set($df->col('b')->asDataFrame);
 ```
@@ -502,13 +567,13 @@ $df->col('a')->set($df->col('b')->asDataFrame);
 
 ## Types Data
 
-Two ways:
-1. Oneshoot typing, converting existing data
-2. Permanent typing, converting existing data
-   1. And force futher data to be typed
-   2. Or silently convert untyped futher data
+**Two ways:**
+1. Converts pre-existing data once only 
+2. Converts pre-existing data and forces the type of future data
+   1. And force the future data to be typed since submission
+   2. Or silently convert untyped future data
 
-### Convert data to a type (oneshoot)
+### Convert data to a type (one shot)
 ```php
 $df->col('a')->type(DataType::INT);
 ```
@@ -525,10 +590,9 @@ $df->col('a')->enforceType(DataType::INT);
 $df->col('a')->enforceType(null); # Note that data already converted, only the following additions we be concerned.
 ```
 
-
-
 ## Manipulating Data using SQL
 
+### Copy DataFrame from SQL
 ```php
 $df = DataFrame::fromArray([
     ['a' => 1, 'b' => 2, 'c' => 3],
@@ -536,41 +600,49 @@ $df = DataFrame::fromArray([
     ['a' => 7, 'b' => 8, 'c' => 9],
 ]);
 
-$df = Builder::query($df, " SELECT
-                            a,
-                            b
-                            FROM dataframe
-                            WHERE a = '4'
-                            OR b = '2';
-                        ");
+$resultingDf = $df->copy()->query(" SELECT
+                        a,
+                        b
+                        FROM dataframe
+                        WHERE a = '4'
+                        OR b = '2';
+                    ");
 
-print_r($df->toArray());
-```
-
-```php
+// $resultingDf To Be:
 [
     0 => ['a' => 1, 'b' => 2],
     1 => ['a' => 4, 'b' => 5]
 ]
 ```
 
+
+## Use Data Driver to explore external sources or to overcome technical limitations on major datasets
+> [!WARNING]
+> Non-default data drivers are still highly experimental and unfinished. The drivers interface and API will also be modified.
+
+### Natively provided drivers
+|Driver|Comment|Memory Usage|Perf. (write access)|Perf. (random access)|Perf. (mass read)|Aggregate Functions
+|---|---|---|---|---|---|---
+| PhpArray | The default driver | Maximal, all the data stay in ram memory. PHP opy-on-write capacity are limited in context | Very Fast | Very Fast | Vert Fast | Very Fast | Moderately slow, some of them can cause huge memory usage (unique value...)
+| PdoSql | _(Experimental)_ Interacting with a database with any PHP PDO driver available | Very low, theoritically infinite | Slow | Very Slow | Medium | Slow (some function can be further optimized)
+
+### Aggregate Function optimized on driver side (performance)
+__NOT YET IMPLEMENTED__
+
+
+### Use specific drivers (PdoSql example)
 ```php
-$df = DataFrame::fromArray([
-    ['a' => 1, 'b' => 2, 'c' => 3],
-    ['a' => 4, 'b' => 5, 'c' => 6],
-    ['a' => 7, 'b' => 8, 'c' => 9],
-]);
+$tableName = 'testTable';
+$primaryKey = 'id';
 
-$df = Builder::query($df, ' UPDATE dataframe
-                            SET a = c * 2; ');
+$pdo = new PDO('sqlite::memory:');
+$pdo->exec("CREATE TABLE  {$tableName}  ({$primaryKey} INTEGER PRIMARY KEY, a TEXT, b TEXT, c TEXT);");
 
-print_r($df['a']->to_array());
+$PdoDriver = new PdoSql(db: $pdo, table: $tableName, keyColumn: $primaryKey);
+
+$df = new DataFrame(dataDriver: $PdoDriver);
 ```
 
-```php
-[
-    0 => ['a' => 6],
-    1 => ['a' => 12],
-    2 => ['a' => 18]
-]
-```
+
+### Implement your custom drivers for WollyM
+__TODO__

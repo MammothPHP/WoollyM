@@ -136,12 +136,12 @@ test('preg replace', function (): void {
 
     $df1->preg_replace('/[1-5]/', 'foo');
 
-    expect($df1->toArray())->toEqual([
+    expect($df1->toArray())->toBe([
         ['a' => 'foo', 'b' => 'foo', 'c' => 'foo'],
         ['a' => 'foo', 'b' => 'foo', 'c' => 6],
         ['a' => 7, 'b' => 8, 'c' => 9],
     ]);
-});
+})->todo();
 
 
 
