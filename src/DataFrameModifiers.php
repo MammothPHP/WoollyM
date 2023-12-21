@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MammothPHP\WoollyM;
 
+use ArrayAccess;
 use Closure;
 use Exception;
 use MammothPHP\WoollyM\DataDrivers\SortableDriverInterface;
@@ -129,11 +130,11 @@ abstract class DataFrameModifiers extends DataFrameStatements
      *          3 => [ 'a' => 1, 'b' => 2, 'c' => 3 ],
      *      ]);
      */
-    public function applyIndexMap(array $map, ?string $column = null): self
+    public function applyIndexMap(array|ArrayAccess $map, ?string $column = null): self
     {
-        return $this->apply(static function (array &$record, int $i) use ($map, $column): array {
-            if (isset($map[$i])) {
-                $value = $map[$i];
+        return $this->apply(static function (array $record, int $recordKey) use ($map, $column): array {
+            if (isset($map[$recordKey])) {
+                $value = $map[$recordKey];
 
                 if (\is_callable($value) && $column === null) {
                     $record = $value($record);

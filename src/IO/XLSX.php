@@ -8,8 +8,7 @@ use MammothPHP\WoollyM\DataFrame;
 use MammothPHP\WoollyM\Exceptions\NotYetImplementedException;
 use PhpOffice\PhpSpreadsheet\{IOFactory, Spreadsheet};
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
-use PhpOffice\PhpSpreadsheet\Writer\BaseWriter;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx as WriterXlsx;
+use PhpOffice\PhpSpreadsheet\Writer\{BaseWriter, Xlsx as WriterXlsx};
 use SplFileInfo;
 
 class XLSX extends Builder
@@ -90,7 +89,8 @@ class XLSX extends Builder
         return array_values($data);
     }
 
-    protected function getWriter(Spreadsheet $spreadsheet): BaseWriter {
+    protected function getWriter(Spreadsheet $spreadsheet): BaseWriter
+    {
         return new WriterXlsx($spreadsheet);
     }
 

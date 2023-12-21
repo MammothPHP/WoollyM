@@ -7,20 +7,20 @@
 > Main Author: [Julien Boudry](https://www.linkedin.com/in/julienboudry/)  
 > License: [BSD-3](LICENSE.txt) - _Please [say hello](https://github.com/MammothPHP/WoollyM/discussions/categories/your-wolly-projects) if you like or use this code!_  
 > Contribute: [Contribute File](CONTRIBUTING.md)   
-> Donation: **₿ [bc1q3jllk3qd9fjvvuqy07tawkv7t6h7qjf55fc2gh](https://blockchair.com/bitcoin/address/bc1q3jllk3qd9fjvvuqy07tawkv7t6h7qjf55fc2gh)** or **[Github Sponsor Page](https://github.com/sponsors/julien-boudry)**  
+> Donation: ₿ [bc1q3jllk3qd9fjvvuqy07tawkv7t6h7qjf55fc2gh](https://blockchair.com/bitcoin/address/bc1q3jllk3qd9fjvvuqy07tawkv7t6h7qjf55fc2gh) or [Github Sponsor Page](https://github.com/sponsors/julien-boudry)  
 > _You can also offer me a bottle of good wine._  
 
 > [!WARNING]
-> This project is currently at an **experimental stage**. Production use is not recommended. APIs and functionalities are subject to **change at any time without notice**. Documentation is still deficient. Help and feedback are most welcome.
+> This project is currently at an experimental stage. Production use is not recommended. APIs and functionalities are subject to change at any time without notice. Documentation is still deficient. Help and feedback are most welcome.
 
 > [!NOTE]
-> _**Wolly** was a fork from [archon/dataframe](https://github.com/hwperkins/Archon) project which was very useful and inspiring during development. Today, the internal engine has been almost completely rewritten and the public APIs are radically different and incompatible. A few traces of code and ideas remain, they have been placed by their original author under the BSD-3 license._
+> _Wolly was a fork from [archon/dataframe](https://github.com/hwperkins/Archon) project which was very useful and inspiring during development. Today, the internal engine has been almost completely rewritten and the public APIs are radically different and incompatible. A few traces of code and ideas remain, they have been placed by their original author under the BSD-3 license._
 
 # WoollyM: PHP Dataframes for Data Analysis library
 
 WoollyM is a PHP library for data analysis. It can be used to represent tabular data from various sources _(CSV, database, JSON, Excel...)_. The unified API can then be used easily to browse, analyze, modify, and export data in a variety of formats, we try to provide a very playful, modern, expressive, and user-friendly interface. This API is also modular and extensible, so you can easily add your own calculation and exploration methods.
 
-Performances are optimized to be as light as possible on RAM during operations (input, output, read, write, stats, copy, clone), this is done using - internally - complex iterators and optimization preferring RAM over speed (even if we try to be fast also). The storage engine uses a modular storage system, if the default PhpArray driver uses RAM, the use of a database driver (such as the PDO driver) theoretically allows you to work on extremely large datasets. Using appropriate drivers, you can also write - for example - directly to the database (add, update) using the **Wolly** API.
+Performances are optimized to be as light as possible on RAM during operations (input, output, read, write, stats, copy, clone), this is done using - internally - complex iterators and optimization preferring RAM over speed (even if we try to be fast also). The storage engine uses a modular storage system, if the default PhpArray driver uses RAM, the use of a database driver (such as the PDO driver) theoretically allows you to work on extremely large datasets. Using appropriate drivers, you can also write - for example - directly to the database (add, update) using the Wolly API.
 
 - [WoollyM: PHP Dataframes for Data Analysis library](#woollym-php-dataframes-for-data-analysis-library)
   - [Installation](#installation)
@@ -60,7 +60,7 @@ Performances are optimized to be as light as possible on RAM during operations (
     - [Modification to rows](#modification-to-rows)
       - [Applying functions to each row](#applying-functions-to-each-row)
       - [preg\_replace](#preg_replace)
-      - [filter](#filter-1)
+      - [Filter](#filter-1)
       - [applyIndexMap](#applyindexmap)
       - [sortValues](#sortvalues)
       - [setColumn](#setcolumn)
@@ -97,8 +97,8 @@ composer require mammothphp/woollym
  - php_mbstring extension
 
 ## Note on architecture
-- **Wolly** is extendable, or at least he was trying to get used to the idea.
-- Data are stored in `data-drivers` that are modules. Currently **Wolly** offer 2 natives modules _(the default PhpArray and PdoSql)_ but you can create your own _(without fork)_. Modules can limit some functionnality but they don't change the public API.
+- Wolly is extendable, or at least he was trying to get used to the idea.
+- Data are stored in `data-drivers` that are modules. Currently Wolly offer 2 natives modules _(the default PhpArray and PdoSql)_ but you can create your own _(without fork)_. Modules can limit some functionnality but they don't change the public API.
 - Statements aggregate function _(like sum, count, max...)_ are modules, most current as offer natively, but you can had your own _(without fork)_
 - `Builder` API is used to to create or export a DataFrame from an external sources _(file, database, string...)_ This results in things like  `$df = XLSX::fromFile($path)->import()`.
   - To keep the API as cute as possible for the most common cases, this is different for import/export with an `Array` (or `Traversable`).
@@ -110,7 +110,7 @@ composer require mammothphp/woollym
 - A `Record` is similar to a line in a spreadsheet.
     - A `Record` can contain from none _(empty record)_ to several `Columns`.
     - The default behavior of API is to return no entry for non-existent columns in the `Record`. But options allow you to virtually return a NULL value if necessary.
-    - Each record has a unique key. Generated on the **Wolly** side _(more specifically by the data-driver used)_. Currently only integer are supported.
+    - Each record has a unique key. Generated on the Wolly side _(more specifically by the data-driver used)_. Currently only integer are supported. The default driver index key from 0.
     - Each record `Column` (property) contain a value. Can be of any PHP type (and `null`) on the default data-driver.
 - A `Column` represents a property common to several records, and is similar to a column in a spreadsheet.
   - `Columns` can be added manually or dynamically (a new `Record` contains a new column) at any time.
@@ -141,7 +141,7 @@ $df = new DataFrame($arr);
 ### Import or export from/to an external source
 _To limit external dependencies, some modules could require a separate `composer require`. Please consult the instructions for each of the needed modules.__ 
 
-**>>> [Import/Export modules documentation and examples](doc/WorkingWithExternalsFormats)**
+>>> [Import/Export modules documentation and examples](doc/WorkingWithExternalsFormats)
 
 | Module | Import | Export | Performances & Limit
 | --- | --- | --- | ---
@@ -373,9 +373,9 @@ $df->copy()->unique(onColumns: 'colA'); // Return a new DataFrame contaning uniq
 $df->append($iterable); // Return $df (self)
 ```
 
-* The `Select` object represents a statement to explore au subset of data corresponding to selection and doing stats with them. You can build them using a SQL-like constructor. They offer some commodity helpers methods to modify or copy directly the selected data, but it's not its main purpose.
-* The `Copy` object offers an API to return a NEW DataFrame without modifying anything from the original DataFrame. It's also possible to export a Select object to a new DataFrame.
-* Even if it's possible to modify a DataFrame using some methods from the Select object to apply to a selection. Most modifiers are directly accessible from the DataFrame object.
+ The `Select` object represents a statement to explore au subset of data corresponding to selection and doing stats with them. You can build them using a SQL-like constructor. They offer some commodity helpers methods to modify or copy directly the selected data, but it's not its main purpose.
+ The `Copy` object offers an API to return a NEW DataFrame without modifying anything from the original DataFrame. It's also possible to export a Select object to a new DataFrame.
+ Even if it's possible to modify a DataFrame using some methods from the Select object to apply to a selection. Most modifiers are directly accessible from the DataFrame object.
 
 
 ## The Select Statement
@@ -383,7 +383,7 @@ $df->append($iterable); // Return $df (self)
 ### The three different types of Select statements
 ```php
 $df->select('colA', 'colB'): Select // Return Select
-$df->selectAll(): SelectAll // With all columns, and keep the * selection in returned select object even if columns are aded or deleted to the dataframe.
+$df->selectAll(): SelectAll // With all columns, and keep the  selection in returned select object even if columns are aded or deleted to the dataframe.
 $df->col('colA'): ColunRepresentation // A classic select with extra methods to rename, remove, clone, type the selected column.
 ```
 
@@ -460,7 +460,7 @@ $stmt->max(); // max value (numeric)
 > Copy operations are not yet well optimized about memory consumption. Some of them have the potential to do so significantly in the future; others won't really be able to.
 
 > [!NOTE]
-> Clone the DataFrame then use equivalent modifier can be more efficient about memory consumtpion than the copy. Depending of the data-driver used and the PHP Copy-on-write feature. **Wolly** has a good PHP cloning support.
+> Clone the DataFrame then use equivalent modifier can be more efficient about memory consumtpion than the copy. Depending of the data-driver used and the PHP Copy-on-write feature. Wolly has a good PHP cloning support.
 
 ```php
 // To a new Data Frame
@@ -480,11 +480,11 @@ $df = DataFrame::fromArray([
     ['a' => 7, 'b' => 8, 'c' => 9],
 ]);
 
-$df->filter(static function (array $row, int $key) {
-    return $row['a'] > 4 || $row['a'] < 4;
+$newDf = $df->copy()->filter(static function (array $record, int $key) {
+    return $record['a'] > 4 || $record['a'] < 4;
 });
 
-expect($df->toArray())
+expect($newDf->toArray())
     ->toBe([
         ['a' => 1, 'b' => 2, 'c' => 3],
         ['a' => 7, 'b' => 8, 'c' => 9],
@@ -528,9 +528,9 @@ expect($df->toArray())
 
 #### Applying functions to each row
 ```php
-$df->apply(function ($row, $index) {
-    $row['a'] = $row['c'] + 1;
-    return $row;
+$df->apply(function ($record, $index) {
+    $record['a'] = $record['c'] + 1;
+    return $record;
 });
 ```
 
@@ -553,11 +553,78 @@ $df->apply(function ($row, $index) {
     ]);
 ```
 
-#### filter
-_TO DOCUMENT_
+#### Filter
+```php
+$df = DataFrame::fromArray([
+    ['a' => 1, 'b' => 2, 'c' => 3],
+    ['a' => 4, 'b' => 5, 'c' => 6],
+    ['a' => 7, 'b' => 8, 'c' => 9],
+]);
+
+$df->filter(static function (array $record, int $recordKey) {
+    return $record['a'] > 4 || $record['a'] < 4;
+});
+
+$df->toArray();
+// To Be:
+[
+    ['a' => 1, 'b' => 2, 'c' => 3],
+    ['a' => 7, 'b' => 8, 'c' => 9],
+];
+```
 
 #### applyIndexMap
-_TO DOCUMENT_
+Apply new values to specific rows of the DataFrame using row index.
+
+If column is supplied, will apply to column.
+If column is absent, will apply to row.
+
+Source:
+```php
+    $df = DataFrame::fromArray([
+        ['a' => 1, 'b' => 2, 'c' => 3],
+        ['a' => 4, 'b' => 5, 'c' => 6],
+        ['a' => 7, 'b' => 8, 'c' => 9],
+    ]);
+```
+
+By column:
+```php
+    $df->applyIndexMap(
+        map: [
+            0 => 'foo',
+            1 => fn($oldValue) => $oldValue * 2,
+            2 => 'baz',
+        ],
+        column: 'a'
+    );
+
+    $df->toArray();
+    // To Be:
+    [
+        ['a' => 'foo', 'b' => 2, 'c' => 3],
+        ['a' => 8, 'b' => 5, 'c' => 6],
+        ['a' => 'baz', 'b' => 8, 'c' => 9],
+    ]
+```
+
+By row:
+```php
+    $df->applyIndexMap(
+        map: [
+            1 => fn(array $oldRecord): array => array_map(fn(int $v): int => $v * 2, $oldRecord),
+            2 => [ 'a' => 1, 'b' => 2, 'c' => 3 ],
+        ]
+    );
+
+    $df->toArray();
+    //To Be:
+    [
+        0 => ['a' => 1, 'b' => 2, 'c' => 3],
+        1 => ['a' => 8, 'b' => 10, 'c' => 12],
+        2 => ['a' => 1, 'b' => 2, 'c' => 3],
+    ]
+```
 
 #### sortValues
 _TO DOCUMENT_
@@ -593,7 +660,7 @@ $df->col('a')->set($df->col('b')->asDataFrame);
 
 ## Types Data
 
-**Two ways:**
+Two ways:
 1. Converts pre-existing data once only 
 2. Converts pre-existing data and forces the type of future data
    1. And force the future data to be typed since submission

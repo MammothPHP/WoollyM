@@ -55,10 +55,10 @@ test('apply data frame', function (): void {
     expect($df->toArray())->toEqual($expected);
 });
 
-test('apply index map function', function (): void {
+test('apply index map function 1', function (): void {
     $df = $this->df;
 
-    $df->applyIndexMap([
+    $df->applyIndexMap(map: [
         0 => static function ($row) {
             $row['a'] = 10;
 
@@ -78,7 +78,26 @@ test('apply index map function', function (): void {
     ]);
 });
 
-test('apply index map value function', function (): void {
+test('apply index map function 2', function (): void {
+    $df = $this->df;
+
+    $df->applyIndexMap(
+        map: [
+            0 => 'foo',
+            1 => fn($oldValue) => $oldValue * 2,
+            2 => 'baz',
+        ],
+        column: 'a'
+    );
+
+    expect($df->toArray())->toEqual([
+        ['a' => 'foo', 'b' => 2, 'c' => 3],
+        ['a' => 8, 'b' => 5, 'c' => 6],
+        ['a' => 'baz', 'b' => 8, 'c' => 9],
+    ]);
+});
+
+test('apply index map value function 1', function (): void {
     $df = $this->df;
 
     $my_function = static function ($value) {
@@ -91,10 +110,13 @@ test('apply index map value function', function (): void {
         }
     };
 
-    $df->applyIndexMap([
-        0 => $my_function,
-        2 => $my_function,
-    ], 'a');
+    $df->applyIndexMap(
+        map: [
+            0 => $my_function,
+            2 => $my_function,
+        ],
+        column: 'a'
+    );
 
     expect($df->toArray())->toEqual([
         ['a' => 0, 'b' => 2, 'c' => 3],
@@ -103,10 +125,27 @@ test('apply index map value function', function (): void {
     ]);
 });
 
+test('apply index map value function 2', function (): void {
+    $df = $this->df;
+
+    $df->applyIndexMap(
+        map: [
+            1 => fn(array $oldRecord): array => array_map(fn(int $v): int => $v * 2, $oldRecord),
+            2 => ['a' => 1, 'b' => 2, 'c' => 3],
+        ]
+    );
+
+    expect($df->toArray())->toEqual([
+        0 => ['a' => 1, 'b' => 2, 'c' => 3],
+        1 => ['a' => 8, 'b' => 10, 'c' => 12],
+        2 => ['a' => 1, 'b' => 2, 'c' => 3],
+    ]);
+});
+
 test('apply index map array', function (): void {
     $df = $this->df;
 
-    $df->applyIndexMap([
+    $df->applyIndexMap(map: [
         1 => ['a' => 301, 'b' => 404, 'c' => 500],
     ]);
 
