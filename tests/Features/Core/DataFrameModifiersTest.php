@@ -180,7 +180,7 @@ test('preg replace', function (): void {
         ['a' => 'foo', 'b' => 'foo', 'c' => 6],
         ['a' => 7, 'b' => 8, 'c' => 9],
     ]);
-})->todo();
+});
 
 
 

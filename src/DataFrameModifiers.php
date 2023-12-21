@@ -9,6 +9,7 @@ use Closure;
 use Exception;
 use MammothPHP\WoollyM\DataDrivers\SortableDriverInterface;
 use MammothPHP\WoollyM\DataDrivers\DriversExceptions\SortNotSupportedByDriverException;
+use MammothPHP\WoollyM\Exceptions\NotModifiedRecord;
 use Traversable;
 
 abstract class DataFrameModifiers extends DataFrameStatements
@@ -68,19 +69,27 @@ abstract class DataFrameModifiers extends DataFrameStatements
     }
 
     /**
-     * Applies a user-defined function to each row of the DataFrame. The parameters of the function include the row
+     * Applies a user-defined function to each record of the DataFrame. The parameters of the function include the record
      * being iterated over, and optionally the index. ie: apply(function($el, $ix) { ... })
      */
     public function apply(Closure $f): self
     {
-        if ($this->countColumns() > 1) {
-            foreach ($this as $i => $row) {
-                $this->data->setRecord($i, $this->convertRecordToAbstract($f($row, $i)));
-            }
-        } elseif ($this->countColumns() === 1) {
-            foreach ($this as $i => $row) {
-                $this->data->setRecordColumn($i, $this->getColumnKey(key($row)), $f($row[key($row)], $i));
-            }
+        $countColumn = $this->countColumns();
+
+        foreach ($this as $i => $record) {
+            try {
+                $newRecord = $countColumn !== 1 ? $f($record, $i) : $f($record[key($record)], $i);
+
+                if ($newRecord === $record) {
+                    throw new NotModifiedRecord; // can also be throw before from closure
+                }
+
+                if ($countColumn !== 1) {
+                    $this->data->setRecord($i, $this->convertRecordToAbstract($newRecord));
+                } else {
+                    $this->data->setRecordColumn($i, $this->getColumnKey(key($record)), $newRecord);
+                }
+            } catch (NotModifiedRecord) {}
         }
 
         return $this;
@@ -91,8 +100,24 @@ abstract class DataFrameModifiers extends DataFrameStatements
      */
     public function preg_replace(array|string $pattern, array|string $replacement): self
     {
-        return $this->apply(static function (array $row) use ($pattern, $replacement) {
-            return preg_replace($pattern, $replacement, $row);
+        return $this->apply(static function (array $record) use ($pattern, $replacement) {
+
+            $totalReplacement = 0;
+
+            foreach ($record as &$v) {
+                $count = 0;
+
+                $replaced = preg_replace(pattern: $pattern, replacement: $replacement, subject: (string) $v, count: $count);
+
+                $v = $count > 0 ? $replaced : $v;
+                $totalReplacement += $count;
+            }
+
+            if ($totalReplacement === 0) {
+                throw new NotModifiedRecord;
+            }
+
+            return $record;
         });
     }
 
