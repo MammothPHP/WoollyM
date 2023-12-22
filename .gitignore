@@ -12,6 +12,10 @@ composer.phar
 phpstan.neon
 .phpunit.cache/test-results
 
+# Documentation
+phpDocumentor.phar
+/.phpdoc/
+
 
 # IDE
 *.idea
