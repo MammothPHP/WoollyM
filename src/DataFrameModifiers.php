@@ -9,32 +9,41 @@ use MammothPHP\WoollyM\DataDrivers\SortableDriverInterface;
 use MammothPHP\WoollyM\DataDrivers\DriversExceptions\SortNotSupportedByDriverException;
 use MammothPHP\WoollyM\Exceptions\NotModifiedRecord;
 use MammothPHP\WoollyM\Statements\Modify\Modify;
+use MammothPHP\WoollyM\Statements\Sort\Sort;
 
 abstract class DataFrameModifiers extends DataFrameStatements
 {
     /* *****************************************************************************************************************
-     ******************************************* Copy ******************************************************************
+     ******************************************* copy / modify / sort API **********************************************
      ******************************************************************************************************************/
 
     /**
-     * Return a Copy object, methods will provide new DataFrame objects.
+     * Return a Copy object, methods will return new DataFrame objects.
      */
     public function copy(DataFrame $to = new DataFrame): Copy
     {
         return new Copy($this, $to);
     }
 
-    /* *****************************************************************************************************************
-     ******************************************* Modify ****************************************************************
-     ******************************************************************************************************************/
-
     /**
-     * Return a Copy object, methods will provide new DataFrame objects.
+     * Return a Modify object, methods will return the same DataFrame object
      */
     public function modify(): Modify
     {
         return new Modify($this);
     }
+
+    /**
+     * Return a Sort object, methods will return new DataFrame objects.
+     */
+    public function sort(): Sort
+    {
+        return new Sort($this);
+    }
+
+    /* *****************************************************************************************************************
+     ******************************************* Others Modidiers ******************************************************
+     ******************************************************************************************************************/
 
     /**
      * Sort column order using a closure. Then retrieve records will respect the new order.
