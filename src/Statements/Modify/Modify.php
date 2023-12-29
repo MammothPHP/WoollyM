@@ -2,20 +2,22 @@
 
 declare(strict_types=1);
 
-namespace MammothPHP\WoollyM;
+namespace MammothPHP\WoollyM\Statements\Modify;
 
 use ArrayAccess;
 use Closure;
-use MammothPHP\WoollyM\DataDrivers\DriversExceptions\SortNotSupportedByDriverException;
-use MammothPHP\WoollyM\DataDrivers\SortableDriverInterface;
 use MammothPHP\WoollyM\Exceptions\NotModifiedRecord;
+use MammothPHP\WoollyM\{DataFrame, LinkedDataFrame};
 use Traversable;
 
 class Modify
 {
+    use LinkedDataFrame;
 
-    public function __construct(public readonly DataFrame $df)
-    {}
+    public function __construct(DataFrame $df)
+    {
+        $this->setLinkedDataFrame($df);
+    }
 
     /**
      * Allows user to "array_merge" two DataFrames so that the rows of one are appended to the rows of current DataFrame object
@@ -24,10 +26,10 @@ class Modify
     public function append(array|Traversable $iterable): DataFrame
     {
         foreach ($iterable as $dfRow) {
-            $this->df->addRecord($dfRow);
+            $this->getLinkedDataFrame()->addRecord($dfRow);
         }
 
-        return $this->df;
+        return $this->getLinkedDataFrame();
     }
 
     /**
@@ -35,7 +37,7 @@ class Modify
      */
     public function preg_replace(array|string $pattern, array|string $replacement): DataFrame
     {
-        return $this->df->apply(static function (array $record) use ($pattern, $replacement) {
+        return $this->getLinkedDataFrame()->apply(static function (array $record) use ($pattern, $replacement) {
 
             $totalReplacement = 0;
 
@@ -62,13 +64,15 @@ class Modify
      */
     public function filter(Closure $f): DataFrame
     {
-        foreach ($this->df as $recordKey => $recordData) {
+        $df = $this->getLinkedDataFrame();
+
+        foreach ($df as $recordKey => $recordData) {
             if ($f($recordData, $recordKey) === false) {
-                $this->df->removeRecord($recordKey);
+                $df->removeRecord($recordKey);
             }
         }
 
-        return $this->df;
+        return $this->getLinkedDataFrame();
     }
 
     /**
@@ -92,7 +96,7 @@ class Modify
      */
     public function applyIndexMap(array|ArrayAccess $map, ?string $column = null): DataFrame
     {
-        return $this->df->apply(static function (array $record, int $recordKey) use ($map, $column): array {
+        return $this->getLinkedDataFrame()->apply(static function (array $record, int $recordKey) use ($map, $column): array {
             if (isset($map[$recordKey])) {
                 $value = $map[$recordKey];
 
@@ -127,22 +131,22 @@ class Modify
     public function convertTypes(array $typeMap, array|string|null $fromDateFormat = null, ?string $toDateFormat = null): DataFrame
     {
         foreach ($typeMap as $column => $type) {
-            $this->df->col($column)->type(
+            $this->getLinkedDataFrame()->col($column)->type(
                 type: $type,
                 fromDateFormat: $fromDateFormat,
                 toDateFormat: $toDateFormat
             );
         }
 
-        return $this->df;
+        return $this->getLinkedDataFrame();
     }
 
     public function setColumn(string $targetColumn, mixed $rightHandSide): self
     {
-        $this->df->addColumn($targetColumn);
-        $this->df->mustHaveColumn($targetColumn);
+        $this->getLinkedDataFrame()->addColumn($targetColumn);
+        $this->getLinkedDataFrame()->mustHaveColumn($targetColumn);
 
-        $this->df->col($targetColumn)->set($rightHandSide);
+        $this->getLinkedDataFrame()->col($targetColumn)->set($rightHandSide);
 
         return $this;
     }

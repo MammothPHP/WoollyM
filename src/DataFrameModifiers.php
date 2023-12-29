@@ -4,13 +4,11 @@ declare(strict_types=1);
 
 namespace MammothPHP\WoollyM;
 
-use ArrayAccess;
 use Closure;
-use Exception;
 use MammothPHP\WoollyM\DataDrivers\SortableDriverInterface;
 use MammothPHP\WoollyM\DataDrivers\DriversExceptions\SortNotSupportedByDriverException;
 use MammothPHP\WoollyM\Exceptions\NotModifiedRecord;
-use Traversable;
+use MammothPHP\WoollyM\Statements\Modify\Modify;
 
 abstract class DataFrameModifiers extends DataFrameStatements
 {
