@@ -11,13 +11,18 @@ use PDO;
 
 class Copy
 {
+    use LinkedDataFrame;
+
     public ?DataDriverInterface $dataDriver = null;
 
-    public function __construct(public readonly DataFrame $df, public readonly DataFrame $to) {}
+    public function __construct(DataFrame $df, public readonly DataFrame $to)
+    {
+        $this->setLinkedDataFrame($df);
+    }
 
     public function clone(): DataFrame
     {
-        return clone $this->df;
+        return clone $this->getLinkedDataFrame();
     }
 
     /**
@@ -26,7 +31,7 @@ class Copy
      */
     public function filter(Closure $f): DataFrame
     {
-        return $this->to->modify()->append(array_filter($this->df->toArray(), $f, \ARRAY_FILTER_USE_BOTH));
+        return $this->to->modify()->append(array_filter($this->getLinkedDataFrame()->toArray(), $f, \ARRAY_FILTER_USE_BOTH));
     }
 
     /**
@@ -40,7 +45,8 @@ class Copy
 
         $groupedData = [];
         $uniqueColumns = [];
-        foreach ($this->df as $row) {
+
+        foreach ($this->getLinkedDataFrame() as $row) {
             $uniqueKey = null;
             foreach ($onColumns as $column) {
                 $uniqueKey .= $row[$column];
@@ -76,12 +82,12 @@ class Copy
 
         $pdo = new PDO('sqlite::memory:');
 
-        $sqlColumns = implode(', ', $this->df->columnsNames());
+        $sqlColumns = implode(', ', $this->getLinkedDataFrame()->columnsNames());
 
         $pdo->exec("DROP TABLE IF EXISTS {$table};");
         $pdo->exec("CREATE TABLE IF NOT EXISTS dataframe ({$sqlColumns});");
 
-        SQL::fromDataFrame($this->df)->toPDO($pdo, $table);
+        SQL::fromDataFrame($this->getLinkedDataFrame())->toPDO($pdo, $table);
 
         if ($queryType === 'SELECT') {
             $result = $pdo->query($sql);

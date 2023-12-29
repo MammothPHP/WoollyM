@@ -11,6 +11,11 @@ trait LinkedDataFrame
 {
     protected readonly WeakReference $df;
 
+    public function __clone(): void
+    {
+        $this->setLinkedDataFrame($this->getLinkedDataFrame());
+    }
+
     protected function setLinkedDataFrame(DataFrame $df): void
     {
         $this->df = WeakReference::create($df);
