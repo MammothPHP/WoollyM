@@ -2,20 +2,21 @@
 
 declare(strict_types=1);
 
-namespace MammothPHP\WoollyM\Statements;
+namespace MammothPHP\WoollyM\Statements\Select;
 
 use BadMethodCallException;
 use Closure;
 use Iterator;
 use MammothPHP\WoollyM\DataFrame;
 use MammothPHP\WoollyM\Exceptions\{InvalidSelectException, NotYetImplementedException, PropertyNotExistException};
+use MammothPHP\WoollyM\LinkedDataFrame;
+use MammothPHP\WoollyM\Statements\StatementClause;
 use MammothPHP\WoollyM\Stats\Modules;
 use WeakMap;
-use WeakReference;
 
 class Select implements Iterator
 {
-    protected readonly WeakReference $df;
+    use LinkedDataFrame;
 
     protected WeakMap $select;
     protected array $where = [];
@@ -30,50 +31,23 @@ class Select implements Iterator
         $this->select(...$selections);
     }
 
-    protected function setLinkedDataFrame(DataFrame $df): void
-    {
-        $this->df = WeakReference::create($df);
-    }
-
     public function __clone(): void
     {
         $this->select = clone $this->select;
     }
 
-    /**
-     * Get the Linked DataFrame object
-     * @throws InvalidSelectException
-     */
-    public function getLinkedDataFrame(): DataFrame
-    {
-        $this->isAliveOrThrowInvalidSelectException();
 
-        return $this->df->get();
-    }
-
-    /**
-     * @return - false if linked dataFrame no longer exist.
-     */
-    public function isAlive(): bool
-    {
-        return $this->df->get() !== null;
-    }
-
-    protected function isAliveOrThrowInvalidSelectException(): void
-    {
-        $this->isAlive() || throw new InvalidSelectException;
-    }
 
     /**
      * Get the current filters configuration for this Select object
      */
-    public function config(SelectParam $param): array|int|null
+    public function config(StatementClause $param): array|int|null
     {
         return match ($param) {
-            SelectParam::SELECT => $this->getSelect(),
-            SelectParam::WHERE => $this->where,
-            SelectParam::LIMIT => $this->limit,
-            SelectParam::OFFSET => $this->offset,
+            StatementClause::SELECT => $this->getSelect(),
+            StatementClause::WHERE => $this->where,
+            StatementClause::LIMIT => $this->limit,
+            StatementClause::OFFSET => $this->offset,
         };
     }
 

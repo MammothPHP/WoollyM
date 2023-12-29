@@ -9,7 +9,7 @@ use MammothPHP\WoollyM\Exceptions\InvalidSelectException;
 use MammothPHP\WoollyM\DataDrivers\{ColumnKeyType, DataDriverInterface};
 use MammothPHP\WoollyM\DataDrivers\DriversExceptions\{InvalidDriverClassException, KeyNotExistException};
 use MammothPHP\WoollyM\DataDrivers\PhpArray\PhpArrayDriver;
-use MammothPHP\WoollyM\Statements\ColumnRepresentation;
+use MammothPHP\WoollyM\Statements\Select\ColumnRepresentation;
 use WeakMap;
 
 abstract class DataFramePrimitives

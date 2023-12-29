@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MammothPHP\WoollyM\Statements;
+namespace MammothPHP\WoollyM\Statements\Select;
 
 use Closure;
 use Exception;

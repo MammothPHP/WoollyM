@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace MammothPHP\WoollyM;
 
 use MammothPHP\WoollyM\Exceptions\InvalidSelectException;
-use MammothPHP\WoollyM\Statements\{ColumnRepresentation, Select, SelectAll};
+use MammothPHP\WoollyM\Statements\Select\ColumnRepresentation;
+use MammothPHP\WoollyM\Statements\Select\Select;
+use MammothPHP\WoollyM\Statements\Select\SelectAll;
 
 abstract class DataFrameStatements extends DataFrameAccessors
 {

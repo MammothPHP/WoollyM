@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 use MammothPHP\WoollyM\DataFrame;
 use MammothPHP\WoollyM\Exceptions\{InvalidSelectException, PropertyNotExistException, UnavailableMethodInContext};
-use MammothPHP\WoollyM\Statements\{Select, SelectParam};
+use MammothPHP\WoollyM\Statements\Select\Select;
+use MammothPHP\WoollyM\Statements\StatementClause;
 
 beforeEach(function (): void {
     $this->df = DataFrame::fromArray([
@@ -29,26 +30,26 @@ it('return a select object', function (): void {
 
 it('support select constructor', function (): void {
     $select = $this->df->select('colA', 'colB');
-    expect($select->config(SelectParam::SELECT))->toBe(['colA', 'colB']);
+    expect($select->config(StatementClause::SELECT))->toBe(['colA', 'colB']);
 
     $select->select('colC');
-    expect($select->config(SelectParam::SELECT))->toBe(['colA', 'colB', 'colC']);
+    expect($select->config(StatementClause::SELECT))->toBe(['colA', 'colB', 'colC']);
 
     $select->replaceSelect('colA');
-    expect($select->config(SelectParam::SELECT))->toBe(['colA']);
+    expect($select->config(StatementClause::SELECT))->toBe(['colA']);
 
     $select->select('colB', 'colC');
-    expect($select->config(SelectParam::SELECT))->toBe(['colA', 'colB', 'colC']);
+    expect($select->config(StatementClause::SELECT))->toBe(['colA', 'colB', 'colC']);
 
     $select->resetSelect();
-    expect($select->config(SelectParam::SELECT))->toBe([]);
+    expect($select->config(StatementClause::SELECT))->toBe([]);
 });
 
 it('support whereColumn constructor', function (): void {
     $select = $this->df->select('colA')->whereColumnEqual('colB', 42)->whereColumnEqual('colC', fn(mixed $v): bool => $v > 1);
 
-    expect($select->config(SelectParam::WHERE))->toBeArray()->toHaveCount(2);
-    expect($select->config(SelectParam::WHERE)[1][0])->toBeInstanceOf(Closure::class);
+    expect($select->config(StatementClause::WHERE))->toBeArray()->toHaveCount(2);
+    expect($select->config(StatementClause::WHERE)[1][0])->toBeInstanceOf(Closure::class);
 });
 
 it('support where constructor', function (): void {
@@ -57,49 +58,49 @@ it('support where constructor', function (): void {
     $c1 = fn() => true;
 
     $select->where($c1);
-    expect($select->config(SelectParam::WHERE))->toBe([[$c1]]);
+    expect($select->config(StatementClause::WHERE))->toBe([[$c1]]);
     $select->where($c1);
-    expect($select->config(SelectParam::WHERE))->toBe([[$c1], [$c1]]);
+    expect($select->config(StatementClause::WHERE))->toBe([[$c1], [$c1]]);
     $select->and($c1);
-    expect($select->config(SelectParam::WHERE))->toBe([[$c1], [$c1], [$c1]]);
+    expect($select->config(StatementClause::WHERE))->toBe([[$c1], [$c1], [$c1]]);
 
     $select->or($c1);
-    expect($select->config(SelectParam::WHERE))->toBe([[$c1], [$c1], [$c1, $c1]]);
+    expect($select->config(StatementClause::WHERE))->toBe([[$c1], [$c1], [$c1, $c1]]);
 
     $select->and($c1);
-    expect($select->config(SelectParam::WHERE))->toBe([[$c1], [$c1], [$c1, $c1], [$c1]]);
+    expect($select->config(StatementClause::WHERE))->toBe([[$c1], [$c1], [$c1, $c1], [$c1]]);
 
     $select->resetWhere();
-    expect($select->config(SelectParam::WHERE))->toBe([]);
+    expect($select->config(StatementClause::WHERE))->toBe([]);
 });
 
 it('support limit and offset constructor', function (): void {
     $select = $this->df->select('colA');
 
     $select->limit(5, 10);
-    expect($select->config(SelectParam::LIMIT))->toBe(5);
-    expect($select->config(SelectParam::OFFSET))->toBe(10);
+    expect($select->config(StatementClause::LIMIT))->toBe(5);
+    expect($select->config(StatementClause::OFFSET))->toBe(10);
 
     $select->offset(7);
-    expect($select->config(SelectParam::LIMIT))->toBe(5);
-    expect($select->config(SelectParam::OFFSET))->toBe(7);
+    expect($select->config(StatementClause::LIMIT))->toBe(5);
+    expect($select->config(StatementClause::OFFSET))->toBe(7);
 
     $select->limit(42);
-    expect($select->config(SelectParam::LIMIT))->toBe(42);
-    expect($select->config(SelectParam::OFFSET))->toBe(0);
+    expect($select->config(StatementClause::LIMIT))->toBe(42);
+    expect($select->config(StatementClause::OFFSET))->toBe(0);
 
     $select->offset(8);
-    expect($select->config(SelectParam::OFFSET))->toBe(8);
+    expect($select->config(StatementClause::OFFSET))->toBe(8);
 
     $select->resetLimit();
-    expect($select->config(SelectParam::LIMIT))->toBeNull();
-    expect($select->config(SelectParam::OFFSET))->toBe(0);
+    expect($select->config(StatementClause::LIMIT))->toBeNull();
+    expect($select->config(StatementClause::OFFSET))->toBe(0);
 
     $select->offset(9);
-    expect($select->config(SelectParam::OFFSET))->toBe(9);
+    expect($select->config(StatementClause::OFFSET))->toBe(9);
 
     $select->resetOffset();
-    expect($select->config(SelectParam::OFFSET))->toBe(0);
+    expect($select->config(StatementClause::OFFSET))->toBe(0);
 });
 
 test('reset', function (): void {
@@ -108,10 +109,10 @@ test('reset', function (): void {
 
     expect($select->reset())->toBe($select);
 
-    expect($select->config(SelectParam::SELECT))->toBe([]);
-    expect($select->config(SelectParam::WHERE))->toBe([]);
-    expect($select->config(SelectParam::LIMIT))->toBeNull();
-    expect($select->config(SelectParam::OFFSET))->toBe(0);
+    expect($select->config(StatementClause::SELECT))->toBe([]);
+    expect($select->config(StatementClause::WHERE))->toBe([]);
+    expect($select->config(StatementClause::LIMIT))->toBeNull();
+    expect($select->config(StatementClause::OFFSET))->toBe(0);
 });
 
 test('selectAll can be reset', function (): void {
@@ -120,9 +121,9 @@ test('selectAll can be reset', function (): void {
 
     expect($select->reset())->toBe($select);
 
-    expect($select->config(SelectParam::WHERE))->toBe([]);
-    expect($select->config(SelectParam::LIMIT))->toBeNull();
-    expect($select->config(SelectParam::OFFSET))->toBe(0);
+    expect($select->config(StatementClause::WHERE))->toBe([]);
+    expect($select->config(StatementClause::LIMIT))->toBeNull();
+    expect($select->config(StatementClause::OFFSET))->toBe(0);
 });
 
 it('support cloning (dataFrame tests)', function (): void {
@@ -163,14 +164,14 @@ it('can produce a new DataFrame', function (): void {
 it('can select all', function (): void {
     $select = $this->df->selectAll();
 
-    expect($select->config(SelectParam::SELECT))->toBe(['colA', 'colB', 'colC']);
+    expect($select->config(StatementClause::SELECT))->toBe(['colA', 'colB', 'colC']);
 });
 
 it('keep select all', function (): void {
     $select = $this->df->selectAll();
     $this->df->addColumn('colD');
 
-    expect($select->config(SelectParam::SELECT))->toBe(['colA', 'colB', 'colC', 'colD']);
+    expect($select->config(StatementClause::SELECT))->toBe(['colA', 'colB', 'colC', 'colD']);
 });
 
 it('throw an exception if module method not exist', function (): void {

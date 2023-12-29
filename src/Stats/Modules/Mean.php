@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace MammothPHP\WoollyM\Stats\Modules;
 
 use MammothPHP\WoollyM\Exceptions\NotYetImplementedException;
-use MammothPHP\WoollyM\Statements\Select;
+use MammothPHP\WoollyM\Statements\Select\Select;
 use MammothPHP\WoollyM\Stats\{StatsMethodInterface, StatsPropertyInterface};
 
 class Mean implements StatsMethodInterface, StatsPropertyInterface

@@ -7,7 +7,7 @@ namespace MammothPHP\WoollyM\Statements;
 /**
  * @internal
  */
-enum SelectParam
+enum StatementClause
 {
     case SELECT;
     case WHERE;
