@@ -26,7 +26,7 @@ class Copy
      */
     public function filter(Closure $f): DataFrame
     {
-        return $this->to->append(array_filter($this->df->toArray(), $f, \ARRAY_FILTER_USE_BOTH));
+        return $this->to->modify()->append(array_filter($this->df->toArray(), $f, \ARRAY_FILTER_USE_BOTH));
     }
 
     /**
@@ -60,7 +60,7 @@ class Copy
             }
         }
 
-        return $this->to->append($groupedData);
+        return $this->to->modify()->append($groupedData);
     }
 
     /**
@@ -94,6 +94,6 @@ class Copy
 
         $pdo->exec("DROP TABLE IF EXISTS {$table};");
 
-        return $this->to->append($results);
+        return $this->to->modify()->append($results);
     }
 }

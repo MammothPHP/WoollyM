@@ -68,7 +68,7 @@ test('addColumn', function (): void {
 test('set new column', function (): void {
     expect($this->df->hasColumn('d'))->toBeFalse();
 
-    $this->df
+    $this->df->modify()
         ->setColumn('d', $this->df->col('c')->export()->apply(static function ($el) {
             return $el + 1;
         }));
@@ -97,9 +97,9 @@ test('append', function (): void {
     $df2 = clone $this->df;
 
     // Test that appending an array with less than count of 1 will simply return the original DataFrame
-    expect($df1->append(DataFrame::fromArray([])))->toBe($df1);
+    expect($df1->modify()->append(DataFrame::fromArray([])))->toBe($df1);
 
-    $df1->append($df2);
+    $df1->modify()->append($df2);
 
     expect($df1->toArray())->toEqual([
         ['a' => 1, 'b' => 2, 'c' => 3],

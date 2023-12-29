@@ -13,7 +13,7 @@ test('convert numeric integer', function (): void {
         ['numeric' => '3.0-',         'integer' => '$3,456,789.23'],
     ]);
 
-    $df->convertTypes([
+    $df->modify()->convertTypes([
         'numeric' => DataType::NUMERIC,
         'integer' => DataType::INT,
     ]);
@@ -41,7 +41,7 @@ test('convert date time', function (): void {
         ['datetime' => ''],
     ]);
 
-    $df->convertTypes([
+    $df->modify()->convertTypes([
         'datetime' => DataType::DATETIME,
     ], ['d/m/Y', 'd-Y-m', 'M d Y'], 'Y-m-d');
 
@@ -52,7 +52,7 @@ test('convert date time', function (): void {
         ['datetime' => '0001-01-01'],
     ]);
 
-    $df->convertTypes([
+    $df->modify()->convertTypes([
         'datetime' => DataType::DATETIME,
     ], 'Y-m-d', 'M d Y');
 
@@ -64,7 +64,7 @@ test('convert date time', function (): void {
     ]);
 
     $this->expectExceptionMessage("Error parsing date string 'Mar 12 1996' with date format Y-m-d");
-    $df->convertTypes([
+    $df->modify()->convertTypes([
         'datetime' => DataType::DATETIME,
     ], 'Y-m-d', 'Y-m-d');
 });
@@ -79,7 +79,7 @@ test('convert currency a c c o u n t i n g', function (): void {
         ['currency' => 'asdf.56-',   'accounting' => 'asdf.56-'],
     ]);
 
-    $df->convertTypes([
+    $df->modify()->convertTypes([
         'currency'   => DataType::CURRENCY,
         'accounting' => DataType::ACCOUNTING,
     ]);

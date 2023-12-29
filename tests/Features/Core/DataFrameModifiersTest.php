@@ -58,7 +58,7 @@ test('apply data frame', function (): void {
 test('apply index map function 1', function (): void {
     $df = $this->df;
 
-    $df->applyIndexMap(map: [
+    $df->modify()->applyIndexMap(map: [
         0 => static function ($row) {
             $row['a'] = 10;
 
@@ -81,7 +81,7 @@ test('apply index map function 1', function (): void {
 test('apply index map function 2', function (): void {
     $df = $this->df;
 
-    $df->applyIndexMap(
+    $df->modify()->applyIndexMap(
         map: [
             0 => 'foo',
             1 => fn($oldValue) => $oldValue * 2,
@@ -110,7 +110,7 @@ test('apply index map value function 1', function (): void {
         }
     };
 
-    $df->applyIndexMap(
+    $df->modify()->applyIndexMap(
         map: [
             0 => $my_function,
             2 => $my_function,
@@ -128,7 +128,7 @@ test('apply index map value function 1', function (): void {
 test('apply index map value function 2', function (): void {
     $df = $this->df;
 
-    $df->applyIndexMap(
+    $df->modify()->applyIndexMap(
         map: [
             1 => fn(array $oldRecord): array => array_map(fn(int $v): int => $v * 2, $oldRecord),
             2 => ['a' => 1, 'b' => 2, 'c' => 3],
@@ -145,7 +145,7 @@ test('apply index map value function 2', function (): void {
 test('apply index map array', function (): void {
     $df = $this->df;
 
-    $df->applyIndexMap(map: [
+    $df->modify()->applyIndexMap(map: [
         1 => ['a' => 301, 'b' => 404, 'c' => 500],
     ]);
 
@@ -157,7 +157,7 @@ test('apply index map array', function (): void {
 });
 
 test('filter', function (): void {
-    $this->df->filter(function (array $rowArray, int $position): bool {
+    $this->df->modify()->filter(function (array $rowArray, int $position): bool {
         if ($position === 1 || \in_array(7, $rowArray, true)) {
             return false;
         }
@@ -173,7 +173,7 @@ test('filter', function (): void {
 test('preg replace', function (): void {
     $df1 = $this->df;
 
-    $df1->preg_replace('/[1-5]/', 'foo');
+    $df1->modify()->preg_replace('/[1-5]/', 'foo');
 
     expect($df1->toArray())->toBe([
         ['a' => 'foo', 'b' => 'foo', 'c' => 'foo'],
@@ -265,7 +265,7 @@ test('sort values', function (): void {
 test('apply index map values', function (): void {
     $df = $this->df;
 
-    $df->applyIndexMap([
+    $df->modify()->applyIndexMap([
         0 => 0,
         2 => 0,
     ], 'a');

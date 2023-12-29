@@ -7,7 +7,7 @@ namespace MammothPHP\WoollyM\Statements;
 use BadMethodCallException;
 use Closure;
 use Iterator;
-use MammothPHP\WoollyM\{DataFrame, DataFrameModifiers};
+use MammothPHP\WoollyM\DataFrame;
 use MammothPHP\WoollyM\Exceptions\{InvalidSelectException, NotYetImplementedException, PropertyNotExistException};
 use MammothPHP\WoollyM\Stats\Modules;
 use WeakMap;
