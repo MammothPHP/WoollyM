@@ -37,7 +37,7 @@ class Modify
      */
     public function preg_replace(array|string $pattern, array|string $replacement): DataFrame
     {
-        return $this->getLinkedDataFrame()->apply(static function (array $record) use ($pattern, $replacement) {
+        return $this->apply(static function (array $record) use ($pattern, $replacement) {
 
             $totalReplacement = 0;
 
@@ -76,6 +76,36 @@ class Modify
     }
 
     /**
+     * Applies a user-defined function to each record of the DataFrame. The parameters of the function include the record
+     * being iterated over, and optionally the index. ie: apply(function($el, $ix) { ... })
+     */
+    public function apply(Closure $f): DataFrame
+    {
+        $df = $this->getLinkedDataFrame();
+
+        $countColumn = $df->countColumns();
+
+        foreach ($df as $i => $record) {
+            try {
+                $newRecord = $countColumn !== 1 ? $f($record, $i) : $f($record[key($record)], $i);
+
+                if ($newRecord === $record) {
+                    throw new NotModifiedRecord; // can also be throw before from closure
+                }
+
+                if ($countColumn !== 1) {
+                    $df->updateRecord($i, $newRecord);
+                } else {
+                    $df->updateCell($i, key($record), $newRecord);
+                }
+            } catch (NotModifiedRecord) {
+            }
+        }
+
+        return $df;
+    }
+
+    /**
      * Apply new values to specific rows of the DataFrame using row index.
      *
      * If column is supplied, will apply to column.
@@ -96,7 +126,7 @@ class Modify
      */
     public function applyIndexMap(array|ArrayAccess $map, ?string $column = null): DataFrame
     {
-        return $this->getLinkedDataFrame()->apply(static function (array $record, int $recordKey) use ($map, $column): array {
+        return $this->apply(static function (array $record, int $recordKey) use ($map, $column): array {
             if (isset($map[$recordKey])) {
                 $value = $map[$recordKey];
 

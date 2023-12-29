@@ -275,6 +275,13 @@ abstract class DataFramePrimitives
         return $this;
     }
 
+    public function updateCell(int $recordKey, string $column, mixed $newValue): self
+    {
+        $this->data->setRecordColumn($recordKey, $this->getColumnKey($column), $newValue);
+
+        return $this;
+    }
+
     /**
      * Remove a record by key
      * @throws KeyNotExistException

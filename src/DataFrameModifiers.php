@@ -7,7 +7,6 @@ namespace MammothPHP\WoollyM;
 use Closure;
 use MammothPHP\WoollyM\DataDrivers\SortableDriverInterface;
 use MammothPHP\WoollyM\DataDrivers\DriversExceptions\SortNotSupportedByDriverException;
-use MammothPHP\WoollyM\Exceptions\NotModifiedRecord;
 use MammothPHP\WoollyM\Statements\Modify\Modify;
 use MammothPHP\WoollyM\Statements\Sort\Sort;
 
@@ -56,34 +55,6 @@ abstract class DataFrameModifiers extends DataFrameStatements
 
         uasort($this->columnIndexes, $finalCallback);
         $this->clearColumnsCache();
-
-        return $this;
-    }
-
-    /**
-     * Applies a user-defined function to each record of the DataFrame. The parameters of the function include the record
-     * being iterated over, and optionally the index. ie: apply(function($el, $ix) { ... })
-     */
-    public function apply(Closure $f): self
-    {
-        $countColumn = $this->countColumns();
-
-        foreach ($this as $i => $record) {
-            try {
-                $newRecord = $countColumn !== 1 ? $f($record, $i) : $f($record[key($record)], $i);
-
-                if ($newRecord === $record) {
-                    throw new NotModifiedRecord; // can also be throw before from closure
-                }
-
-                if ($countColumn !== 1) {
-                    $this->data->setRecord($i, $this->convertRecordToAbstract($newRecord));
-                } else {
-                    $this->data->setRecordColumn($i, $this->getColumnKey(key($record)), $newRecord);
-                }
-            } catch (NotModifiedRecord) {
-            }
-        }
 
         return $this;
     }

@@ -68,8 +68,10 @@ test('addColumn', function (): void {
 test('set new column', function (): void {
     expect($this->df->hasColumn('d'))->toBeFalse();
 
+    $newColumnData = $this->df->col('c')->export();
+
     $this->df->modify()
-        ->setColumn('d', $this->df->col('c')->export()->apply(static function ($el) {
+        ->setColumn('d', $newColumnData->modify()->apply(static function ($el) {
             return $el + 1;
         }));
 

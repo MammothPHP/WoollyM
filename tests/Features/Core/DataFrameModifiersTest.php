@@ -13,6 +13,15 @@ beforeEach(function (): void {
     $this->df = DataFrame::fromArray($this->input);
 });
 
+test('internal references with chained methods', function (): void {
+    // Normal way
+    $newData = $this->df->col('a')->export();
+    expect($newData->modify()->isAlive())->toBeTrue();
+
+    // Exported DataFrame must not die immediatly and modify action must not fail
+    expect($this->df->col('a')->export()->modify()->isAlive())->toBeTrue();
+})->todo();
+
 test('sort columns', function (): void {
     $df = new DataFrame([
         ['c' => 3, 'b' => 2, 'a' => 1],
@@ -39,7 +48,7 @@ test('sort columns', function (): void {
 test('apply data frame', function (): void {
     $df = $this->df;
 
-    $df->apply(static function ($row) {
+    $df->modify()->apply(static function ($row) {
         $row['b'] = $row['a'] + 2;
         $row['c'] = $row['b'] + 2;
 
