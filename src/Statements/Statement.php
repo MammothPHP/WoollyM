@@ -10,6 +10,9 @@ use MammothPHP\WoollyM\Exceptions\{InvalidSelectException, NotYetImplementedExce
 use MammothPHP\WoollyM\{DataFrame, LinkedDataFrame};
 use WeakMap;
 
+/**
+ * @internal
+ */
 abstract class Statement implements Iterator
 {
     use LinkedDataFrame;

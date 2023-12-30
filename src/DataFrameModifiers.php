@@ -7,7 +7,9 @@ namespace MammothPHP\WoollyM;
 use Closure;
 use MammothPHP\WoollyM\DataDrivers\SortableDriverInterface;
 use MammothPHP\WoollyM\DataDrivers\DriversExceptions\SortNotSupportedByDriverException;
-use MammothPHP\WoollyM\Statements\Modify\Modify;
+use MammothPHP\WoollyM\Statements\Delete\Delete;
+use MammothPHP\WoollyM\Statements\Insert\Insert;
+use MammothPHP\WoollyM\Statements\Update\Update;
 use MammothPHP\WoollyM\Statements\Sort\Sort;
 
 abstract class DataFrameModifiers extends DataFrameStatements
@@ -25,11 +27,27 @@ abstract class DataFrameModifiers extends DataFrameStatements
     }
 
     /**
-     * Return a Modify object, methods will return the same DataFrame object
+     * Return a Copy object, methods will return new DataFrame objects.
      */
-    public function modify(): Modify
+    public function delete(DataFrame $to = new DataFrame): Delete
     {
-        return new Modify($this);
+        return new Delete($this);
+    }
+
+    /**
+     * Return an Update statement, methods will return the same DataFrame object
+     */
+    public function insert(): Insert
+    {
+        return new Insert($this);
+    }
+
+    /**
+     * Return an Update statement, methods will return the same DataFrame object
+     */
+    public function update(): Update
+    {
+        return new Update($this);
     }
 
     /**

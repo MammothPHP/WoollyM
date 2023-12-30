@@ -4,19 +4,9 @@ declare(strict_types=1);
 
 namespace MammothPHP\WoollyM\Statements\Select;
 
-use MammothPHP\WoollyM\DataFrame;
-use Override;
+use MammothPHP\WoollyM\Statements\SelectAllMode;
 
 class SelectAll extends FixedSelect
 {
-    public function __construct(DataFrame $df)
-    {
-        $this->setLinkedDataFrame($df);
-    }
-
-    #[Override]
-    public function getSelect(): array
-    {
-        return $this->getLinkedDataFrame()->columnsNames();
-    }
+    use SelectAllMode;
 }

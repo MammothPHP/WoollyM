@@ -16,10 +16,10 @@ beforeEach(function (): void {
 test('internal references with chained methods', function (): void {
     // Normal way
     $newData = $this->df->col('a')->export();
-    expect($newData->modify()->isAlive())->toBeTrue();
+    expect($newData->update()->isAlive())->toBeTrue();
 
     // Exported DataFrame must not die immediatly and modify action must not fail
-    expect($this->df->col('a')->export()->modify()->isAlive())->toBeTrue();
+    expect($this->df->col('a')->export()->update()->isAlive())->toBeTrue();
 })->todo();
 
 test('sort columns', function (): void {
@@ -48,7 +48,7 @@ test('sort columns', function (): void {
 test('apply data frame', function (): void {
     $df = $this->df;
 
-    $df->modify()->apply(static function ($row) {
+    $df->update()->apply(static function ($row) {
         $row['b'] = $row['a'] + 2;
         $row['c'] = $row['b'] + 2;
 
@@ -67,7 +67,7 @@ test('apply data frame', function (): void {
 test('apply index map function 1', function (): void {
     $df = $this->df;
 
-    $df->modify()->applyIndexMap(map: [
+    $df->update()->applyIndexMap(map: [
         0 => static function ($row) {
             $row['a'] = 10;
 
@@ -90,7 +90,7 @@ test('apply index map function 1', function (): void {
 test('apply index map function 2', function (): void {
     $df = $this->df;
 
-    $df->modify()->applyIndexMap(
+    $df->update()->applyIndexMap(
         map: [
             0 => 'foo',
             1 => fn($oldValue) => $oldValue * 2,
@@ -119,7 +119,7 @@ test('apply index map value function 1', function (): void {
         }
     };
 
-    $df->modify()->applyIndexMap(
+    $df->update()->applyIndexMap(
         map: [
             0 => $my_function,
             2 => $my_function,
@@ -137,7 +137,7 @@ test('apply index map value function 1', function (): void {
 test('apply index map value function 2', function (): void {
     $df = $this->df;
 
-    $df->modify()->applyIndexMap(
+    $df->update()->applyIndexMap(
         map: [
             1 => fn(array $oldRecord): array => array_map(fn(int $v): int => $v * 2, $oldRecord),
             2 => ['a' => 1, 'b' => 2, 'c' => 3],
@@ -154,7 +154,7 @@ test('apply index map value function 2', function (): void {
 test('apply index map array', function (): void {
     $df = $this->df;
 
-    $df->modify()->applyIndexMap(map: [
+    $df->update()->applyIndexMap(map: [
         1 => ['a' => 301, 'b' => 404, 'c' => 500],
     ]);
 
@@ -166,7 +166,7 @@ test('apply index map array', function (): void {
 });
 
 test('filter', function (): void {
-    $this->df->modify()->filter(function (array $rowArray, int $position): bool {
+    $this->df->delete()->filter(function (array $rowArray, int $position): bool {
         if ($position === 1 || \in_array(7, $rowArray, true)) {
             return false;
         }
@@ -182,7 +182,7 @@ test('filter', function (): void {
 test('preg replace', function (): void {
     $df1 = $this->df;
 
-    $df1->modify()->preg_replace('/[1-5]/', 'foo');
+    $df1->update()->preg_replace('/[1-5]/', 'foo');
 
     expect($df1->toArray())->toBe([
         ['a' => 'foo', 'b' => 'foo', 'c' => 'foo'],
@@ -274,7 +274,7 @@ test('sort values', function (): void {
 test('apply index map values', function (): void {
     $df = $this->df;
 
-    $df->modify()->applyIndexMap([
+    $df->update()->applyIndexMap([
         0 => 0,
         2 => 0,
     ], 'a');

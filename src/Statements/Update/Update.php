@@ -2,31 +2,17 @@
 
 declare(strict_types=1);
 
-namespace MammothPHP\WoollyM\Statements\Modify;
+namespace MammothPHP\WoollyM\Statements\Update;
 
 use ArrayAccess;
 use Closure;
 use MammothPHP\WoollyM\Exceptions\NotModifiedRecord;
-use MammothPHP\WoollyM\{DataFrame, LinkedDataFrame};
-use MammothPHP\WoollyM\Statements\Select\{Select, SelectAll};
-use Traversable;
+use MammothPHP\WoollyM\DataFrame;
+use MammothPHP\WoollyM\Statements\{SelectAllMode, Statement};
 
-class Modify extends SelectAll
+class Update extends Statement
 {
-    /**
-     * Allows user to "array_merge" two DataFrames so that the rows of one are appended to the rows of current DataFrame object
-     * @param $iterable - The one to add to the current.
-     */
-    public function append(array|Traversable $iterable): DataFrame
-    {
-        $df = $this->getLinkedDataFrame();
-
-        foreach ($iterable as $dfRow) {
-            $df->addRecord($dfRow);
-        }
-
-        return $df;
-    }
+    use SelectAllMode;
 
     /**
      * Replaces all occurences within the DataFrame of regex $pattern with string $replacement
@@ -52,23 +38,6 @@ class Modify extends SelectAll
 
             return $record;
         });
-    }
-
-    /**
-     * Remove record if closure return false
-     * @param $f - ex: fn(array recordData, int $recordKey): bool => ...
-     */
-    public function filter(Closure $f): DataFrame
-    {
-        $df = $this->getLinkedDataFrame();
-
-        foreach ($df as $recordKey => $recordData) {
-            if ($f($recordData, $recordKey) === false) {
-                $df->removeRecord($recordKey);
-            }
-        }
-
-        return $this->getLinkedDataFrame();
     }
 
     /**
@@ -165,16 +134,6 @@ class Modify extends SelectAll
         }
 
         return $this->getLinkedDataFrame();
-    }
-
-    public function setColumn(string $targetColumn, mixed $rightHandSide): self
-    {
-        $this->getLinkedDataFrame()->addColumn($targetColumn);
-        $this->getLinkedDataFrame()->mustHaveColumn($targetColumn);
-
-        $this->getLinkedDataFrame()->col($targetColumn)->set($rightHandSide);
-
-        return $this;
     }
 
 }
