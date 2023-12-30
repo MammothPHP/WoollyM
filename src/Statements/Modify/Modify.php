@@ -25,11 +25,13 @@ class Modify
      */
     public function append(array|Traversable $iterable): DataFrame
     {
+        $df = $this->getLinkedDataFrame();
+
         foreach ($iterable as $dfRow) {
-            $this->getLinkedDataFrame()->addRecord($dfRow);
+            $df->addRecord($dfRow);
         }
 
-        return $this->getLinkedDataFrame();
+        return $df;
     }
 
     /**
