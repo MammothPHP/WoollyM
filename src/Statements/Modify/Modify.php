@@ -8,17 +8,11 @@ use ArrayAccess;
 use Closure;
 use MammothPHP\WoollyM\Exceptions\NotModifiedRecord;
 use MammothPHP\WoollyM\{DataFrame, LinkedDataFrame};
+use MammothPHP\WoollyM\Statements\Select\{Select, SelectAll};
 use Traversable;
 
-class Modify
+class Modify extends SelectAll
 {
-    use LinkedDataFrame;
-
-    public function __construct(DataFrame $df)
-    {
-        $this->setLinkedDataFrame($df);
-    }
-
     /**
      * Allows user to "array_merge" two DataFrames so that the rows of one are appended to the rows of current DataFrame object
      * @param $iterable - The one to add to the current.
@@ -87,7 +81,7 @@ class Modify
 
         $countColumn = $df->countColumns();
 
-        foreach ($df as $i => $record) {
+        foreach ($this as $i => $record) {
             try {
                 $newRecord = $countColumn !== 1 ? $f($record, $i) : $f($record[key($record)], $i);
 
