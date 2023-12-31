@@ -29,7 +29,7 @@ abstract class DataFrameModifiers extends DataFrameStatements
     /**
      * Return a Copy object, methods will return new DataFrame objects.
      */
-    public function delete(DataFrame $to = new DataFrame): Delete
+    public function delete(): Delete
     {
         return new Delete($this);
     }

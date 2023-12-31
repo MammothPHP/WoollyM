@@ -9,6 +9,7 @@ use MammothPHP\WoollyM\Exceptions\InvalidSelectException;
 use MammothPHP\WoollyM\DataDrivers\{ColumnKeyType, DataDriverInterface};
 use MammothPHP\WoollyM\DataDrivers\DriversExceptions\{InvalidDriverClassException, KeyNotExistException};
 use MammothPHP\WoollyM\DataDrivers\PhpArray\PhpArrayDriver;
+use MammothPHP\WoollyM\Statements\Insert\Insert;
 use MammothPHP\WoollyM\Statements\Select\ColumnRepresentation;
 use WeakMap;
 
@@ -36,6 +37,8 @@ abstract class DataFramePrimitives
 
     protected ?array $columnNamesCache = null;
     protected ?array $forcedTypesCache = null;
+
+    abstract function insert(): Insert; // Prevent IDE error
 
     /**
      * @param array<int,array> $data Array data to ingest
