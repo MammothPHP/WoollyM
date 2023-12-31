@@ -51,7 +51,7 @@ abstract class DataFramePrimitives
 
         $this->columnRepresentations = new WeakMap;
 
-        $this->addRecords($data);
+        $this->insert()->append($data);
     }
 
     public function __clone()
@@ -247,19 +247,6 @@ abstract class DataFramePrimitives
     public function addRecord(array $recordArray): self
     {
         $this->data->addRecord($this->convertRecordToAbstract($recordArray));
-
-        return $this;
-    }
-
-    /**
-     * Same as addRecord method, but with an array of many records.
-     * @param array[] $records
-     */
-    public function addRecords(array $records): self
-    {
-        foreach ($records as $oneRow) {
-            $this->addRecord($oneRow);
-        }
 
         return $this;
     }

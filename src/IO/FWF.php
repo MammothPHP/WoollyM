@@ -50,7 +50,7 @@ class FWF extends Builder
             fileData: $this->input ?? $this->convertSplFileToString()
         );
 
-        return $to->addRecords($data);
+        return $to->insert()->append($data);
     }
 
     /**
