@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace MammothPHP\WoollyM\Statements\Insert;
 
-use MammothPHP\WoollyM\DataFrame;
-use MammothPHP\WoollyM\Statements\{SelectAllMode, Statement};
+use MammothPHP\WoollyM\{DataFrame, LinkedDataFrame};
+use MammothPHP\WoollyM\Statements\SelectAllMode;
 use Traversable;
 
-class Insert extends Statement
+class Insert
 {
     use SelectAllMode;
+    use LinkedDataFrame;
 
     /**
      * Add a record.

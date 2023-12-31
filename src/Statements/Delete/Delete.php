@@ -7,7 +7,6 @@ namespace MammothPHP\WoollyM\Statements\Delete;
 use Closure;
 use MammothPHP\WoollyM\DataDrivers\DriversExceptions\KeyNotExistException;
 use MammothPHP\WoollyM\DataFrame;
-use MammothPHP\WoollyM\Exceptions\InvalidSelectException;
 use MammothPHP\WoollyM\Statements\Statement;
 
 class Delete extends Statement

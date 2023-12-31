@@ -15,7 +15,7 @@ beforeEach(function (): void {
 });
 
 
-test('insert a record', function(): void {
+test('insert a record', function (): void {
     $newValue = ['colB' => 64];
     $expected = $this->df->toArray() + [5 => $newValue];
 

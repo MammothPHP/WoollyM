@@ -15,7 +15,7 @@ beforeEach(function (): void {
 });
 
 
-test('update a record', function(): void {
+test('update a record', function (): void {
     $newValue = ['colB' => 64];
     $expected = $this->df->toArray();
     $expected[3] = $newValue;
@@ -25,7 +25,7 @@ test('update a record', function(): void {
     expect($this->df->toArray())->toBe($expected);
 });
 
-test('merge record', function(): void {
+test('merge record', function (): void {
     $newValue = ['colB' => 64, 'colD' => 'foo'];
     $expected = $this->df->toArray();
     $expected[3] = array_merge($expected[3], $newValue);
