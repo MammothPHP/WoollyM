@@ -13,6 +13,16 @@ class Insert extends Statement
     use SelectAllMode;
 
     /**
+     * Add a record.
+     */
+    public function record(array $recordArray): DataFrame
+    {
+        $df = $this->getLinkedDataFrame();
+
+        return $df->addRecord($recordArray);
+    }
+
+    /**
      * Allows user to "array_merge" two DataFrames so that the rows of one are appended to the rows of current DataFrame object
      * @param $iterable - The one to add to the current.
      */

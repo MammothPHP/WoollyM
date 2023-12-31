@@ -15,6 +15,28 @@ class Update extends Statement
     use SelectAllMode;
 
     /**
+     * Update a record by key. Replace it totally by the new. If key does not exist, record will be created.
+     */
+    public function record(int $key, array $recordArray): DataFrame
+    {
+        $df = $this->getLinkedDataFrame();
+
+        return $df->updateRecord($key, $recordArray);
+    }
+
+    /**
+     * Update a record by key, addin or replace provided column, untouching others.
+     */
+    public function mergeRecord(int $key, array $mergeValue): DataFrame
+    {
+        $df = $this->getLinkedDataFrame();
+
+        $mergeValue = array_merge($df->getRecord($key), $mergeValue);
+
+        return $df->updateRecord($key, $mergeValue);
+    }
+
+    /**
      * Replaces all occurences within the DataFrame of regex $pattern with string $replacement
      */
     public function preg_replace(array|string $pattern, array|string $replacement): DataFrame
