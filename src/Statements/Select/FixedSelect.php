@@ -14,7 +14,7 @@ abstract class FixedSelect extends Select
      * @internal
      */
     #[Override]
-    public function select(string ...$selections): self
+    public function select(string ...$selections): static
     {
         throw new UnavailableMethodInContext;
     }
@@ -24,7 +24,7 @@ abstract class FixedSelect extends Select
      * @internal
      */
     #[Override]
-    public function replaceSelect(string ...$selections): self
+    public function replaceSelect(string ...$selections): static
     {
         throw new UnavailableMethodInContext;
     }
@@ -34,7 +34,7 @@ abstract class FixedSelect extends Select
      * @internal
      */
     #[Override]
-    public function reset(): self
+    public function reset(): static
     {
         return $this->resetWhere()->resetLimit();
     }
@@ -44,7 +44,7 @@ abstract class FixedSelect extends Select
      * @internal
      */
     #[Override]
-    public function resetSelect(): self
+    public function resetSelect(): static
     {
         throw new UnavailableMethodInContext;
     }

@@ -66,7 +66,7 @@ abstract class DataFrameModifiers extends DataFrameStatements
      * Sort column order using a closure. Then retrieve records will respect the new order.
      * @param $callback - If null, sort will be alphabetic. For closure, example fn(string $a, string $b): int => $a <=> $b;
      */
-    public function sortColumns(?Closure $callback = null): self
+    public function sortColumns(?Closure $callback = null): static
     {
         $callback ??= fn(string $a, string $b): int => $a <=> $b;
         $finalCallback = fn(ColumnIndex $a, ColumnIndex $b): int => $callback($a->getName(), $b->getName()); // protected ColumnIndex leak
@@ -80,7 +80,7 @@ abstract class DataFrameModifiers extends DataFrameStatements
     /**
      * Sort the rows by its values
      */
-    public function sortValues(array|string $by, bool $ascending = true): self
+    public function sortValues(array|string $by, bool $ascending = true): static
     {
         if (!$this->data instanceof SortableDriverInterface) {
             throw new SortNotSupportedByDriverException;

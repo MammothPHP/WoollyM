@@ -83,7 +83,7 @@ abstract class DataFramePrimitives
     /**
      * Adds a new column to the DataFrame. If column already exist, then nothing will happen.
      */
-    public function addColumn(string $columnName): self
+    public function addColumn(string $columnName): static
     {
         if (!$this->hasColumn($columnName)) {
             $this->columnIndexes[] = $newColumnIndex = new ColumnIndex($columnName, $this);
@@ -98,7 +98,7 @@ abstract class DataFramePrimitives
      * Adds multiple columns to the DataFrame.
      * @param string[] $columnNames
      */
-    public function addColumns(array $columnNames): self
+    public function addColumns(array $columnNames): static
     {
         foreach ($columnNames as $columnName) {
             $this->addColumn($columnName);
@@ -110,7 +110,7 @@ abstract class DataFramePrimitives
     /**
      * Removes a column (and all associated data) from the DataFrame.
      */
-    public function removeColumn(string $columnName): self
+    public function removeColumn(string $columnName): static
     {
         $this->mustHaveColumn($columnName);
 
@@ -190,7 +190,7 @@ abstract class DataFramePrimitives
      *
      * @throws InvalidSelectException
      */
-    public function mustHaveColumn(string $columnName): self
+    public function mustHaveColumn(string $columnName): static
     {
         if ($this->hasColumn($columnName) === false) {
             throw new InvalidSelectException("{$columnName} doesn't exist in DataFrame");
@@ -247,7 +247,7 @@ abstract class DataFramePrimitives
      * Add a record, providing an array indexed by column => value
      * @param array<string, mixed> $recordArray
      */
-    public function addRecord(array $recordArray): self
+    public function addRecord(array $recordArray): static
     {
         $this->data->addRecord($this->convertRecordToAbstract($recordArray));
 
@@ -258,14 +258,14 @@ abstract class DataFramePrimitives
      * Update a record by record key. If key does not exist, record will be created.
      * @param array<string, mixed>
      */
-    public function updateRecord(int $recordKey, array $recordArray): self
+    public function updateRecord(int $recordKey, array $recordArray): static
     {
         $this->data->setRecord($recordKey, $this->convertRecordToAbstract($recordArray));
 
         return $this;
     }
 
-    public function updateCell(int $recordKey, string $column, mixed $newValue): self
+    public function updateCell(int $recordKey, string $column, mixed $newValue): static
     {
         $this->data->setRecordColumn($recordKey, $this->getColumnKey($column), $newValue);
 
@@ -276,7 +276,7 @@ abstract class DataFramePrimitives
      * Remove a record by key
      * @throws KeyNotExistException
      */
-    public function removeRecord(int $recordKey): self
+    public function removeRecord(int $recordKey): static
     {
         $this->data->removeRecord($recordKey);
 

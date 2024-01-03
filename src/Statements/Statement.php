@@ -56,7 +56,7 @@ abstract class Statement implements Iterator
      * @throws InvalidSelectException
      * @throws NotYetImplementedException
      */
-    public function reset(): self
+    public function reset(): static
     {
         return $this->resetSelect()->resetWhere()->resetLimit(); // resetLimit also reset offSet
     }
@@ -66,7 +66,7 @@ abstract class Statement implements Iterator
      * @param $selections - Valid columns names to select
      * @throws InvalidSelectException
      */
-    public function select(string ...$selections): self
+    public function select(string ...$selections): static
     {
         $this->isAliveOrThrowInvalidSelectException();
 
@@ -84,7 +84,7 @@ abstract class Statement implements Iterator
      * @param $selections - Valid columns names to select
      * @throws InvalidSelectException
      */
-    public function replaceSelect(string ...$selections): self
+    public function replaceSelect(string ...$selections): static
     {
         return $this->resetSelect()->select(...$selections);
     }
@@ -92,7 +92,7 @@ abstract class Statement implements Iterator
     /**
      * Unselect all columns from the Select object
      */
-    public function resetSelect(): self
+    public function resetSelect(): static
     {
         $this->select = new WeakMap;
 
@@ -114,7 +114,7 @@ abstract class Statement implements Iterator
         return $r;
     }
 
-    public function where(Closure|string ...$conditions): self
+    public function where(Closure|string ...$conditions): static
     {
         foreach ($conditions as $oneCondition) {
             $this->and($oneCondition);
@@ -124,7 +124,7 @@ abstract class Statement implements Iterator
     }
 
 
-    public function and(Closure|string ...$conditions): self
+    public function and(Closure|string ...$conditions): static
     {
         $this->isAliveOrThrowInvalidSelectException();
 
@@ -135,7 +135,7 @@ abstract class Statement implements Iterator
         return $this;
     }
 
-    public function or(Closure|string ...$conditions): self
+    public function or(Closure|string ...$conditions): static
     {
         $this->isAliveOrThrowInvalidSelectException();
 
@@ -155,7 +155,7 @@ abstract class Statement implements Iterator
         return $this;
     }
 
-    public function whereColumnEqual(string $column, mixed $condition): self
+    public function whereColumnEqual(string $column, mixed $condition): static
     {
         if ($condition instanceof Closure) {
             $condition = static fn(mixed $v): bool => $condition($v[$column]);
@@ -168,7 +168,7 @@ abstract class Statement implements Iterator
         return $this;
     }
 
-    public function whereKeyBetween(int $start = 0, ?int $end = null): self
+    public function whereKeyBetween(int $start = 0, ?int $end = null): static
     {
         $this->isAliveOrThrowInvalidSelectException();
 
@@ -180,14 +180,14 @@ abstract class Statement implements Iterator
     /**
      * Remove all where condition from the select object
      */
-    public function resetWhere(): self
+    public function resetWhere(): static
     {
         $this->where = [];
 
         return $this;
     }
 
-    public function limit(?int $limit = null, int $offset = 0): self
+    public function limit(?int $limit = null, int $offset = 0): static
     {
         $this->isAliveOrThrowInvalidSelectException();
 
@@ -204,14 +204,14 @@ abstract class Statement implements Iterator
     /**
      * Remove all limit and offset conditions from the select object
      */
-    public function resetLimit(): self
+    public function resetLimit(): static
     {
         $this->limit(limit: null, offset: 0);
 
         return $this;
     }
 
-    public function offset(int $offset): self
+    public function offset(int $offset): static
     {
         $this->isAliveOrThrowInvalidSelectException();
 
@@ -227,7 +227,7 @@ abstract class Statement implements Iterator
     /**
      * Remove all offset condition from the select object
      */
-    public function resetOffset(): self
+    public function resetOffset(): static
     {
         $this->offset(0);
 

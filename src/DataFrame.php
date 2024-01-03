@@ -10,7 +10,7 @@ class DataFrame extends DataFrameHelpers
     /**
      * Factory method for creating a DataFrame from a two-dimensional associative array.
      */
-    public static function fromArray(array $data): self
+    public static function fromArray(array $data): static
     {
         return new self($data);
     }
