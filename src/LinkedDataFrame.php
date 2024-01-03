@@ -5,20 +5,15 @@ declare(strict_types=1);
 namespace MammothPHP\WoollyM;
 
 use MammothPHP\WoollyM\Exceptions\InvalidSelectException;
-use WeakReference;
+use ReflectionProperty;
 
 trait LinkedDataFrame
 {
-    protected readonly WeakReference $df;
-
-    public function __clone(): void
-    {
-        $this->setLinkedDataFrame($this->getLinkedDataFrame());
-    }
+    public readonly DataFrame $df;
 
     protected function setLinkedDataFrame(DataFrame $df): void
     {
-        $this->df = WeakReference::create($df);
+        $this->df = $df;
     }
 
     /**
@@ -29,18 +24,22 @@ trait LinkedDataFrame
     {
         $this->isAliveOrThrowInvalidSelectException();
 
-        return $this->df->get();
+        return $this->df;
     }
 
     /**
      * @return - false if linked dataFrame no longer exist.
+     * @internal
      */
     public function isAlive(): bool
     {
-        return $this->df->get() !== null;
+        return (new ReflectionProperty($this, 'df'))->isInitialized($this);
     }
 
-    protected function isAliveOrThrowInvalidSelectException(): void
+    /**
+     * @internal
+     */
+    public function isAliveOrThrowInvalidSelectException(): void
     {
         $this->isAlive() || throw new InvalidSelectException;
     }

@@ -20,7 +20,7 @@ test('internal references with chained methods', function (): void {
 
     // Exported DataFrame must not die immediatly and modify action must not fail
     expect($this->df->col('a')->export()->update()->isAlive())->toBeTrue();
-})->todo();
+});
 
 test('sort columns', function (): void {
     $df = new DataFrame([

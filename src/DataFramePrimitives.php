@@ -38,7 +38,7 @@ abstract class DataFramePrimitives
     protected ?array $columnNamesCache = null;
     protected ?array $forcedTypesCache = null;
 
-    abstract function insert(): Insert; // Prevent IDE error
+    abstract public function insert(): Insert; // Prevent IDE error
 
     /**
      * @param array<int,array> $data Array data to ingest
