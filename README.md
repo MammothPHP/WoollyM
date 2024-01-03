@@ -56,12 +56,12 @@ Performances are optimized to be as light as possible on RAM during operations (
   - [Copy](#copy)
     - [Filter](#filter)
     - [Unique](#unique)
-  - [Modifiers](#modifiers)
-    - [Modification to rows](#modification-to-rows)
+  - [Update](#update)
       - [Applying functions to each row](#applying-functions-to-each-row)
       - [preg\_replace](#preg_replace)
-      - [Filter](#filter-1)
       - [applyIndexMap](#applyindexmap)
+  - [Delete](#delete)
+      - [Filter](#filter-1)
       - [sortValues](#sortvalues)
       - [setColumn](#setcolumn)
       - [sortColumn](#sortcolumn)
@@ -98,20 +98,20 @@ composer require mammothphp/woollym
 
 ## Note on architecture
 - Wolly is extendable, or at least he was trying to get used to the idea.
-- Data are stored in `data-drivers` that are modules. Currently Wolly offer 2 natives modules _(the default PhpArray and PdoSql)_ but you can create your own _(without fork)_. Modules can limit some functionnality but they don't change the public API.
+- Data are stored in `data-drivers` that are modules. Currently Wolly offer 2 natives drivers _(the default PhpArray and PdoSql)_ but you can create your own _(without fork)_. Drivers can limit some functionnality but they don't change the public API.
 - Statements aggregate function _(like sum, count, max...)_ are modules, most current as offer natively, but you can had your own _(without fork)_
 - `Builder` API is used to to create or export a DataFrame from an external sources _(file, database, string...)_ This results in things like  `$df = XLSX::fromFile($path)->import()`.
   - To keep the API as cute as possible for the most common cases, this is different for import/export with an `Array` (or `Traversable`).
   - Builder are simple (and optimized) wrapper on top of DataFrame. You can create your own builder _(using the asbtract class `Builder` or not)_.
-  - Builders should not be confused with `data-drivers`, as the associated methods are always distinct. For example, the PDO Builder will not create a DataFrame using the PdoSql driver to browse or modify the underlying database. In this case, you need to create a DataFrame directly linked to the driver.
+  - Builders should not be confused with `data-drivers`, as the associated methods are always distinct. For example, the PDO Builder will not create a DataFrame using the PdoSql driver to browse or modify the underlying database. In this case, you need to specify the DataFrame object (using the needed driver) in wich to import.
 
 ## Principles
 
 - A `Record` is similar to a line in a spreadsheet.
     - A `Record` can contain from none _(empty record)_ to several `Columns`.
     - The default behavior of API is to return no entry for non-existent columns in the `Record`. But options allow you to virtually return a NULL value if necessary.
-    - Each record has a unique key. Generated on the Wolly side _(more specifically by the data-driver used)_. Currently only integer are supported. The default driver index key from 0.
-    - Each record `Column` (property) contain a value. Can be of any PHP type (and `null`) on the default data-driver.
+    - Each record has a unique key. Generated on the Wolly side _(more specifically by the data-driver used)_. Currently only integer are supported. The default driver (PhpArray) index key from 0.
+    - Each record `Column` (property) contain a value. Can be of any PHP type (including `null`) on the default data-driver, drivers can limit types of silently convert it.
 - A `Column` represents a property common to several records, and is similar to a column in a spreadsheet.
   - `Columns` can be added manually or dynamically (a new `Record` contains a new column) at any time.
   - `Columns` are represented to the user by case-sensitive string names.
@@ -203,9 +203,15 @@ $df[] = [
     'b' => 42,
 ];
 
+// equivalent to
+$df->insert()->record([
+    'a' => 42,
+    'b' => 42,
+]);
 
-// Multiples records
-$df->addRecords([
+
+// Multiples records from array, dataFrame or others iterables
+$df->insert()->append([
     [
     'a' => 42,
     'b' => 42,
@@ -215,26 +221,12 @@ $df->addRecords([
     'b' => 43,
     ],
 ]);
-
-// Equivalent, but compatible with Iterable, DataFrame, Array
-$otherDf = new DataFrame([
-    [
-    'a' => 42,
-    'b' => 42,
-    ],
-    [
-    'a' => 42,
-    'b' => 43,
-    ],
-]);
-
-$df->append($otherDf);
 ```
 
 #### Edit Record
 ```php
 $df->updateRecord(
-    position: 42,
+    key: 42,
     recordArray: [
       'a' => 42,
       'b' => 42,
@@ -245,18 +237,30 @@ $df->updateRecord(
 $df[42] = [
     'a' => 42,
     'b' => 42,
-]);
+];
+
+// equivalent to
+$df->update()->record(
+    key: 42,
+    recordArray: [
+      'a' => 42,
+      'b' => 42,
+    ]
+);
 ```
 
 #### Unset Record(s)
 ```php
-$df->removeRecord(position: 42);
+$df->removeRecord(key: 42);
 
 // equivalent
 unset($df[42]);
 
+// equivalent
+$df->delete()->record(key: 42);
+
 // also equivalent
-$df->filter(fn(array $record, int $position): bool => $position !== 42);
+$df->delete()->applyFilter(fn(array $record, int $position): bool => $position !== 42);
 ```
 
 
@@ -366,19 +370,20 @@ $arr = $df->head(length: 3, offset: 1, columns:['a','c']);
 
 ## Logic and Philosophy
 
-Three main access paths:
-```php
-$df->select('colNameA')->whereColumnEqual('colB', 42); // Return a new Select object
-$df->copy()->unique(onColumns: 'colA'); // Return a new DataFrame contaning unique value from column A
-$df->append($iterable); // Return $df (self)
-```
+Accessing data or modifying it, use an Sql inspired syntax using the keyword `select()`, `insert()`, `update()`, `delete()`, `copy()` as a prefix to corresponding methods.
 
- The `Select` object represents a statement to explore au subset of data corresponding to selection and doing stats with them. You can build them using a SQL-like constructor. They offer some commodity helpers methods to modify or copy directly the selected data, but it's not its main purpose.
- The `Copy` object offers an API to return a NEW DataFrame without modifying anything from the original DataFrame. It's also possible to export a Select object to a new DataFrame.
- Even if it's possible to modify a DataFrame using some methods from the Select object to apply to a selection. Most modifiers are directly accessible from the DataFrame object.
+```php
+$df->select('colNameA')->whereColumnEqual('colB', 42); // Return a new Select statement object
+$df->insert()->append($iterable); // Return $df (self)
+$df->update()->record(key: 42, $recordArray); // Return $df (self)
+$df->delete()->whereColumnEqual('colA', 'foo')->execute(); // Return $df (self)
+
+$df->copy()->unique(onColumns: 'colA'); // Return a new DataFrame contaning unique value from column A
+```
 
 
 ## The Select Statement
+The `Select` object represents a statement to explore au subset of data corresponding to selection and doing stats with them. You can build them using a SQL-like constructor. They offer some commodity helpers methods to modify or copy directly the selected data, but it's not its main purpose.
 
 ### The three different types of Select statements
 ```php
@@ -426,6 +431,7 @@ foreach($df->selectAll()->where(fn($r) => $r) as $recordKey => $record) {
 ```
 
 ### Copy from a Select Statement
+
 Return the result as a new DataFrame object:
 ```php
 $newDf = $df->select('colA','colC')->whereColumnEqual('colB', 42)->export();
@@ -461,6 +467,8 @@ $stmt->max(); // max value (numeric)
 
 > [!NOTE]
 > Clone the DataFrame then use equivalent modifier can be more efficient about memory consumtpion than the copy. Depending of the data-driver used and the PHP Copy-on-write feature. Wolly has a good PHP cloning support.
+
+ The `Copy` object offers an API to return a NEW DataFrame without modifying anything from the original DataFrame. It's also possible to export a Select object to a new DataFrame, but Copy API also offer transformations methods.
 
 ```php
 // To a new Data Frame
@@ -522,13 +530,11 @@ expect($newDf->toArray())
     );
 ```
 
-## Modifiers
-
-### Modification to rows
+## Update
 
 #### Applying functions to each row
 ```php
-$df->apply(function ($record, $index) {
+$df->update()->apply(function ($record, $index) {
     $record['a'] = $record['c'] + 1;
     return $record;
 });
@@ -536,41 +542,21 @@ $df->apply(function ($record, $index) {
 
 #### preg_replace
 ```php
-    $df = new dataFrame([
+    $df = new DataFrame([
         ['a' => 1, 'b' => 2, 'c' => 3],
         ['a' => 4, 'b' => 5, 'c' => 6],
         ['a' => 7, 'b' => 8, 'c' => 9],
     ]);
     
-    $df->preg_replace('/[1-5]/', 'foo');
+    $df->update()->preg_replace('/[1-5]/', 'foo');
 
-    df->toArray();
+    $df->toArray();
     // To Be:
     [
         ['a' => 'foo', 'b' => 'foo', 'c' => 'foo'],
         ['a' => 'foo', 'b' => 'foo', 'c' => 6],
         ['a' => 7, 'b' => 8, 'c' => 9],
-    ]);
-```
-
-#### Filter
-```php
-$df = DataFrame::fromArray([
-    ['a' => 1, 'b' => 2, 'c' => 3],
-    ['a' => 4, 'b' => 5, 'c' => 6],
-    ['a' => 7, 'b' => 8, 'c' => 9],
-]);
-
-$df->filter(static function (array $record, int $recordKey) {
-    return $record['a'] > 4 || $record['a'] < 4;
-});
-
-$df->toArray();
-// To Be:
-[
-    ['a' => 1, 'b' => 2, 'c' => 3],
-    ['a' => 7, 'b' => 8, 'c' => 9],
-];
+    ];
 ```
 
 #### applyIndexMap
@@ -590,7 +576,7 @@ Source:
 
 By column:
 ```php
-    $df->applyIndexMap(
+    $df->update()->applyIndexMap(
         map: [
             0 => 'foo',
             1 => fn($oldValue) => $oldValue * 2,
@@ -610,7 +596,7 @@ By column:
 
 By row:
 ```php
-    $df->applyIndexMap(
+    $df->update()->applyIndexMap(
         map: [
             1 => fn(array $oldRecord): array => array_map(fn(int $v): int => $v * 2, $oldRecord),
             2 => [ 'a' => 1, 'b' => 2, 'c' => 3 ],
@@ -624,6 +610,29 @@ By row:
         1 => ['a' => 8, 'b' => 10, 'c' => 12],
         2 => ['a' => 1, 'b' => 2, 'c' => 3],
     ]
+```
+
+
+## Delete
+
+#### Filter
+```php
+$df = DataFrame::fromArray([
+    ['a' => 1, 'b' => 2, 'c' => 3],
+    ['a' => 4, 'b' => 5, 'c' => 6],
+    ['a' => 7, 'b' => 8, 'c' => 9],
+]);
+
+$df->delete()->filter(static function (array $record, int $recordKey) {
+    return $record['a'] > 4 || $record['a'] < 4;
+});
+
+$df->toArray();
+// To Be:
+[
+    ['a' => 1, 'b' => 2, 'c' => 3],
+    ['a' => 7, 'b' => 8, 'c' => 9],
+];
 ```
 
 #### sortValues

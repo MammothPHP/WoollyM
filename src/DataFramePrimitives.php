@@ -258,9 +258,9 @@ abstract class DataFramePrimitives
      * Update a record by record key. If key does not exist, record will be created.
      * @param array<string, mixed>
      */
-    public function updateRecord(int $recordKey, array $recordArray): static
+    public function updateRecord(int $key, array $recordArray): static
     {
-        $this->data->setRecord($recordKey, $this->convertRecordToAbstract($recordArray));
+        $this->data->setRecord($key, $this->convertRecordToAbstract($recordArray));
 
         return $this;
     }
@@ -276,9 +276,9 @@ abstract class DataFramePrimitives
      * Remove a record by key
      * @throws KeyNotExistException
      */
-    public function removeRecord(int $recordKey): static
+    public function removeRecord(int $key): static
     {
-        $this->data->removeRecord($recordKey);
+        $this->data->removeRecord($key);
 
         return $this;
     }

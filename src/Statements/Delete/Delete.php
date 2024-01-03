@@ -7,19 +7,20 @@ namespace MammothPHP\WoollyM\Statements\Delete;
 use Closure;
 use MammothPHP\WoollyM\DataDrivers\DriversExceptions\KeyNotExistException;
 use MammothPHP\WoollyM\DataFrame;
+use MammothPHP\WoollyM\Statements\SelectAllMode;
 use MammothPHP\WoollyM\Statements\Statement;
 
 class Delete extends Statement
 {
+    use SelectAllMode;
+
     /**
      * Delete a record by key
      * @throws KeyNotExistException
      */
     public function record(int $key): DataFrame
     {
-        $df = $this->getLinkedDataFrame();
-
-        return $df->removeRecord($key);
+        return $this->getLinkedDataFrame()->removeRecord($key);
     }
 
     /**
@@ -30,12 +31,12 @@ class Delete extends Statement
     {
         $df = $this->getLinkedDataFrame();
 
-        foreach ($df as $recordKey => $recordData) {
+        foreach ($this as $recordKey => $recordData) {
             if ($f($recordData, $recordKey) === false) {
                 $df->removeRecord($recordKey);
             }
         }
 
-        return $this->getLinkedDataFrame();
+        return $df;
     }
 }

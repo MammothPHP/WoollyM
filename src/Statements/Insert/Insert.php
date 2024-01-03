@@ -18,9 +18,7 @@ class Insert
      */
     public function record(array $recordArray): DataFrame
     {
-        $df = $this->getLinkedDataFrame();
-
-        return $df->addRecord($recordArray);
+        return $this->getLinkedDataFrame()->addRecord($recordArray);
     }
 
     /**
