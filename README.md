@@ -54,6 +54,11 @@ Performances are optimized to be as light as possible on RAM during operations (
     - [Copy from a Select Statement](#copy-from-a-select-statement)
     - [Aggregate stats function](#aggregate-stats-function)
   - [Copy](#copy)
+    - [Modification to a Selection](#modification-to-a-selection)
+      - [Applying functions to a selection directly](#applying-functions-to-a-selection-directly)
+      - [Set a value for each record in a column](#set-a-value-for-each-record-in-a-column)
+      - [Set DataFrame (single column) to a column](#set-dataframe-single-column-to-a-column)
+      - [Set Column to a Column](#set-column-to-a-column)
     - [Filter](#filter)
     - [Unique](#unique)
   - [Update](#update)
@@ -61,15 +66,12 @@ Performances are optimized to be as light as possible on RAM during operations (
       - [preg\_replace](#preg_replace)
       - [applyIndexMap](#applyindexmap)
   - [Delete](#delete)
+      - [Execute](#execute)
       - [Filter](#filter-1)
+  - [Sorting](#sorting)
       - [sortValues](#sortvalues)
       - [setColumn](#setcolumn)
       - [sortColumn](#sortcolumn)
-    - [Modification to a Selection](#modification-to-a-selection)
-      - [Applying functions to a selection directly](#applying-functions-to-a-selection-directly)
-      - [Set a value for each record in a column](#set-a-value-for-each-record-in-a-column)
-      - [Set DataFrame (single column) to a column](#set-dataframe-single-column-to-a-column)
-      - [Set Column to a Column](#set-column-to-a-column)
   - [Types Data](#types-data)
     - [Convert data to a type (one shot)](#convert-data-to-a-type-one-shot)
     - [Keep an active conversion for a column](#keep-an-active-conversion-for-a-column)
@@ -480,6 +482,34 @@ $df->copy(to: $newDf)->...
 ```
 
 
+### Modification to a Selection
+
+#### Applying functions to a selection directly
+```php
+$closure = fn (mixed $value, int $position) => $value + 3;
+
+$df->col('a')->apply($closure);
+
+// Equivalent to
+$df->update('a')->apply($closure);
+```
+
+#### Set a value for each record in a column
+```php
+$df->col('a')->set(42);
+```
+
+#### Set DataFrame (single column) to a column
+```php
+$df->col('a')->set(new Dataframe( [[1],[2],[3]] ));
+```
+
+#### Set Column to a Column
+```php
+$df->col('a')->set($df->col('b')->asDataFrame);
+```
+
+
 ### Filter
 ```php
 $df = DataFrame::fromArray([
@@ -615,6 +645,29 @@ By row:
 
 ## Delete
 
+#### Execute
+```php
+    $df = DataFrame::fromArray([
+        ['colA' => 1, 'colB' => 2, 'colC' => 3],
+        ['colA' => 4, 'colB' => 5, 'colC' => 6],
+        ['colA' => 7, 'colB' => 8, 'colC' => 9],
+        ['colA' => 10, 'colB' => 11, 'colC' => 12],
+        ['colA' => 13, 'colB' => 14, 'colC' => 15],
+    ]);
+    
+    $df->delete()
+        ->whereColumnEqual('colB', 5)
+        ->or(fn (array $record): bool => $record['colA'] >= 10)
+        ->execute();
+
+    $df->toArray();
+    // To Be:
+    [
+        0 => ['colA' => 1, 'colB' => 2, 'colC' => 3],
+        2 => ['colA' => 7, 'colB' => 8, 'colC' => 9],
+    ]
+```
+
 #### Filter
 ```php
 $df = DataFrame::fromArray([
@@ -635,6 +688,8 @@ $df->toArray();
 ];
 ```
 
+## Sorting
+
 #### sortValues
 _TO DOCUMENT_
 
@@ -643,28 +698,6 @@ _TO DOCUMENT_
 
 #### sortColumn
 _TO DOCUMENT_
-
-### Modification to a Selection
-
-#### Applying functions to a selection directly
-```php
-$df->col('a')->apply(fn (mixed $value, int $position) => $value + 3);
-```
-
-#### Set a value for each record in a column
-```php
-$df->col('a')->set(42);
-```
-
-#### Set DataFrame (single column) to a column
-```php
-$df->col('a')->set(new Dataframe( [[1],[2],[3]] ));
-```
-
-#### Set Column to a Column
-```php
-$df->col('a')->set($df->col('b')->asDataFrame);
-```
 
 
 ## Types Data
