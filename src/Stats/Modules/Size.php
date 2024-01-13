@@ -11,24 +11,22 @@ class Size implements StatsMethodInterface, StatsPropertyInterface
 {
     public const string NAME = 'size';
 
-    public function executeProperty(Select $select): int|float
+    public function executeProperty(Select $select): int
     {
         return $this->execute($select);
     }
 
-    public function executeMethod(Select $select, array $arguments): int|float
+    public function executeMethod(Select $select, array $arguments): int
     {
         return $this->execute($select, ...$arguments);
     }
 
-    protected function execute(Select $select): int|float
+    protected function execute(Select $select): int
     {
         $r = 0;
 
         foreach ($select as $record) {
-            foreach ($record as $value) {
-                $r++;
-            }
+            $r += \count($record);
         }
 
         return $r;

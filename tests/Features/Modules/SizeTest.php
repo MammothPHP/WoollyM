@@ -29,3 +29,15 @@ test('size all', function (): void {
         ->toBe($expected)
     ;
 });
+
+test('size with filters', function(): void {
+    $df = new DataFrame([
+        ['colA' => 42, 'colB' => 7 , 'colC' => 8],
+        ['colA' => 77, 'colB' => 7 , 'colC' => 42],
+        ['colA' => 77, 'colB' => 7 , 'colC' => 8],
+        ['colA' => 42, 'colB' => 7 , 'colC' => 42],
+        ['colA' => 77, 'colB' => 7 , 'colC' => 8],
+    ]);
+
+    expect($df->select('colA', 'colC')->whereColumnEqual('colA', 42)->size())->toBe(4);
+});
