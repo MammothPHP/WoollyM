@@ -166,12 +166,12 @@ test('apply index map array', function (): void {
 });
 
 test('filter', function (): void {
-    $this->df->delete()->applyFilter(function (array $rowArray, int $position): bool {
+    $this->df->delete()->filter(function (array $rowArray, int $position): bool {
         if ($position === 1 || \in_array(7, $rowArray, true)) {
-            return false;
+            return true;
         }
 
-        return true;
+        return false;
     });
 
     expect($this->df->toArray())->toBe([

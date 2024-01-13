@@ -23,3 +23,15 @@ test('delete record', function (): void {
 
     expect($this->df->toArray())->toBe($expected);
 });
+
+test('delete all statement', function(): void {
+    $this->df->delete()
+        ->whereColumnEqual('colB', 5)
+        ->or(fn (array $record): bool => $record['colA'] >= 10)
+        ->execute();
+
+    expect($this->df->toArray())->toBe([
+        0 => ['colA' => 1, 'colB' => 2, 'colC' => 3],
+        2 => ['colA' => 7, 'colB' => 8, 'colC' => 9],
+    ]);
+});
