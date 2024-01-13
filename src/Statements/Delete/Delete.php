@@ -7,9 +7,7 @@ namespace MammothPHP\WoollyM\Statements\Delete;
 use Closure;
 use MammothPHP\WoollyM\DataDrivers\DriversExceptions\KeyNotExistException;
 use MammothPHP\WoollyM\DataFrame;
-use MammothPHP\WoollyM\Exceptions\InvalidSelectException;
-use MammothPHP\WoollyM\Statements\SelectAllMode;
-use MammothPHP\WoollyM\Statements\Statement;
+use MammothPHP\WoollyM\Statements\{SelectAllMode, Statement};
 
 class Delete extends Statement
 {
@@ -20,7 +18,7 @@ class Delete extends Statement
      */
     public function execute(): DataFrame
     {
-        return $this->filter(static fn (): bool => true);
+        return $this->filter(static fn(): bool => true);
     }
 
     /**

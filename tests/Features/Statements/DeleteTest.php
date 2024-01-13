@@ -24,10 +24,10 @@ test('delete record', function (): void {
     expect($this->df->toArray())->toBe($expected);
 });
 
-test('delete all statement', function(): void {
+test('delete all statement', function (): void {
     $this->df->delete()
         ->whereColumnEqual('colB', 5)
-        ->or(fn (array $record): bool => $record['colA'] >= 10)
+        ->or(fn(array $record): bool => $record['colA'] >= 10)
         ->execute();
 
     expect($this->df->toArray())->toBe([
