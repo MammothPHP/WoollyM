@@ -88,7 +88,7 @@ class ColumnRepresentation extends FixedSelect implements Stringable
      */
     public function type(DataType $type, array|string|null $fromDateFormat = null, ?string $toDateFormat = null): self
     {
-        $this->apply(fn(mixed $value): mixed => $type->convert($value, $fromDateFormat, $toDateFormat));
+        $this->apply(static fn(mixed $value): mixed => $type->convert($value, $fromDateFormat, $toDateFormat));
 
         return $this;
     }
@@ -198,6 +198,6 @@ class ColumnRepresentation extends FixedSelect implements Stringable
      */
     public function setColumnValue(mixed $value): void
     {
-        $this->apply(fn(): mixed => $value);
+        $this->apply(static fn(): mixed => $value);
     }
 }

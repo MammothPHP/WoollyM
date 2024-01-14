@@ -11,16 +11,16 @@
     "ext-pdo_sqlite": "*",
     "gajus/dindent": "dev-master",
     "phpoffice/phpspreadsheet": "^1.29",
-    "league/csv": "^9.11",
+    "league/csv": "^9.14",
     "halaxa/json-machine": "^1.1"
   },
   "require-dev": {
     "laravel/pint": "^1.13",
-    "pestphp/pest": "^2.20",
+    "pestphp/pest": "^2.30",
     "phpbench/phpbench": "^1.2",
     "nunomaduro/phpinsights": "^2.11",
-    "phploc/phploc": "^2.0",
-    "pestphp/pest-plugin-type-coverage": "^2.5"
+    "phploc/phploc": "dev-main",
+    "pestphp/pest-plugin-type-coverage": "^2.8"
   },
   "autoload": {
     "psr-4": { "MammothPHP\\WoollyM\\": "src/"}

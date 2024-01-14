@@ -689,13 +689,13 @@ $df->toArray();
 ```
 
 ## Sorting
+_Sorting can be incompatible with some drivers. And some of them could be accelerated by some compatible drivers._
 
 #### sortRecordsByColumns
 Sort record ascending / descing by column(s).
 ```php
 $df->sortRecordByColumns(by: 'colA', ascending: true);
 $df->sortRecordByColumns(by: ['colA', 'colB'], ascending: true); // By colA then colB
-
 ```
 
 #### sortColumn
@@ -707,6 +707,8 @@ If no callback has been supplied, then it's will arrange it using alphabetics or
 ```
 
 ## Types Data
+> [!WARNING]
+> Type's system is unsatisfactory and will certainly be totally rethought in the future.
 
 Two ways:
 1. Converts pre-existing data once only 
