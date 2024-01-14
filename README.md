@@ -144,7 +144,7 @@ $df = new DataFrame($arr);
 ### Import or export from/to an external source
 _To limit external dependencies, some modules could require a separate `composer require`. Please consult the instructions for each of the needed modules.__ 
 
->>> [Import/Export modules documentation and examples](doc/WorkingWithExternalsFormats)
+> [Import/Export modules documentation and examples](doc/WorkingWithExternalsFormats)
 
 | Module | Import | Export | Performances & Limit
 | --- | --- | --- | ---
@@ -744,7 +744,7 @@ $df = DataFrame::fromArray([
     ['a' => 7, 'b' => 8, 'c' => 9],
 ]);
 
-$resultingDf = $df->copy()->query(" SELECT
+$resultingDf = $df->copy()->fromSqlQuery(" SELECT
                         a,
                         b
                         FROM dataframe

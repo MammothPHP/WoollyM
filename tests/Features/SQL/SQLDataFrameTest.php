@@ -59,7 +59,7 @@ test('group by sqlite', function (): void {
         ['a' => 'foo', 'b' => 4],
     ];
 
-    $actual = $df->copy()->query('SELECT a, sum(b) AS b FROM dataframe GROUP BY 1 ORDER BY 1 ASC')->toArray();
+    $actual = $df->copy()->fromSqlQuery('SELECT a, sum(b) AS b FROM dataframe GROUP BY 1 ORDER BY 1 ASC')->toArray();
 
     expect($actual)->not->toBe($df);
     expect($actual)->toBe($expected);
@@ -72,7 +72,7 @@ test('data frame select', function (): void {
         ['a' => 7, 'b' => 8, 'c' => 9],
     ]);
 
-    $df = $df->copy()->query("SELECT a, c
+    $df = $df->copy()->fromSqlQuery("SELECT a, c
         FROM dataframe
         WHERE a = '4'
           OR b = '2';");
@@ -92,7 +92,7 @@ test('data frame select update', function (): void {
         ['a' => 7, 'b' => 8, 'c' => 9],
     ]);
 
-    $df = $df->copy()->query('UPDATE dataframe SET a = c * 2;');
+    $df = $df->copy()->fromSqlQuery('UPDATE dataframe SET a = c * 2;');
 
     $expected = [
         ['a' => 6, 'b' => 2, 'c' => 3],

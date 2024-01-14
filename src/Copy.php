@@ -74,7 +74,7 @@ class Copy
      * Table name will always be 'dataframe'
      * @throws DataFrameException
      */
-    public function query(string $sql): DataFrame
+    public function fromSqlQuery(string $sql): DataFrame
     {
         $table = 'dataframe';
         $sql = trim($sql);
