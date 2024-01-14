@@ -5,7 +5,7 @@
 </p>
 
 > Main Author: [Julien Boudry](https://www.linkedin.com/in/julienboudry/)  
-> License: [BSD-3](LICENSE.txt) - _Please [say hello](https://github.com/MammothPHP/WoollyM/discussions/categories/your-wolly-projects) if you like or use this code!_  
+> License: [BSD-3](LICENSE.txt) - _Please [say hello](https://github.com/MammothPHP/WoollyM/discussions/categories/your-woolly-projects) if you like or use this code!_  
 > Contribute: [Contribute File](CONTRIBUTING.md)   
 > Donation: ₿ [bc1q3jllk3qd9fjvvuqy07tawkv7t6h7qjf55fc2gh](https://blockchair.com/bitcoin/address/bc1q3jllk3qd9fjvvuqy07tawkv7t6h7qjf55fc2gh) or [Github Sponsor Page](https://github.com/sponsors/julien-boudry)  
 > _You can also offer me a bottle of good wine._  
@@ -14,18 +14,19 @@
 > This project is currently at an experimental stage. Production use is not recommended. APIs and functionalities are subject to change at any time without notice. Documentation is still deficient. Help and feedback are most welcome.
 
 > [!NOTE]
-> _Wolly was a fork from [archon/dataframe](https://github.com/hwperkins/Archon) project which was very useful and inspiring during development. Today, the internal engine has been almost completely rewritten and the public APIs are radically different and incompatible. A few traces of code and ideas remain, they have been placed by their original author under the BSD-3 license._
+> _Woolly was a fork from [archon/dataframe](https://github.com/hwperkins/Archon) project which was very useful and inspiring during development. Today, the internal engine has been almost completely rewritten and the public APIs are radically different and incompatible. A few traces of code and ideas remain, they have been placed by their original author under the BSD-3 license._
 
 # WoollyM: PHP Dataframes for Data Analysis library
 
 WoollyM is a PHP library for data analysis. It can be used to represent tabular data from various sources _(CSV, database, JSON, Excel...)_. The unified API can then be used easily to browse, analyze, modify, and export data in a variety of formats, we try to provide a very playful, modern, expressive, and user-friendly interface. This API is also modular and extensible, so you can easily add your own calculation and exploration methods.
 
-Performances are optimized to be as light as possible on RAM during operations (input, output, read, write, stats, copy, clone), this is done using - internally - complex iterators and optimization preferring RAM over speed (even if we try to be fast also). The storage engine uses a modular storage system, if the default PhpArray driver uses RAM, the use of a database driver (such as the PDO driver) theoretically allows you to work on extremely large datasets. Using appropriate drivers, you can also write - for example - directly to the database (add, update) using the Wolly API.
+Performances are optimized to be as light as possible on RAM during operations (input, output, read, write, stats, copy, clone), this is done using - internally - complex iterators and optimization preferring RAM over speed (even if we try to be fast also). The storage engine uses a modular storage system, if the default PhpArray driver uses RAM, the use of a database driver (such as the PDO driver) theoretically allows you to work on extremely large datasets. Using appropriate drivers, you can also write - for example - directly to the database (add, update) using the Woolly API.
 
 - [WoollyM: PHP Dataframes for Data Analysis library](#woollym-php-dataframes-for-data-analysis-library)
   - [Installation](#installation)
     - [Using Composer:](#using-composer)
     - [Requirements](#requirements)
+    - [Namespace](#namespace)
   - [Note on architecture](#note-on-architecture)
   - [Principles](#principles)
   - [Instantiation (basic)](#instantiation-basic)
@@ -82,14 +83,13 @@ Performances are optimized to be as light as possible on RAM during operations (
     - [Natively provided drivers](#natively-provided-drivers)
     - [Aggregate Function optimized on driver side (performance)](#aggregate-function-optimized-on-driver-side-performance)
     - [Use specific drivers (PdoSql example)](#use-specific-drivers-pdosql-example)
-    - [Implement your custom drivers for WollyM](#implement-your-custom-drivers-for-wollym)
+    - [Implement your custom drivers for WoollyM](#implement-your-custom-drivers-for-woollym)
 - [Create custom aggregation functions](#create-custom-aggregation-functions)
 
 
 ## Installation
 
 ### Using Composer:
-
 ```sh
 composer require mammothphp/woollym
 ```
@@ -98,9 +98,14 @@ composer require mammothphp/woollym
  - PHP 8.3 or higher
  - php_mbstring extension
 
+### Namespace
+```php
+use MammothPHP\WoollyM\DataFrame;
+```
+
 ## Note on architecture
-- Wolly is extendable, or at least he was trying to get used to the idea.
-- Data are stored in `data-drivers` that are modules. Currently Wolly offer 2 natives drivers _(the default PhpArray and PdoSql)_ but you can create your own _(without fork)_. Drivers can limit some functionnality but they don't change the public API.
+- Woolly is extendable, or at least he was trying to get used to the idea.
+- Data are stored in `data-drivers` that are modules. Currently Woolly offer 2 natives drivers _(the default PhpArray and PdoSql)_ but you can create your own _(without fork)_. Drivers can limit some functionnality but they don't change the public API.
 - Statements aggregate function _(like sum, count, max...)_ are modules, most current as offer natively, but you can had your own _(without fork)_
 - `Builder` API is used to to create or export a DataFrame from an external sources _(file, database, string...)_ This results in things like  `$df = XLSX::fromFile($path)->import()`.
   - To keep the API as cute as possible for the most common cases, this is different for import/export with an `Array` (or `Traversable`).
@@ -112,16 +117,12 @@ composer require mammothphp/woollym
 - A `Record` is similar to a line in a spreadsheet.
     - A `Record` can contain from none _(empty record)_ to several `Columns`.
     - The default behavior of API is to return no entry for non-existent columns in the `Record`. But options allow you to virtually return a NULL value if necessary.
-    - Each record has a unique key. Generated on the Wolly side _(more specifically by the data-driver used)_. Currently only integer are supported. The default driver (PhpArray) index key from 0.
-    - Each record `Column` (property) contain a value. Can be of any PHP type (including `null`) on the default data-driver, drivers can limit types of silently convert it.
+    - Each record has a unique key. Generated on the Woolly side _(more specifically by the data-driver used)_. Currently only integer are supported. The default driver (PhpArray) index key from 0.
+    - Each record `Column` (property) contain a value. Can be of any PHP type (including `null`) on the default data-driver, others drivers can limit types of silently convert it.
 - A `Column` represents a property common to several records, and is similar to a column in a spreadsheet.
-  - `Columns` can be added manually or dynamically (a new `Record` contains a new column) at any time.
+  - `Columns` can be added manually or dynamically (a new `Record` can contains a new column) at any time.
   - `Columns` are represented to the user by case-sensitive string names.
-  - It is not currently possible to reorder columns, but this should never matter. But it's possible to delete it.
-  - It's possible to interact specifically with a column using the `$df->col('colName')` API, under the hood this returns an augmented Select statement with specific methods, this also opens the way to higher optimized performance with compatible drivers.
 
-- The royal road to a modified copy of a DataFrame is the API `$df->copy()` but it's not the only way because some magical methods are also available elsewhere for practical reasons.
-- The perfect way work on a filtered portion of the DataFrame without copy it is the API `$df->select()`.
 
 ## Instantiation (basic)
 
@@ -468,7 +469,7 @@ $stmt->max(); // max value (numeric)
 > Copy operations are not yet well optimized about memory consumption. Some of them have the potential to do so significantly in the future; others won't really be able to.
 
 > [!NOTE]
-> Clone the DataFrame then use equivalent modifier can be more efficient about memory consumtpion than the copy. Depending of the data-driver used and the PHP Copy-on-write feature. Wolly has a good PHP cloning support.
+> Clone the DataFrame then use equivalent modifier can be more efficient about memory consumtpion than the copy. Depending of the data-driver used and the PHP Copy-on-write feature. Woolly has a good PHP cloning support.
 
  The `Copy` object offers an API to return a NEW DataFrame without modifying anything from the original DataFrame. It's also possible to export a Select object to a new DataFrame, but Copy API also offer transformations methods.
 
@@ -787,7 +788,7 @@ $df = new DataFrame(dataDriver: $PdoDriver);
 ```
 
 
-### Implement your custom drivers for WollyM
+### Implement your custom drivers for WoollyM
 __TODO__
 
 
