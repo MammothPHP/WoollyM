@@ -69,8 +69,7 @@ Performances are optimized to be as light as possible on RAM during operations (
       - [Execute](#execute)
       - [Filter](#filter-1)
   - [Sorting](#sorting)
-      - [sortValues](#sortvalues)
-      - [setColumn](#setcolumn)
+      - [sortRecordsByColumns](#sortrecordsbycolumns)
       - [sortColumn](#sortcolumn)
   - [Types Data](#types-data)
     - [Convert data to a type (one shot)](#convert-data-to-a-type-one-shot)
@@ -691,15 +690,21 @@ $df->toArray();
 
 ## Sorting
 
-#### sortValues
-_TO DOCUMENT_
+#### sortRecordsByColumns
+Sort record ascending / descing by column(s).
+```php
+$df->sortRecordByColumns(by: 'colA', ascending: true);
+$df->sortRecordByColumns(by: ['colA', 'colB'], ascending: true); // By colA then colB
 
-#### setColumn
-_TO DOCUMENT_
+```
 
 #### sortColumn
-_TO DOCUMENT_
+Rearranges the order of columns by column name. Takes as argument a Clusure that functions identically to the native PHP uasort() api.
+If no callback has been supplied, then it's will arrange it using alphabetics order.
 
+```php
+    $df->sortColumns(fn(string $a, string $b): int => $a <=> $b);
+```
 
 ## Types Data
 
@@ -821,6 +826,9 @@ Modules::registerModule(
         }
     }
 );
+
+
+// Use it!
 
 $df = new DataFrame([
     ['colA' => 42, 'colB' => 7 , 'colC' => 8],

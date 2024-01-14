@@ -10,7 +10,6 @@ use MammothPHP\WoollyM\DataDrivers\DriversExceptions\SortNotSupportedByDriverExc
 use MammothPHP\WoollyM\Statements\Delete\Delete;
 use MammothPHP\WoollyM\Statements\Insert\Insert;
 use MammothPHP\WoollyM\Statements\Update\Update;
-use MammothPHP\WoollyM\Statements\Sort\Sort;
 
 abstract class DataFrameModifiers extends DataFrameStatements
 {
@@ -50,16 +49,8 @@ abstract class DataFrameModifiers extends DataFrameStatements
         return new Update($this);
     }
 
-    /**
-     * Return a Sort object, methods will return new DataFrame objects.
-     */
-    public function sort(): Sort
-    {
-        return new Sort($this);
-    }
-
     /* *****************************************************************************************************************
-     ******************************************* Others Modidiers ******************************************************
+     ******************************************* Sorts *****************************************************************
      ******************************************************************************************************************/
 
     /**
@@ -78,9 +69,9 @@ abstract class DataFrameModifiers extends DataFrameStatements
     }
 
     /**
-     * Sort the rows by its values
+     * Sort the records by columns
      */
-    public function sortValues(array|string $by, bool $ascending = true): static
+    public function sortRecordsByColumns(array|string $by, bool $ascending = true): static
     {
         if (!$this->data instanceof SortableDriverInterface) {
             throw new SortNotSupportedByDriverException;

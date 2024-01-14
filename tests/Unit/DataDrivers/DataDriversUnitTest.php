@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use MammothPHP\WoollyM\DataDrivers\{ColumnKeyType, DataDriverInterface};
-use MammothPHP\WoollyM\DataDrivers\DriversExceptions\{InvalidDriverClassException, SortNotSupportedByDriverException};
+use MammothPHP\WoollyM\DataDrivers\DataDriverInterface;
+use MammothPHP\WoollyM\DataDrivers\DriversExceptions\SortNotSupportedByDriverException;
 use MammothPHP\WoollyM\DataFrame;
 
 class InvalidDriverClass {}
@@ -43,5 +43,5 @@ class NotSortableDriver implements DataDriverInterface
 test('sort require a compatible driver', function (): void {
     $df = new DataFrame(dataDriver: new NotSortableDriver);
 
-    $df->sortValues('col1');
+    $df->sortRecordsByColumns('col1');
 })->throws(SortNotSupportedByDriverException::class);

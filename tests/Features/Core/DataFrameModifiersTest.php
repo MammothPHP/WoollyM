@@ -193,7 +193,7 @@ test('preg replace', function (): void {
 
 
 
-test('sort values', function (): void {
+test('sort record by columns', function (): void {
     // Single column
     $unordered_df = DataFrame::fromArray([
         ['a' => 1, 'x' => 'a'],
@@ -209,7 +209,7 @@ test('sort values', function (): void {
         ['a' => 4, 'x' => 'd'],
     ]);
 
-    $unordered_df->sortValues('a');
+    $unordered_df->sortRecordsByColumns('a');
 
     expect($ordered_df->toArray())->toBe($unordered_df->toArray());
 
@@ -228,7 +228,7 @@ test('sort values', function (): void {
         ['a' => 1, 'x' => 'a'],
     ]);
 
-    $unordered_df->sortValues(by: 'a', ascending: false);
+    $unordered_df->sortRecordsByColumns(by: 'a', ascending: false);
 
     expect($unordered_df->toArray())->toBe($ordered_df->toArray());
 
@@ -247,7 +247,7 @@ test('sort values', function (): void {
         ['a' => 4, 'b' => 1, 'x' => 'b'],
     ]);
 
-    $unordered_df->sortValues(['a', 'x']);
+    $unordered_df->sortRecordsByColumns(['a', 'x']);
 
     expect($unordered_df->toArray())->toBe($ordered_df->toArray());
 
@@ -266,7 +266,7 @@ test('sort values', function (): void {
         ['a' => 4, 'b' => 5, 'x' => 'd'],
     ]);
 
-    $unordered_df->sortValues(['b', 'a']);
+    $unordered_df->sortRecordsByColumns(['b', 'a']);
 
     expect($unordered_df->toArray())->toBe($ordered_df->toArray());
 });
