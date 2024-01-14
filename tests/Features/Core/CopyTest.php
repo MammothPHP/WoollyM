@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use MammothPHP\WoollyM\{Copy, DataFrame};
+use MammothPHP\WoollyM\DataFrame;
 
 beforeEach(function (): void {
     $this->input = [

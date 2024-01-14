@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use MammothPHP\WoollyM\{DataFrame, DataFrameModifiers, DataType};
+use MammothPHP\WoollyM\{DataFrame, DataType};
 
 beforeEach(function (): void {
     $this->df = new DataFrame([

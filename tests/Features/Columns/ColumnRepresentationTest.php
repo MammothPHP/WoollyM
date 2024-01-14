@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use MammothPHP\WoollyM\{DataFrame, DataFrameModifiers};
+use MammothPHP\WoollyM\DataFrame;
 use MammothPHP\WoollyM\Exceptions\{DataFrameException, InvalidSelectException};
 
 beforeEach(function (): void {

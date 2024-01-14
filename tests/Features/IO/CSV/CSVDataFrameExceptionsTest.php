@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 use MammothPHP\WoollyM\DataFrame;
-use MammothPHP\WoollyM\Exceptions\{FileExistsException, InvalidSelectException, UnknownOptionException};
+use MammothPHP\WoollyM\Exceptions\FileExistsException;
 use MammothPHP\WoollyM\IO\CSV;
 
 test('overwrite fail csv', function (): void {
