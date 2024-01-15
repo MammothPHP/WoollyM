@@ -263,7 +263,7 @@ unset($df[42]);
 $df->delete()->record(key: 42);
 
 // also equivalent
-$df->delete()->applyFilter(fn(array $record, int $position): bool => $position !== 42);
+$df->delete()->filter(fn(array $record, int $position): bool => $position === 42);
 ```
 
 
