@@ -20,9 +20,9 @@ abstract class DataFrameModifiers extends DataFrameStatements
     /**
      * Return a Copy object, methods will return new DataFrame objects.
      */
-    public function copy(DataFrame $to = new DataFrame): Copy
+    public function extract(DataFrame $to = new DataFrame): Extract
     {
-        return new Copy($this, $to);
+        return new Extract($this, $to);
     }
 
     /**

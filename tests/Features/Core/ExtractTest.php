@@ -15,7 +15,7 @@ beforeEach(function (): void {
 });
 
 test('clone', function (): void {
-    $clone = $this->df->copy()->clone();
+    $clone = $this->df->extract()->clone();
 
     expect($clone)->not->toBe($this->df);
     expect($clone->toArray())->toBe($this->df->toArray());
@@ -24,13 +24,13 @@ test('clone', function (): void {
 test('filter', function (): void {
     $df = $this->df;
 
-    $df = $df->copy()->filter(static function ($row) {
+    $df = $df->extract()->withFilter(static function ($row) {
         return $row['a'] > 4 || $row['a'] < 4;
     });
 
     expect($df)->not->toBe($this->df);
 
-    expect($df->toArray())->toEqual([
+    expect($df->toArray())->toBe([
         ['a' => 1, 'b' => 2, 'c' => 3],
         ['a' => 7, 'b' => 8, 'c' => 9],
     ]);
@@ -46,20 +46,20 @@ test('unique', function (): void {
         ['a' => 3, 'b' => 5, 'c' => 8],
     ]);
 
-    expect($df->copy()->unique('a')->toArray())->toBe([
+    expect($df->extract()->unique('a')->toArray())->toBe([
         ['a' => 1],
         ['a' => 2],
         ['a' => 3],
     ]);
 
-    expect($df->copy()->unique(['a', 'b'])->toArray())->toBe([
+    expect($df->extract()->unique(['a', 'b'])->toArray())->toBe([
         ['a' => 1, 'b' => 2],
         ['a' => 1, 'b' => 3],
         ['a' => 2, 'b' => 4],
         ['a' => 3, 'b' => 5],
     ]);
 
-    $df = $df->copy()->unique(['a', 'b', 'c']);
+    $df = $df->extract()->unique(['a', 'b', 'c']);
 
     expect($df)->not->toBe($this->df);
 

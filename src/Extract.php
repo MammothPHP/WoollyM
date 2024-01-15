@@ -9,7 +9,7 @@ use MammothPHP\WoollyM\DataDrivers\DataDriverInterface;
 use MammothPHP\WoollyM\IO\SQL;
 use PDO;
 
-class Copy
+class Extract
 {
     use LinkedDataFrame;
 
@@ -29,7 +29,7 @@ class Copy
      * Filter DataFrame rows using user-defined function. The parameters of the function include the row
      * being iterated over, and the index.
      */
-    public function filter(Closure $f): DataFrame
+    public function withFilter(Closure $f): DataFrame
     {
         return $this->to->insert()->append(array_filter($this->getLinkedDataFrame()->toArray(), $f, \ARRAY_FILTER_USE_BOTH));
     }

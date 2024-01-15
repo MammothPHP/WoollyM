@@ -52,23 +52,24 @@ Performances are optimized to be as light as possible on RAM during operations (
   - [The Select Statement](#the-select-statement)
     - [The three different types of Select statements](#the-three-different-types-of-select-statements)
     - [Filter \& Limit the Select statements](#filter--limit-the-select-statements)
-    - [Copy from a Select Statement](#copy-from-a-select-statement)
+    - [Extract from a Select Statement](#extract-from-a-select-statement)
     - [Aggregate stats function](#aggregate-stats-function)
-  - [Copy](#copy)
     - [Modification to a Selection](#modification-to-a-selection)
       - [Applying functions to a selection directly](#applying-functions-to-a-selection-directly)
       - [Set a value for each record in a column](#set-a-value-for-each-record-in-a-column)
       - [Set DataFrame (single column) to a column](#set-dataframe-single-column-to-a-column)
       - [Set Column to a Column](#set-column-to-a-column)
-    - [Filter](#filter)
-    - [Unique](#unique)
   - [Update](#update)
       - [Applying functions to each row](#applying-functions-to-each-row)
       - [preg\_replace](#preg_replace)
       - [applyIndexMap](#applyindexmap)
   - [Delete](#delete)
       - [Execute](#execute)
-      - [Filter](#filter-1)
+      - [Filter](#filter)
+  - [Extract](#extract)
+    - [Clone](#clone)
+    - [withFilter](#withfilter)
+    - [Unique](#unique)
   - [Sorting](#sorting)
       - [sortRecordsByColumns](#sortrecordsbycolumns)
       - [sortColumn](#sortcolumn)
@@ -78,7 +79,7 @@ Performances are optimized to be as light as possible on RAM during operations (
       - [Set it](#set-it)
       - [Remove it](#remove-it)
   - [Manipulating Data using SQL](#manipulating-data-using-sql)
-    - [Copy DataFrame from SQL](#copy-dataframe-from-sql)
+    - [Extract DataFrame from SQL](#extract-dataframe-from-sql)
   - [Use Data Driver to explore external sources or to overcome technical limitations on major datasets](#use-data-driver-to-explore-external-sources-or-to-overcome-technical-limitations-on-major-datasets)
     - [Natively provided drivers](#natively-provided-drivers)
     - [Aggregate Function optimized on driver side (performance)](#aggregate-function-optimized-on-driver-side-performance)
@@ -373,7 +374,7 @@ $arr = $df->head(length: 3, offset: 1, columns:['a','c']);
 
 ## Logic and Philosophy
 
-Accessing data or modifying it, use an Sql inspired syntax using the keyword `select()`, `insert()`, `update()`, `delete()`, `copy()` as a prefix to corresponding methods.
+Accessing data or modifying it, use an Sql inspired syntax using the keyword `select()`, `insert()`, `update()`, `delete()`, `extract()` as a prefix to corresponding methods.
 
 ```php
 $df->select('colNameA')->whereColumnEqual('colB', 42); // Return a new Select statement object
@@ -381,12 +382,12 @@ $df->insert()->append($iterable); // Return $df (self)
 $df->update()->record(key: 42, $recordArray); // Return $df (self)
 $df->delete()->whereColumnEqual('colA', 'foo')->execute(); // Return $df (self)
 
-$df->copy()->unique(onColumns: 'colA'); // Return a new DataFrame contaning unique value from column A
+$df->extract()->unique(onColumns: 'colA'); // Return a new DataFrame contaning unique value from column A
 ```
 
 
 ## The Select Statement
-The `Select` object represents a statement to explore au subset of data corresponding to selection and doing stats with them. You can build them using a SQL-like constructor. They offer some commodity helpers methods to modify or copy directly the selected data, but it's not its main purpose.
+The `Select` object represents a statement to explore au subset of data corresponding to selection and doing stats with them. You can build them using a SQL-like constructor. They offer some commodity helpers methods to modify or extract directly the selected data, but it's not its main purpose.
 
 ### The three different types of Select statements
 ```php
@@ -433,7 +434,7 @@ foreach($df->selectAll()->where(fn($r) => $r) as $recordKey => $record) {
 }
 ```
 
-### Copy from a Select Statement
+### Extract from a Select Statement
 
 Return the result as a new DataFrame object:
 ```php
@@ -464,24 +465,6 @@ $stmt->min(); // min value (numeric)
 $stmt->max(); // max value (numeric)
 ```
 
-## Copy
-> [!WARNING]
-> Copy operations are not yet well optimized about memory consumption. Some of them have the potential to do so significantly in the future; others won't really be able to.
-
-> [!NOTE]
-> Clone the DataFrame then use equivalent modifier can be more efficient about memory consumtpion than the copy. Depending of the data-driver used and the PHP Copy-on-write feature. Woolly has a good PHP cloning support.
-
- The `Copy` object offers an API to return a NEW DataFrame without modifying anything from the original DataFrame. It's also possible to export a Select object to a new DataFrame, but Copy API also offer transformations methods.
-
-```php
-// To a new Data Frame
-$df->copy()->....
-
-// To a custom dataFrame (useful for alternatives data-drivers)
-$newDf = new DataFrame(dataDriver: $pdoSqlDriver);
-$df->copy(to: $newDf)->...
-```
-
 
 ### Modification to a Selection
 
@@ -508,57 +491,6 @@ $df->col('a')->set(new Dataframe( [[1],[2],[3]] ));
 #### Set Column to a Column
 ```php
 $df->col('a')->set($df->col('b')->asDataFrame);
-```
-
-
-### Filter
-```php
-$df = DataFrame::fromArray([
-    ['a' => 1, 'b' => 2, 'c' => 3],
-    ['a' => 4, 'b' => 5, 'c' => 6],
-    ['a' => 7, 'b' => 8, 'c' => 9],
-]);
-
-$newDf = $df->copy()->filter(static function (array $record, int $key) {
-    return $record['a'] > 4 || $record['a'] < 4;
-});
-
-expect($newDf->toArray())
-    ->toBe([
-        ['a' => 1, 'b' => 2, 'c' => 3],
-        ['a' => 7, 'b' => 8, 'c' => 9],
-    ]);
-```
-
-### Unique
-```php
-    $df = DataFrame::fromArray([
-        ['a' => 1, 'b' => 2, 'c' => 3],
-        ['a' => 1, 'b' => 3, 'c' => 4],
-        ['a' => 2, 'b' => 4, 'c' => 5],
-        ['a' => 2, 'b' => 4, 'c' => 6],
-        ['a' => 3, 'b' => 5, 'c' => 7],
-        ['a' => 3, 'b' => 5, 'c' => 8],
-    ]);
-
-    expect($df->copy()->unique('a')
-        ->toArray())
-        ->toBe([
-            ['a' => 1],
-            ['a' => 2],
-            ['a' => 3],
-        ]
-    );
-
-    expect($df->copy()->unique(['a', 'b'])
-        ->toArray())
-        ->toBe([
-            ['a' => 1, 'b' => 2],
-            ['a' => 1, 'b' => 3],
-            ['a' => 2, 'b' => 4],
-            ['a' => 3, 'b' => 5],
-        ]
-    );
 ```
 
 ## Update
@@ -689,6 +621,78 @@ $df->toArray();
 ];
 ```
 
+## Extract
+> [!WARNING]
+> Extract operations are not yet well optimized about memory consumption. Some of them have the potential to do so significantly in the future; others won't really be able to.
+
+ The `Extract` object offers an API to return a NEW DataFrame without modifying anything from the original DataFrame. It's also possible to export a Select object to a new DataFrame, but Extract API also offer transformations methods.
+
+```php
+// To a new Data Frame
+$df->extract()->....
+
+// To a custom dataFrame (useful for alternatives data-drivers)
+$newDf = new DataFrame(dataDriver: $pdoSqlDriver);
+$df->extract(to: $newDf)->...
+```
+
+### Clone
+```php
+$newDf = $df->extract()->clone();
+$newDf = clone $df; // equivalent
+```
+
+### withFilter
+```php
+$df = DataFrame::fromArray([
+    ['a' => 1, 'b' => 2, 'c' => 3],
+    ['a' => 4, 'b' => 5, 'c' => 6],
+    ['a' => 7, 'b' => 8, 'c' => 9],
+]);
+
+$newDf = $df->extract()->withFilter(static function (array $record, int $key) {
+    return $record['a'] > 4 || $record['a'] < 4;
+});
+
+$newDf->toArray();
+// To Be:
+[
+    ['a' => 1, 'b' => 2, 'c' => 3],
+    ['a' => 7, 'b' => 8, 'c' => 9],
+];
+```
+
+### Unique
+```php
+$df = DataFrame::fromArray([
+    ['a' => 1, 'b' => 2, 'c' => 3],
+    ['a' => 1, 'b' => 3, 'c' => 4],
+    ['a' => 2, 'b' => 4, 'c' => 5],
+    ['a' => 2, 'b' => 4, 'c' => 6],
+    ['a' => 3, 'b' => 5, 'c' => 7],
+    ['a' => 3, 'b' => 5, 'c' => 8],
+]);
+
+$newDf = $df->extract()->unique('a');
+$newDf->toArray():
+// To Be:
+[
+    ['a' => 1],
+    ['a' => 2],
+    ['a' => 3],
+];
+
+$newDf = $df->extract()->unique(['a', 'b']);
+$newDf->toArray():
+// To Be:
+[
+    ['a' => 1, 'b' => 2],
+    ['a' => 1, 'b' => 3],
+    ['a' => 2, 'b' => 4],
+    ['a' => 3, 'b' => 5],
+];
+```
+
 ## Sorting
 _Sorting can be incompatible with some drivers. And some of them could be accelerated by some compatible drivers._
 
@@ -736,7 +740,7 @@ $df->col('a')->enforceType(null); # Note that data already converted, only the f
 
 ## Manipulating Data using SQL
 
-### Copy DataFrame from SQL
+### Extract DataFrame from SQL
 ```php
 $df = DataFrame::fromArray([
     ['a' => 1, 'b' => 2, 'c' => 3],
@@ -744,7 +748,7 @@ $df = DataFrame::fromArray([
     ['a' => 7, 'b' => 8, 'c' => 9],
 ]);
 
-$resultingDf = $df->copy()->fromSqlQuery(" SELECT
+$resultingDf = $df->extract()->fromSqlQuery(" SELECT
                         a,
                         b
                         FROM dataframe

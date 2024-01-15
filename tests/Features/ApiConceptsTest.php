@@ -15,7 +15,7 @@ test('tests some api concept', function (): void {
     $r = $df->select('colB')->whereColumnEqual('colA', 'foo')->sum(); // 52
     expect($r)->toBe(52);
 
-    $exportedDf = $df->copy()->fromSqlQuery('SELECT colA, sum(colB) FROM dataframe GROUP BY 1;');
+    $exportedDf = $df->extract()->fromSqlQuery('SELECT colA, sum(colB) FROM dataframe GROUP BY 1;');
 
     expect($exportedDf->toArray())->toHaveCount(2);
 });
