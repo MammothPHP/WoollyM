@@ -14,20 +14,16 @@ test('from csv', function (Closure $file): void {
     ];
 
     $fileName = __DIR__ . \DIRECTORY_SEPARATOR . 'TestFiles' . \DIRECTORY_SEPARATOR . 'testCSV.csv';
-
     $input = $file($fileName);
 
-    if (\is_resource($input)) {
-        $csv = CSV::fromStream($input);
-    } elseif ($input instanceof SplFileInfo) {
-        $csv = CSV::fromFileInfo($input);
-    } elseif ($input instanceof Reader) {
-        $csv = CSV::fromCsvReader($input);
-    } elseif (file_exists($input)) {
-        $csv = CSV::fromFilePath($input);
-    } else {
-        $csv = CSV::fromString($input);
-    }
+    $csv = match (true) {
+        \is_resource($input) => CSV::fromStream($input),
+        $input instanceof SplFileInfo => CSV::fromFileInfo($input),
+        $input instanceof Reader => CSV::fromCsvReader($input),
+        file_exists($input) => CSV::fromFilePath($input),
+        \is_string($input) => CSV::fromString($input),
+        default => throw new Exception('Not supported input')
+    };
 
     $df = $csv->import();
 
