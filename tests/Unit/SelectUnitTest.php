@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use MammothPHP\WoollyM\DataFrame;
-use MammothPHP\WoollyM\Exceptions\{InvalidSelectException, PropertyNotExistException, UnavailableMethodInContext};
+use MammothPHP\WoollyM\Exceptions\{PropertyNotExistException, UnavailableMethodInContext};
 use MammothPHP\WoollyM\Statements\Select\Select;
 use MammothPHP\WoollyM\Statements\StatementClause;
 
@@ -13,6 +13,15 @@ beforeEach(function (): void {
         ['colA' => 4, 'colB' => 5, 'colC' => 6],
         ['colA' => 7, 'colB' => 8, 'colC' => 9],
     ]);
+});
+
+it('can retrieve a simple record', function(): void {
+    expect($this->df->select()->record(1))->toBe($this->df[1]);
+
+    $stmt = $this->df->select()->whereColumnEqual('colA', 1);
+
+    expect($stmt->countRecords())->toBe(1);
+    expect($stmt->record(1))->toBe($this->df[1]);
 });
 
 it('return a select object', function (): void {

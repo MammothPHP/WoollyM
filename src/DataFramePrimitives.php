@@ -287,9 +287,9 @@ abstract class DataFramePrimitives
      * Get a record by key
      * @return array<string,array>
      */
-    public function getRecord(int $recordKey): array
+    public function getRecord(int $key): array
     {
-        return $this->convertAbstractRecordToArray($this->data->getRecordKey($recordKey));
+        return $this->convertAbstractRecordToArray($this->data->getRecordKey($key));
     }
 
     /**
