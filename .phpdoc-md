@@ -1,0 +1,14 @@
+<?php
+
+    use HaydenPierce\ClassFinder\ClassFinder;
+
+    $namespace = 'MammothPHP\WoollyM';
+
+    $classes = ClassFinder::getClassesInNamespace($namespace);
+
+    return (object)[
+        'rootNamespace' => $namespace,
+        'destDirectory' => 'docs',
+        'format' => 'github',
+        'classes' => $classes,
+    ];

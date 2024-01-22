@@ -1,6 +1,7 @@
 
 *.sqlite
 *.clover
+/docs
 
 # composer
 /vendor/
