@@ -37,5 +37,16 @@
       "pestphp/pest-plugin": true,
       "dealerdirect/phpcodesniffer-composer-installer": false
     }
+  },
+  "archive": {
+    "exclude": [
+        "/logos",
+        "/tests",
+        "/dev/",
+        "/doc/",
+        "/.github",
+        "*.dist",
+        "*.cache"
+    ]
   }
 }
