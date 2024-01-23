@@ -2,6 +2,9 @@
 *.sqlite
 *.clover
 
+# Generated docs
+/docs/
+
 # composer
 /vendor/
 /composer.lock
