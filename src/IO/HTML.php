@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace MammothPHP\WoollyM\IO;
 
 use Exception;
-use Gajus\Dindent\Indenter;
 use League\Csv\HTMLConverter;
+use tidy;
 
 class HTML
 {
@@ -40,6 +40,14 @@ class HTML
             ($e ?? null) instanceof Exception && throw $e;
         }
 
-        return $pretty ? (new Indenter)->indent($r) : $r;
+        if ($pretty) {
+            $tidy = new tidy;
+            $tidy->parseString($r, ['indent' => true], 'utf8');
+            $tidy->cleanRepair();
+
+            $r = tidy_get_output($tidy);
+        }
+
+        return $r;
     }
 }
