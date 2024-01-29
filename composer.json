@@ -15,7 +15,7 @@
   },
   "require-dev": {
     "laravel/pint": "^1.13",
-    "pestphp/pest": "^2.32",
+    "pestphp/pest": "^2.33",
     "phpbench/phpbench": "^1.2",
     "nunomaduro/phpinsights": "^2.11",
     "phploc/phploc": "dev-main",
