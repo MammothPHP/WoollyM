@@ -42,7 +42,7 @@ class HTML
 
         if ($pretty) {
             $tidy = new tidy;
-            $tidy->parseString($r, ['indent' => true], 'utf8');
+            $tidy->parseString($r, ['indent' => true, 'newline' => "\n" ], 'utf8');
             $tidy->cleanRepair();
 
             $r = tidy_get_output($tidy);

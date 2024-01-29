@@ -67,7 +67,6 @@ class Select extends Statement
 
     /**
      * Get a record by key
-     * @throws InvalidSelectException
      */
     public function record(int $key): array {
         return $this->getLinkedDataFrame()->getRecord($key);
