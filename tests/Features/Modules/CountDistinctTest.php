@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use MammothPHP\WoollyM\DataFrame;
-use MammothPHP\WoollyM\Stats\Modules\CountDistinct;
+use MammothPHP\WoollyM\Stats\Modules\CountDistinctValues;
 
 beforeEach(function (): void {
     $obj1 = new class {};
@@ -20,12 +20,12 @@ beforeEach(function (): void {
 });
 
 test('many counts', function (): void {
-    expect($this->df->col('a')->countDistinct())->toBe($this->df->col('a')->countDistinct)->toBe(5);
-    expect($this->df->col('b')->countDistinct())->toBe($this->df->col('b')->countDistinct)->toBe(3);
-    expect($this->df->col('c')->countDistinct())->toBe($this->df->col('c')->countDistinct)->toBe(5);
-    expect($this->df->col('d')->countDistinct())->toBe($this->df->col('d')->countDistinct)->toBe(5);
+    expect($this->df->col('a')->countDistinctValues())->toBe($this->df->col('a')->countDistinctValues)->toBe(5);
+    expect($this->df->col('b')->countDistinctValues())->toBe($this->df->col('b')->countDistinctValues)->toBe(3);
+    expect($this->df->col('c')->countDistinctValues())->toBe($this->df->col('c')->countDistinctValues)->toBe(5);
+    expect($this->df->col('d')->countDistinctValues())->toBe($this->df->col('d')->countDistinctValues)->toBe(5);
 
-    expect($this->df->selectAll()->countDistinct())->toBe($this->df->selectAll()->countDistinct)->toBe(14);
+    expect($this->df->selectAll()->countDistinctValues())->toBe($this->df->selectAll()->countDistinctValues)->toBe(14);
 });
 
 test('hash & collision', function (): void {
@@ -38,10 +38,10 @@ test('hash & collision', function (): void {
 
     $select = $df->selectAll();
 
-    expect($select->countDistinct)->toBe(2);
+    expect($select->countDistinctValues)->toBe(2);
 
-    $collision = hash(CountDistinct::HASH_ALGO, $h('a'), true); // Protection against deliberate collision must work
+    $collision = hash(CountDistinctValues::HASH_ALGO, $h('a'), true); // Protection against deliberate collision must work
     $df[] = ['a' => $collision];
 
-    expect($select->countDistinct)->toBe(3);
+    expect($select->countDistinctValues)->toBe(3);
 });

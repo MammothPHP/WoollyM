@@ -7,7 +7,7 @@ namespace MammothPHP\WoollyM\DataDrivers\PhpArray;
 use ArrayIterator;
 use Closure;
 use MammothPHP\WoollyM\DataDrivers\DriversExceptions\KeyNotExistException;
-use MammothPHP\WoollyM\DataDrivers\{ColumnKeyType, DataDriverInterface, SortableDriverInterface};
+use MammothPHP\WoollyM\DataDrivers\{DataDriverInterface, SortableDriverInterface};
 use MammothPHP\WoollyM\Exceptions\DataFrameException;
 
 /**

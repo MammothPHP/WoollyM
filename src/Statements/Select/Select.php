@@ -5,12 +5,13 @@ declare(strict_types=1);
 namespace MammothPHP\WoollyM\Statements\Select;
 
 use BadMethodCallException;
+use Countable;
 use MammothPHP\WoollyM\Exceptions\{InvalidSelectException, PropertyNotExistException};
 use MammothPHP\WoollyM\DataFrame;
-use MammothPHP\WoollyM\Statements\{Statement, StatementClause};
+use MammothPHP\WoollyM\Statements\Statement;
 use MammothPHP\WoollyM\Stats\Modules;
 
-class Select extends Statement
+class Select extends Statement implements Countable
 {
     // MODULES Implementation
 
@@ -62,13 +63,23 @@ class Select extends Statement
         throw new BadMethodCallException('Call to undefined method ' . $name . '()');
     }
 
+    /**
+     * Alias of countRecords. Implement Countable.
+     * @internal
+     */
+    public function count(): int
+    {
+        return $this->countRecords();
+    }
+
 
     // Select Methods
 
     /**
      * Get a record by key
      */
-    public function record(int $key): array {
+    public function record(int $key): array
+    {
         return $this->getLinkedDataFrame()->getRecord($key);
     }
 

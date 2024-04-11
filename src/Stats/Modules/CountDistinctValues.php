@@ -8,9 +8,9 @@ use MammothPHP\WoollyM\Statements\Select\Select;
 use MammothPHP\WoollyM\Stats\{StatsMethodInterface, StatsPropertyInterface};
 use SplObjectStorage;
 
-class CountDistinct implements StatsMethodInterface, StatsPropertyInterface
+class CountDistinctValues implements StatsMethodInterface, StatsPropertyInterface
 {
-    public const string NAME = 'countDistinct';
+    public const string NAME = 'countDistinctValues';
     public const string HASH_ALGO = 'sha3-256';
     public const int HASH_START_AT = 256;
 

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use MammothPHP\WoollyM\{DataFrame, DataFrameModifiers};
+use MammothPHP\WoollyM\DataFrame;
 
 beforeEach(function (): void {
     $this->df = new DataFrame([
@@ -13,20 +13,16 @@ beforeEach(function (): void {
 });
 
 test('size column B', function (): void {
-    $expected = 3;
-
     expect($this->df->col('b')->size())
         ->toBe($this->df->col('b')->size)
-        ->toBe($expected)
+        ->toBe(3)
     ;
 });
 
 test('size all', function (): void {
-    $expected = 9;
-
     expect($this->df->selectAll()->size())
         ->toBe($this->df->selectAll()->size)
-        ->toBe($expected)
+        ->toBe(3 * 3)
     ;
 });
 
@@ -39,5 +35,25 @@ test('size with filters', function (): void {
         ['colA' => 77, 'colB' => 7, 'colC' => 8],
     ]);
 
-    expect($df->select('colA', 'colC')->whereColumnEqual('colA', 42)->size())->toBe(4);
+    expect($df->select('colA', 'colC')->whereColumnEqual('colA', 42)->size())->toBe(2 * 2);
+});
+
+test('count column B', function (): void {
+    $expected = 2;
+
+    expect($this->df->col('b')->size(ignoreNullValue: true))->toBe($expected);
+});
+
+test('count column C', function (): void {
+    $expected = 3;
+
+    expect($this->df->col('c')->size(ignoreNullValue: true))->toBe($expected)
+    ;
+});
+
+test('count all values', function (): void {
+    $expected = 8;
+
+    expect($this->df->select('a', 'b', 'c')->size(ignoreNullValue: true))->toBe($expected)
+    ;
 });

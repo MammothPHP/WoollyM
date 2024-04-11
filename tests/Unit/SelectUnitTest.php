@@ -15,7 +15,7 @@ beforeEach(function (): void {
     ]);
 });
 
-it('can retrieve a simple record', function(): void {
+it('can retrieve a simple record', function (): void {
     expect($this->df->select()->record(1))->toBe($this->df[1]);
 
     $stmt = $this->df->select()->whereColumnEqual('colA', 1);

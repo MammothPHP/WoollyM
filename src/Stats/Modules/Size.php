@@ -21,12 +21,26 @@ class Size implements StatsMethodInterface, StatsPropertyInterface
         return $this->execute($select, ...$arguments);
     }
 
-    protected function execute(Select $select): int
+    protected function execute(Select $select, bool $ignoreNonNumericValue = false, bool $ignoreNullValue = false): int
     {
         $r = 0;
 
-        foreach ($select as $record) {
-            $r += \count($record);
+        if (!$ignoreNonNumericValue && !$ignoreNullValue) {
+            foreach ($select as $record) {
+                $r += \count($record);
+            }
+        } else {
+            foreach ($select as $record) {
+                foreach ($select as $record) {
+                    foreach ($record as $value) {
+                        if ($ignoreNonNumericValue && (is_numeric($value) || $value === true)) {
+                            $r++;
+                        } elseif ($ignoreNullValue && $value !== null) {
+                            $r++;
+                        }
+                    }
+                }
+            }
         }
 
         return $r;

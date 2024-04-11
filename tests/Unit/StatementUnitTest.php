@@ -3,9 +3,6 @@
 declare(strict_types=1);
 
 use MammothPHP\WoollyM\DataFrame;
-use MammothPHP\WoollyM\Exceptions\{PropertyNotExistException, UnavailableMethodInContext};
-use MammothPHP\WoollyM\Statements\Select\Select;
-use MammothPHP\WoollyM\Statements\StatementClause;
 
 beforeEach(function (): void {
     $this->df = DataFrame::fromArray([
@@ -15,6 +12,7 @@ beforeEach(function (): void {
     ]);
 });
 
-it('can can be count with Pest/PHPunit', function(): void {
-    expect($this->df->select())->toHaveCount(1);
-})->todo();
+it('can can be count with Pest/PHPunit', function (): void {
+    expect(\count($this->df->select()))->toBe(3);
+    expect($this->df->select())->toHaveCount(3);
+});

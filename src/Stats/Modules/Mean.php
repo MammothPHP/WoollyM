@@ -25,7 +25,7 @@ class Mean implements StatsMethodInterface, StatsPropertyInterface
     protected function execute(Select $select): int|float
     {
         $sum = $select->sum();
-        $count = $select->count(true);
+        $count = $select->size(ignoreNonNumericValue: true);
 
         return $count > 0 ? ($sum / $count) : throw new NotYetImplementedException;
     }

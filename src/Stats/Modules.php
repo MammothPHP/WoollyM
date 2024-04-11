@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace MammothPHP\WoollyM\Stats;
 
 use MammothPHP\WoollyM\Exceptions\NotYetImplementedException;
-use MammothPHP\WoollyM\Stats\Modules\{Average, Count, CountDistinct, Describe, Max, Mean, Min, Size, Sum};
+use MammothPHP\WoollyM\Stats\Modules\{Average, CountDistinctValues, Describe, Max, Mean, Min, Size, Sum};
 
 abstract class Modules
 {
@@ -21,8 +21,7 @@ abstract class Modules
 
             // Calculation
             self::registerModule(new Average);
-            self::registerModule(new CountDistinct);
-            self::registerModule(new Count);
+            self::registerModule(new CountDistinctValues);
             self::registerModule(new Max);
             self::registerModule(new Mean);
             self::registerModule(new Min);

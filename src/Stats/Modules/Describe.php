@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace MammothPHP\WoollyM\Stats\Modules;
 
 use MammothPHP\WoollyM\Statements\Select\Select;
-use MammothPHP\WoollyM\Stats\{StatsMethodInterface, StatsPropertyInterface};
+use MammothPHP\WoollyM\Stats\StatsMethodInterface;
 
 class Describe implements StatsMethodInterface
 {
@@ -19,8 +19,7 @@ class Describe implements StatsMethodInterface
     protected function execute(Select $select): array
     {
         return [
-            'count' => $select->count(),
-            'countNumerics' => $select->count(true),
+            'count records' => $select->countRecords(),
             'size' => $select->size(),
             'sum' => $select->average(),
             'mean' => $select->mean(),

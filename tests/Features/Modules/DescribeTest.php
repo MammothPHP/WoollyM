@@ -5,7 +5,7 @@ declare(strict_types=1);
 use MammothPHP\WoollyM\DataFrame;
 
 beforeEach(function (): void {
-    $this->describeKeys = ['count', 'countNumerics', 'size', 'sum', 'mean', 'max', 'min'];
+    $this->describeKeys = ['count records', 'size', 'sum', 'mean', 'max', 'min'];
 
     $this->df = new DataFrame([
         ['a' => 1, 'b' => null, 'c' => 3],

@@ -7,7 +7,7 @@ namespace MammothPHP\WoollyM\IO;
 use JsonMachine\Items;
 use JsonMachine\JsonDecoder\ExtJsonDecoder;
 use MammothPHP\WoollyM\DataFrame;
-use MammothPHP\WoollyM\Exceptions\{FileExistsException, NotYetImplementedException, UnknownOptionException};
+use MammothPHP\WoollyM\Exceptions\{NotYetImplementedException, UnknownOptionException};
 use SplFileInfo;
 
 class JSON extends Builder
@@ -49,7 +49,7 @@ class JSON extends Builder
      * Encodes a DataFrame array into a JSON string.
      *      pretty: Will "prettify" the rendered JSON (default: false)
      * @throws NotYetImplementedException
-     * @throws \MammothPHP\WoollyM\Exceptions\UnknownOptionException
+     * @throws UnknownOptionException
      */
     public function toString(bool $pretty = false): string
     {
@@ -58,7 +58,7 @@ class JSON extends Builder
 
     /**
      * Decodes a JSON string into a DataFrame array.
-     * @throws \MammothPHP\WoollyM\Exceptions\UnknownOptionException
+     * @throws UnknownOptionException
      */
     protected function itemsFromFile(): void
     {
