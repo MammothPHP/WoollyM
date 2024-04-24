@@ -9,6 +9,7 @@
 /vendor/
 /composer.lock
 composer.phar
+tools/
 
 # phpunit, phpstan
 .phpunit.result.cache
