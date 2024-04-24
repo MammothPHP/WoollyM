@@ -8,4 +8,11 @@
     <template name="./vendor/saggre/phpdocumentor-markdown/themes/markdown">
         <parameter name="urlFileExtensions" value="yes"/>
     </template>
+    <version number="latest">
+        <api>
+            <source dsn=".">
+                <path>src</path>
+            </source>
+        </api>
+    </version>
 </phpdocumentor>
