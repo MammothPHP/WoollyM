@@ -19,7 +19,8 @@
     "phpbench/phpbench": "^1.2",
     "nunomaduro/phpinsights": "^2.11",
     "phploc/phploc": "dev-main",
-    "pestphp/pest-plugin-type-coverage": "^2.8"
+    "pestphp/pest-plugin-type-coverage": "^2.8",
+    "saggre/phpdocumentor-markdown": "^0.1"
   },
   "autoload": {
     "psr-4": { "MammothPHP\\WoollyM\\": "src/"}

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<phpdocumentor
+        configVersion="3"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="https://www.phpdoc.org"
+>
+    <title>WoollyM - API reference</title>
+    <template name="./vendor/saggre/phpdocumentor-markdown/themes/markdown">
+        <parameter name="urlFileExtensions" value="yes"/>
+    </template>
+</phpdocumentor>
