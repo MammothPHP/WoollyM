@@ -14,7 +14,7 @@
     "halaxa/json-machine": "^1.1"
   },
   "require-dev": {
-    "laravel/pint": "^1.15",
+    "laravel/pint": "^1.16",
     "pestphp/pest": "^2.33",
     "phpbench/phpbench": "^1.2",
     "nunomaduro/phpinsights": "^2.11",
