@@ -21,20 +21,20 @@ test('to json', function (): void {
     expect($tempFile->fread(1024))->toBe($expected);
 });
 
-test('from json', function ($df): void {
+test('from json', function (string $type, string $input): void {
     $expected = [
         ['a' => 1, 'b' => 2, 'c' => 3],
         ['a' => 4, 'b' => 5, 'c' => 6],
         ['a' => 7, 'b' => 8, 'c' => 9],
     ];
 
-    $filePath = __DIR__ . \DIRECTORY_SEPARATOR . 'TestFiles' . \DIRECTORY_SEPARATOR . 'input.json';
+    $df = ($type === 'string') ? JSON::fromString($input)->import() : JSON::fromFilePath($input)->import();
 
-    $df = JSON::fromString(file_get_contents($filePath))->import();
+
     expect($df->toArray())->toEqual($expected);
 })->with([
-    'string' => file_get_contents(__DIR__ . \DIRECTORY_SEPARATOR . 'TestFiles' . \DIRECTORY_SEPARATOR . 'input.json'),
-    'file path' => __DIR__ . \DIRECTORY_SEPARATOR . 'TestFiles' . \DIRECTORY_SEPARATOR . 'input.json',
+    ['string', file_get_contents(__DIR__ . \DIRECTORY_SEPARATOR . 'TestFiles' . \DIRECTORY_SEPARATOR . 'input.json')],
+    ['file path', __DIR__ . \DIRECTORY_SEPARATOR . 'TestFiles' . \DIRECTORY_SEPARATOR . 'input.json'],
 ]);
 
 test('to pretty json', function (): void {
