@@ -136,7 +136,15 @@ class XLSX extends Builder
 
         $wsArray = [$this->fromDf->columnsNames()];
         foreach ($this->fromDf as $row) {
-            $wsArray[] = array_values($row);
+            $line = array_values($row);
+
+            foreach($line as &$cell) {
+                if (is_array($cell) || is_object($cell)) {
+                    $cell = json_encode($cell, JSON_PRETTY_PRINT);
+                }
+            }
+
+            $wsArray[] = $line;
         }
 
         $worksheet->fromArray($wsArray, null, 'A1', false);

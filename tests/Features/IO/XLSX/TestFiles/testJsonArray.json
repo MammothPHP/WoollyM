@@ -1,0 +1,121 @@
+[
+    {
+        "userEventId": 4242,
+        "email": "",
+        "firstName": "",
+        "lastName": "",
+        "phone": "4242",
+        "mobile": "4242",
+        "job": "Manager",
+        "onboarding": true,
+        "profileLabel": "Partenaires (Sponsors)",
+        "app_short_name": "Partenaires",
+        "app_long_name": "Partenaire",
+        "color_id": "35A936",
+        "companyId": 4242,
+        "companyUserId": 4242,
+        "companyUserName": "",
+        "companyDescription": "",
+        "companyWebsite": "http://www.woolym.dev",
+        "startUp": false,
+        "calendarLink": "",
+        "bigbossAcademy": true,
+        "linkedin": null,
+        "datingWith": null,
+        "dateSend": null,
+        "newcomer": false,
+        "claim_categories": [
+            {
+                "id": 1,
+                "name": "Acquisition",
+                "elements": [
+                    {
+                        "id": 880,
+                        "name": "Recrutement"
+                    }
+                ]
+            },
+            {
+                "id": 32,
+                "name": "Communication",
+                "elements": [
+                    {
+                        "id": 960,
+                        "name": "Marque Employeur"
+                    },
+                    {
+                        "id": 958,
+                        "name": "Corporate"
+                    }
+                ]
+            },
+            {
+                "id": 34,
+                "name": "Retail/E-Commerce",
+                "elements": [
+                    {
+                        "id": 1017,
+                        "name": "Parcours Clients"
+                    },
+                    {
+                        "id": 281,
+                        "name": "Solutions dédiées"
+                    }
+                ]
+            },
+            {
+                "id": 28,
+                "name": "Expérience Client",
+                "elements": [
+                    {
+                        "id": 1101,
+                        "name": "Digitalisation du parcours client"
+                    },
+                    {
+                        "id": 44,
+                        "name": "Personnalisation"
+                    },
+                    {
+                        "id": 266,
+                        "name": "Relation Clients"
+                    },
+                    {
+                        "id": 267,
+                        "name": "UX / UI"
+                    }
+                ]
+            },
+            {
+                "id": 31,
+                "name": "Transformation digitale",
+                "elements": [
+                    {
+                        "id": 59,
+                        "name": "Recrutement"
+                    }
+                ]
+            }
+        ],
+        "sectors": [
+            {
+                "id": 76,
+                "title": "UX",
+                "user_id": 4242
+            },
+            {
+                "id": 138,
+                "title": "Conversion & Expérience Clients",
+                "user_id": 4242
+            },
+            {
+                "id": 139,
+                "title": "Ecommerce",
+                "user_id": 4242
+            }
+        ],
+        "uid": 4242,
+        "type": "prestataire",
+        "profil": "prestataire",
+        "company": "WoollyM"
+    }
+]
