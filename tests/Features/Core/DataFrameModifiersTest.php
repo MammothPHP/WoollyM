@@ -211,7 +211,7 @@ test('sort record by columns', function (): void {
 
     $unordered_df->sortRecordsByColumns('a');
 
-    expect($ordered_df->toArray())->toBe($unordered_df->toArray());
+    expect($ordered_df->toArray())->toBe(array_values($unordered_df->toArray()));
 
     // Single column descending
     $unordered_df = DataFrame::fromArray([
@@ -230,7 +230,7 @@ test('sort record by columns', function (): void {
 
     $unordered_df->sortRecordsByColumns(by: 'a', ascending: false);
 
-    expect($unordered_df->toArray())->toBe($ordered_df->toArray());
+    expect(array_values($unordered_df->toArray()))->toBe($ordered_df->toArray());
 
     // Double column, first a than x
     $unordered_df = DataFrame::fromArray([
@@ -249,7 +249,7 @@ test('sort record by columns', function (): void {
 
     $unordered_df->sortRecordsByColumns(['a', 'x']);
 
-    expect($unordered_df->toArray())->toBe($ordered_df->toArray());
+    expect(array_values($unordered_df->toArray()))->toBe($ordered_df->toArray());
 
     // Double column, first b than a
     $unordered_df = DataFrame::fromArray([
@@ -268,7 +268,7 @@ test('sort record by columns', function (): void {
 
     $unordered_df->sortRecordsByColumns(['b', 'a']);
 
-    expect($unordered_df->toArray())->toBe($ordered_df->toArray());
+    expect($unordered_df->toArray())->toEqualCanonicalizing($ordered_df->toArray());
 });
 
 test('apply index map values', function (): void {

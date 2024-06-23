@@ -81,7 +81,7 @@ abstract class DataFrameModifiers extends DataFrameStatements
             $by = [$by];
         }
 
-        $this->data->usort(function (array $row_a, array $row_b) use ($by, $ascending): int {
+        $this->data->uasort(function (array $row_a, array $row_b) use ($by, $ascending): int {
             foreach ($by as $col) {
                 $col = $this->getColumnKey($col);
 

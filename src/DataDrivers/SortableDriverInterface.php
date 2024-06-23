@@ -10,5 +10,5 @@ use IteratorAggregate;
 
 interface SortableDriverInterface extends Countable, IteratorAggregate
 {
-    public function usort(Closure $callback): void;
+    public function uasort(Closure $callback): void;
 }

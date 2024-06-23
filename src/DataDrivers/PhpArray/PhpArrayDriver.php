@@ -76,8 +76,8 @@ class PhpArrayDriver implements DataDriverInterface, SortableDriverInterface
         return isset($this->data[$recordKey]);
     }
 
-    public function usort(Closure $callback): void
+    public function uasort(Closure $callback): void
     {
-        usort($this->data, $callback);
+        uasort($this->data, $callback);
     }
 }
