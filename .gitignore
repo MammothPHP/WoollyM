@@ -1,6 +1,7 @@
 
 *.sqlite
 *.clover
+test.*
 
 # Generated docs
 /docs/
