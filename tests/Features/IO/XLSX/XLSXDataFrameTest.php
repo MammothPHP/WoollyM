@@ -2,12 +2,11 @@
 
 declare(strict_types=1);
 use MammothPHP\WoollyM\DataFrame;
-use MammothPHP\WoollyM\IO\JSON;
-use MammothPHP\WoollyM\IO\XLSX as IOXLSX;
+use MammothPHP\WoollyM\IO\{JSON, XLSX as IOXLSX};
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
-afterEach(function(): void {
+afterEach(function (): void {
     $testFile = __DIR__ . \DIRECTORY_SEPARATOR . 'TestFiles' . \DIRECTORY_SEPARATOR . 'test_to.xlsx';
 
     if (file_exists($testFile)) {
@@ -162,7 +161,7 @@ test('to xlsx with array data from a Json', function (): void {
     IOXLSX::fromDataFrame($df1)->toFile($fileName);
     $df2 = IOXLSX::fromFilePath($fileName)->import();
 
-    expect($df2[0]['claim_categories'])->toBeString()->toContain("Recrutement");
+    expect($df2[0]['claim_categories'])->toBeString()->toContain('Recrutement');
 });
 
 test('to xlsx with array data from direct input', function (): void {
@@ -170,14 +169,14 @@ test('to xlsx with array data from direct input', function (): void {
 
     $df1 = DataFrame::fromArray($sheetA = [
         [
-            "colA" => '42',
-            "colB" => [42,43]
-        ]
+            'colA' => '42',
+            'colB' => [42, 43],
+        ],
     ]);
 
     IOXLSX::fromDataFrame($df1)->toFile($fileName);
     $df2 = IOXLSX::fromFilePath($fileName)->import();
-    $sheetA[0]['colB'] = json_encode($sheetA[0]['colB'], JSON_PRETTY_PRINT);
+    $sheetA[0]['colB'] = json_encode($sheetA[0]['colB'], \JSON_PRETTY_PRINT);
 
     expect($df2->toArray())->toBe($sheetA);
 });

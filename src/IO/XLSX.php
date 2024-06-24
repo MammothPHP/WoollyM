@@ -138,9 +138,9 @@ class XLSX extends Builder
         foreach ($this->fromDf as $row) {
             $line = array_values($row);
 
-            foreach($line as &$cell) {
-                if (is_array($cell) || is_object($cell)) {
-                    $cell = json_encode($cell, JSON_PRETTY_PRINT);
+            foreach ($line as &$cell) {
+                if (\is_array($cell) || \is_object($cell)) {
+                    $cell = json_encode($cell, \JSON_PRETTY_PRINT);
                 }
             }
 
