@@ -43,4 +43,20 @@ abstract class DataFrameHelpers extends DataFrameModifiers implements Countable
 
         return $select->limit($length, $offset)->toArray();
     }
+
+
+    /* *****************************************************************************************************************
+     ******************************************** Group ****************************************************************
+     ******************************************************************************************************************/
+
+
+    /**
+     *
+     * @param string[] $args
+     * @return DataFrame
+     */
+    public function group(string ...$args): DataFrame
+    {
+        return (new Extract($this, new DataFrame))->group(...$args);
+    }
 }

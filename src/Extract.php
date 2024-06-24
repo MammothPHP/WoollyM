@@ -102,4 +102,31 @@ class Extract
 
         return $this->to->insert()->append($results);
     }
+
+    public function group(string ...$args): DataFrame
+    {
+        // Check invalid columns
+        array_walk($args, fn(string $col) => $this->df->mustHaveColumn($col));
+
+
+        $r = [];
+
+        foreach ($this->df as $record) {
+            $hash = hash_init('sha224');
+
+            foreach ($args as $col) {
+                hash_update($hash, serialize($record[$col] ?? null));
+            }
+
+            $hash = hash_final($hash, false);
+
+            if (!isset($r[$hash])) {
+                foreach ($args as $col) {
+                    $r[$hash][$col] = $record[$col] ?? null;
+                }
+            }
+        }
+
+        return DataFrame::fromArray($r);
+    }
 }

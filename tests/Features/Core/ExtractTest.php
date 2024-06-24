@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use MammothPHP\WoollyM\DataFrame;
+use MammothPHP\WoollyM\Exceptions\{InvalidSelectException};
 
 beforeEach(function (): void {
     $this->input = [
@@ -72,3 +73,65 @@ test('unique', function (): void {
         ['a' => 3, 'b' => 5, 'c' => 8],
     ]);
 });
+
+test('simple group', function (): void {
+    $originalDf = DataFrame::fromArray([
+        ['CompFirstName' => 'Claude', 'CompName' => 'Debussy', 'CompBirth' => 1862],
+        ['CompFirstName' => 'Johan', 'CompName' => 'Strauss', 'Nationality' => 'Austrian', 'CompBirth' => 1804],
+        ['CompFirstName' => 'Richard', 'CompName' => 'Wagner', 'CompBirth' => 1813],
+        ['CompFirstName' => 'Frederick', 'CompName' => 'Delius', 'CompBirth' => 1862],
+        ['CompFirstName' => 'Richard', 'CompName' => 'Strauss', 'CompBirth' => 1864],
+        ['CompFirstName' => 'Johan', 'CompName' => 'Strauss', 'CompBirth' => 1825],
+    ]);
+
+    expect($originalDf->group('CompFirstName')->toArray())->toBe([
+        ['CompFirstName' => 'Claude'],
+        ['CompFirstName' => 'Johan'],
+        ['CompFirstName' => 'Richard'],
+        ['CompFirstName' => 'Frederick'],
+    ]);
+
+    expect($originalDf->group('CompBirth')->toArray())->toBe([
+        ['CompBirth' => 1862],
+        ['CompBirth' => 1804],
+        ['CompBirth' => 1813],
+        ['CompBirth' => 1864],
+        ['CompBirth' => 1825],
+    ]);
+
+    expect($originalDf->group('CompName', 'CompFirstName')->toArray())->toBe([
+        ['CompName' => 'Debussy', 'CompFirstName' => 'Claude'],
+        ['CompName' => 'Strauss', 'CompFirstName' => 'Johan'],
+        ['CompName' => 'Wagner', 'CompFirstName' => 'Richard'],
+        ['CompName' => 'Delius', 'CompFirstName' => 'Frederick'],
+        ['CompName' => 'Strauss', 'CompFirstName' => 'Richard'],
+    ]);
+
+    expect($originalDf->group('Nationality')->toArray())->toBe([
+        ['Nationality' => null],
+        ['Nationality' => 'Austrian'],
+    ]);
+
+    expect($originalDf->group('Nationality', 'CompFirstName')->toArray())->toBe([
+        ['Nationality' => null, 'CompFirstName' => 'Claude'],
+        ['Nationality' => 'Austrian', 'CompFirstName' => 'Johan'],
+        ['Nationality' => null, 'CompFirstName' => 'Richard'],
+        ['Nationality' => null, 'CompFirstName' => 'Frederick'],
+        ['Nationality' => null, 'CompFirstName' => 'Johan'],
+    ]);
+});
+
+
+test('group must has a valid col', function (): void {
+    $originalDf = DataFrame::fromArray([
+        ['CompFirstName' => 'Johan', 'CompName' => 'Strauss', 'CompBirth' => 1825],
+        ['CompFirstName' => 'Johan', 'CompName' => 'Strauss', 'Nationality' => 'Austrian', 'CompBirth' => 1804],
+    ]);
+
+    expect($originalDf->group('CompFirstName', 'Nationality')->toArray())->toBe([
+        ['CompFirstName' => 'Johan', 'Nationality' => null],
+        ['CompFirstName' => 'Johan', 'Nationality' => 'Austrian'],
+    ]);
+
+    $originalDf->group('CompFirstName', 'DiedIn');
+})->throws(InvalidSelectException::class);
