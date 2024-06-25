@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace MammothPHP\WoollyM\Stats\Modules;
 
-use ReflectionClass;
 use SplObjectStorage;
 
 class CountDistinctValues extends AbstractAgg
@@ -28,20 +27,6 @@ class CountDistinctValues extends AbstractAgg
                             \count(array_unique($this->distinctFloat)) +
                             \count($this->distinctScalar) +
                             \count($this->distinctHash);
-    }
-
-    protected function reset(): void
-    {
-        $rfl = new ReflectionClass(self::class);
-
-        $this->distinctScalar = $rfl->getProperty('distinctScalar')->getDefaultValue();
-        $this->distinctFloat = $rfl->getProperty('distinctFloat')->getDefaultValue();
-        $this->distinctObject = new SplObjectStorage;
-        $this->hasTrue = $rfl->getProperty('hasTrue')->getDefaultValue();
-        $this->hasFalse = $rfl->getProperty('hasFalse')->getDefaultValue();
-        $this->distinctHash = $rfl->getProperty('distinctHash')->getDefaultValue();
-
-        parent::reset();
     }
 
     public function addValue(mixed $value): void

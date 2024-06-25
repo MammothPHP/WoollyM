@@ -5,28 +5,29 @@ declare(strict_types=1);
 namespace MammothPHP\WoollyM\Stats\Modules;
 
 use MammothPHP\WoollyM\Exceptions\NotYetImplementedException;
-use MammothPHP\WoollyM\Statements\Select\Select;
-use MammothPHP\WoollyM\Stats\{StatsMethodInterface, StatsPropertyInterface};
 
-class Mean implements StatsMethodInterface, StatsPropertyInterface
+class Mean extends AbstractAgg
 {
     public const string NAME = 'mean';
 
-    public function executeProperty(Select $select): int|float
+    protected readonly Sum $sum;
+    protected readonly Size $size;
+
+    public function getResult(): int|float
     {
-        return $this->execute($select);
+        return $this->size->getResult() > 0 ? ($this->sum->getResult() / $this->size->getResult()) : throw new NotYetImplementedException;
     }
 
-    public function executeMethod(Select $select, array $arguments): int|float
+    public function addValue(mixed $value): void
     {
-        return $this->execute($select);
+        if (!isset($this->sum)) {
+            $this->sum = new Sum;
+            $this->size = new Size;
+            $this->size->init(ignoreNonNumericValue: true);
+        }
+
+        $this->sum->addValue($value);
+        $this->size->addvalue($value);
     }
 
-    protected function execute(Select $select): int|float
-    {
-        $sum = $select->sum();
-        $count = $select->size(ignoreNonNumericValue: true);
-
-        return $count > 0 ? ($sum / $count) : throw new NotYetImplementedException;
-    }
 }

@@ -17,16 +17,16 @@ abstract class Modules
             self::$modules = [];
 
             // Summary
-            self::registerModule(new Describe);
+            self::registerModule(Describe::class);
 
             // Calculation
-            self::registerModule(new Average);
-            self::registerModule(new CountDistinctValues);
-            self::registerModule(new Max);
-            self::registerModule(new Mean);
-            self::registerModule(new Min);
-            self::registerModule(new Size);
-            self::registerModule(new Sum);
+            self::registerModule(Average::class);
+            self::registerModule(CountDistinctValues::class);
+            self::registerModule(Max::class);
+            self::registerModule(Mean::class);
+            self::registerModule(Min::class);
+            self::registerModule(Size::class);
+            self::registerModule(Sum::class);
         }
     }
 
@@ -34,7 +34,11 @@ abstract class Modules
     {
         self::init();
 
-        $r = self::$modules[$name] ?? null;
+        if (!isset(self::$modules[$name])) {
+            return null;
+        }
+
+        $r = new self::$modules[$name];
 
         return $r instanceof $type->value ? $r : null;
     }
@@ -55,15 +59,19 @@ abstract class Modules
         return self::getModule($method, ModuleType::StatsMethod);
     }
 
-    public static function registerModule(StatsInterface $module): void
+    public static function registerModule(string $moduleClass): void
     {
         self::init();
 
-        if (empty($module::NAME)) {
+        if (!class_exists($moduleClass) || !class_implements($moduleClass)) {
             throw new NotYetImplementedException;
         }
 
-        self::$modules[$module::NAME] = $module;
+        if (empty($moduleClass::NAME)) {
+            throw new NotYetImplementedException;
+        }
+
+        self::$modules[$moduleClass::NAME] = $moduleClass;
     }
 
     public static function removeModuleByMethod(string $method): void

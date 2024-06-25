@@ -5,44 +5,50 @@ declare(strict_types=1);
 namespace MammothPHP\WoollyM\Stats\Modules;
 
 use MammothPHP\WoollyM\Statements\Select\Select;
-use MammothPHP\WoollyM\Stats\{StatsMethodInterface, StatsPropertyInterface};
 
-class Size implements StatsMethodInterface, StatsPropertyInterface
+class Size extends AbstractAgg
 {
     public const string NAME = 'size';
 
-    public function executeProperty(Select $select): int
+    protected bool $isInitializated = false;
+    public readonly bool $ignoreNonNumericValue;
+    public readonly bool $ignoreNullValue;
+
+    public function init(bool $ignoreNonNumericValue = false, bool $ignoreNullValue = false): void
     {
-        return $this->execute($select);
+        if (!$this->isInitializated) {
+            $this->ignoreNonNumericValue = $ignoreNonNumericValue;
+            $this->ignoreNullValue = $ignoreNullValue;
+            $this->isInitializated = true;
+        }
     }
 
     public function executeMethod(Select $select, array $arguments): int
     {
-        return $this->execute($select, ...$arguments);
+        $this->execute($select, ...$arguments);
+
+        return $this->getResult();
     }
 
-    protected function execute(Select $select, bool $ignoreNonNumericValue = false, bool $ignoreNullValue = false): int
+    public function addValue(mixed $value): void
     {
-        $r = 0;
+        if ($this->ignoreNonNumericValue && (is_numeric($value) || $value === true)) {
+            $this->agg++;
+        } elseif ($this->ignoreNullValue && $value !== null) {
+            $this->agg++;
+        }
+    }
 
-        if (!$ignoreNonNumericValue && !$ignoreNullValue) {
+    protected function execute(Select $select, bool $ignoreNonNumericValue = false, bool $ignoreNullValue = false): void
+    {
+        $this->init(ignoreNonNumericValue: $ignoreNonNumericValue, ignoreNullValue: $ignoreNullValue);
+
+        if (!$this->ignoreNonNumericValue && !$this->ignoreNullValue) {
             foreach ($select as $record) {
-                $r += \count($record);
+                $this->agg += \count($record);
             }
         } else {
-            foreach ($select as $record) {
-                foreach ($select as $record) {
-                    foreach ($record as $value) {
-                        if ($ignoreNonNumericValue && (is_numeric($value) || $value === true)) {
-                            $r++;
-                        } elseif ($ignoreNullValue && $value !== null) {
-                            $r++;
-                        }
-                    }
-                }
-            }
+            parent::execute($select);
         }
-
-        return $r;
     }
 }
