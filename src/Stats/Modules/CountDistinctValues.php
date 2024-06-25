@@ -4,55 +4,65 @@ declare(strict_types=1);
 
 namespace MammothPHP\WoollyM\Stats\Modules;
 
-use MammothPHP\WoollyM\Statements\Select\Select;
-use MammothPHP\WoollyM\Stats\{StatsMethodInterface, StatsPropertyInterface};
+use ReflectionClass;
 use SplObjectStorage;
 
-class CountDistinctValues implements StatsMethodInterface, StatsPropertyInterface
+class CountDistinctValues extends AbstractAgg
 {
     public const string NAME = 'countDistinctValues';
     public const string HASH_ALGO = 'sha3-256';
     public const int HASH_START_AT = 256;
 
-    public function executeProperty(Select $select): int|float
+    protected array $distinctScalar = [];
+    protected array $distinctFloat = [];
+    protected SplObjectStorage $distinctObject;
+    protected int $hasTrue = 0;
+    protected int $hasFalse = 0;
+    protected array $distinctHash = [];
+
+    public function getResult(): int|float
     {
-        return $this->execute($select);
+        return $this->agg = $this->hasTrue +
+                            $this->hasFalse +
+                            \count($this->distinctObject) +
+                            \count(array_unique($this->distinctFloat)) +
+                            \count($this->distinctScalar) +
+                            \count($this->distinctHash);
     }
 
-    public function executeMethod(Select $select, array $arguments): int|float
+    protected function reset(): void
     {
-        return $this->execute($select);
+        $rfl = new ReflectionClass(self::class);
+
+        $this->distinctScalar = $rfl->getProperty('distinctScalar')->getDefaultValue();
+        $this->distinctFloat = $rfl->getProperty('distinctFloat')->getDefaultValue();
+        $this->distinctObject = new SplObjectStorage;
+        $this->hasTrue = $rfl->getProperty('hasTrue')->getDefaultValue();
+        $this->hasFalse = $rfl->getProperty('hasFalse')->getDefaultValue();
+        $this->distinctHash = $rfl->getProperty('distinctHash')->getDefaultValue();
+
+        parent::reset();
     }
 
-    protected function execute(Select $select): int|float
+    public function addValue(mixed $value): void
     {
-        $distinctScalar = [];
-        $distinctFloat = [];
-        $distinctObject = new SplObjectStorage;
-        $hasTrue = 0;
-        $hasFalse = 0;
-        $distinctHash = [];
+        $this->distinctObject ??= new SplObjectStorage;
 
-        foreach ($select as $record) {
-            foreach ($record as $value) {
-                if ($value === true && $hasTrue === 0) {
-                    $hasTrue = 1;
-                } elseif ($value === false && $hasFalse === 0) {
-                    $hasFalse = 1;
-                } elseif (\is_object($value)) {
-                    $distinctObject[$value] = null;
-                } elseif (\is_float($value)) {
-                    $distinctFloat[] = $value;
-                } elseif (\is_scalar($value)) {
-                    if (\is_string($value) && (\strlen($value) * 8) > static::HASH_START_AT) {
-                        $distinctHash[hash(static::HASH_ALGO, $value, true)] = null;
-                    } else {
-                        $distinctScalar[$value] = null;
-                    }
-                }
+        if ($value === true && $this->hasTrue === 0) {
+            $this->hasTrue = 1;
+        } elseif ($value === false && $this->hasFalse === 0) {
+            $this->hasFalse = 1;
+        } elseif (\is_object($value)) {
+            $this->distinctObject[$value] = null;
+        } elseif (\is_float($value)) {
+            $this->distinctFloat[] = $value;
+        } elseif (\is_scalar($value)) {
+            if (\is_string($value) && (\strlen($value) * 8) > static::HASH_START_AT) {
+                $this->distinctHash[hash(static::HASH_ALGO, $value, true)] = null;
+            } else {
+                $this->distinctScalar[$value] = null;
             }
         }
 
-        return $hasTrue + $hasFalse + \count($distinctObject) + \count(array_unique($distinctFloat)) + \count($distinctScalar) + \count($distinctHash);
     }
 }

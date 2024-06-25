@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace MammothPHP\WoollyM\Stats\Modules;
 
-class Max extends MinMaxMaxAbstract
+class Max extends AbstractMinMaxMax
 {
     public const string NAME = 'max';
 

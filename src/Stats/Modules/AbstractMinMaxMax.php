@@ -7,7 +7,7 @@ namespace MammothPHP\WoollyM\Stats\Modules;
 use MammothPHP\WoollyM\Statements\Select\Select;
 use MammothPHP\WoollyM\Stats\{StatsMethodInterface, StatsPropertyInterface};
 
-abstract class MinMaxMaxAbstract implements StatsMethodInterface, StatsPropertyInterface
+abstract class AbstractMinMaxMax implements StatsMethodInterface, StatsPropertyInterface
 {
     public function executeProperty(Select $select): mixed
     {
