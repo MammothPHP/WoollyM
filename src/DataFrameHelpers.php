@@ -6,6 +6,7 @@ namespace MammothPHP\WoollyM;
 
 use Countable;
 use MammothPHP\WoollyM\Exceptions\{InvalidSelectException, NotYetImplementedException};
+use MammothPHP\WoollyM\Stats\{AggProvider};
 
 abstract class DataFrameHelpers extends DataFrameModifiers implements Countable
 {
@@ -54,7 +55,7 @@ abstract class DataFrameHelpers extends DataFrameModifiers implements Countable
      * @param string[] $args
      * @return DataFrame
      */
-    public function group(string ...$args): DataFrame
+    public function group(string|AggProvider ...$args): DataFrame
     {
         return (new Extract($this, new DataFrame))->group(...$args);
     }

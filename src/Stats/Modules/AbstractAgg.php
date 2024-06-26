@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace MammothPHP\WoollyM\Stats\Modules;
 
 use MammothPHP\WoollyM\Statements\Select\Select;
-use MammothPHP\WoollyM\Stats\{AggInterface, StatsMethodInterface, StatsPropertyInterface};
+use MammothPHP\WoollyM\Stats\{AggGroup, AggInterface, StatsMethodInterface, StatsPropertyInterface};
 
 abstract class AbstractAgg implements AggInterface, StatsMethodInterface, StatsPropertyInterface
 {
+    use AggGroup;
+
     protected int|float $agg = 0;
 
     public function executeProperty(Select $select): int|float|null

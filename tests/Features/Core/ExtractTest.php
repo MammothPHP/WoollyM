@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use MammothPHP\WoollyM\DataFrame;
 use MammothPHP\WoollyM\Exceptions\{InvalidSelectException};
+use MammothPHP\WoollyM\Stats\Modules\{CountDistinctValues, Sum};
 
 beforeEach(function (): void {
     $this->input = [
@@ -135,3 +136,49 @@ test('group must has a valid col', function (): void {
 
     $originalDf->group('CompFirstName', 'DiedIn');
 })->throws(InvalidSelectException::class);
+
+
+test('group simple group aggregation', function (): void {
+    $df = new DataFrame([
+        ['a' => 1, 'b' => 2, 'c' => 3],
+        ['a' => 1, 'b' => 3, 'c' => 4],
+        ['a' => 2, 'b' => 4, 'c' => 5],
+        ['a' => 2, 'b' => 4, 'c' => 6],
+        ['a' => 3, 'b' => 5, 'c' => 7],
+        ['a' => 3, 'b' => 5, 'c' => 8],
+        ['a' => 4, 'b' => 5, 'c' => 9],
+    ]);
+
+    $grouped = $df->group('a', Sum::col('b'));
+
+    expect($grouped->toArray())->tobe([
+        ['a' => 1, 'b' => 5],
+        ['a' => 2, 'b' => 8],
+        ['a' => 3, 'b' => 10],
+        ['a' => 4, 'b' => 5],
+    ]);
+
+    $grouped = $df->group('b', CountDistinctValues::col('a'));
+
+    expect($grouped->toArray())->tobe([
+        ['b' => 2, 'a' => 1],
+        ['b' => 3, 'a' => 1],
+        ['b' => 4, 'a' => 1],
+        ['b' => 5, 'a' => 2],
+    ]);
+});
+
+test('group alias "as"', function (): void {
+    $df = new DataFrame([
+        ['a' => 'foo', 'b' => 7],
+        ['a' => 'foo', 'b' => 7],
+        ['a' => 'bar', 'b' => 42],
+    ]);
+
+    $grouped = $df->group('a', Sum::col('b', as: 'total'));
+
+    expect($grouped->toArray())->toBe([
+        ['a' => 'foo', 'total' => 14],
+        ['a' => 'bar', 'total' => 42],
+    ]);
+});

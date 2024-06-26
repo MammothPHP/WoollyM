@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace MammothPHP\WoollyM\Stats\Modules;
 
-use MammothPHP\WoollyM\Statements\Select\Select;
-use MammothPHP\WoollyM\Stats\{StatsMethodInterface, StatsPropertyInterface};
-
 abstract class AbstractMinMaxMax extends AbstractAgg
 {
     protected bool $isFirst = true;
@@ -20,7 +17,7 @@ abstract class AbstractMinMaxMax extends AbstractAgg
 
     public function addValue(mixed $value): void
     {
-        if (!is_int($value) && !is_float($value)) {
+        if (!\is_int($value) && !\is_float($value)) {
             return;
         }
 
