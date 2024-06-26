@@ -8,25 +8,8 @@ class Max extends AbstractMinMaxMax
 {
     public const string NAME = 'max';
 
-    protected function compare(mixed $a, mixed $b): bool
+    protected function compare(int|float $a, int|float $b): bool
     {
-        return $this->greaterThan($a, $b);
-    }
-
-    protected function greaterThan(mixed $a, mixed $b): bool
-    {
-        if ($a === null) {
-            return false;
-        }
-
-        if ($b === null) {
-            return true;
-        }
-
-        if (\is_bool($b) && !\is_bool($a)) {
-            return true;
-        }
-
         return $a > $b;
     }
 }

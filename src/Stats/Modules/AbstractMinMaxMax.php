@@ -7,36 +7,30 @@ namespace MammothPHP\WoollyM\Stats\Modules;
 use MammothPHP\WoollyM\Statements\Select\Select;
 use MammothPHP\WoollyM\Stats\{StatsMethodInterface, StatsPropertyInterface};
 
-abstract class AbstractMinMaxMax implements StatsMethodInterface, StatsPropertyInterface
+abstract class AbstractMinMaxMax extends AbstractAgg
 {
-    public function executeProperty(Select $select): mixed
+    protected bool $isFirst = true;
+
+    abstract protected function compare(int|float $a, int|float $b): bool;
+
+    public function getResult(): int|float|null
     {
-        return $this->execute($select);
+        return $this->isFirst ? null : $this->agg;
     }
 
-    public function executeMethod(Select $select, array $arguments): mixed
+    public function addValue(mixed $value): void
     {
-        return $this->execute($select, ...$arguments);
-    }
-
-    abstract protected function compare(mixed $a, mixed $b): bool;
-
-    protected function execute(Select $select): mixed
-    {
-        $first = true;
-        foreach ($select as $record) {
-            foreach ($record as $value) {
-                if ($first) {
-                    $first = false;
-                    $r = $value;
-                }
-
-                if ($this->compare($value, $r)) {
-                    $r = $value;
-                }
-            }
+        if (!is_int($value) && !is_float($value)) {
+            return;
         }
 
-        return $r;
+        if ($this->isFirst) {
+            $this->isFirst = false;
+            $this->agg = $value;
+        }
+
+        if ($this->compare($value, $this->agg)) {
+            $this->agg = $value;
+        }
     }
 }

@@ -19,7 +19,7 @@ test('equivalence', function (): void {
     $select = $this->df->selectAll();
 
     expect($select->max)->toBe($select->max())->toBe(42);
-    expect($select->min)->toBe($select->min())->toBeNull();
+    expect($select->min)->toBe($select->min())->toBe(0);
 });
 
 test('various base comparaisons', function (): void {
@@ -27,11 +27,11 @@ test('various base comparaisons', function (): void {
     expect($select->max)->toBe(7)->and($select->min)->toBe(1);
 
     $select = $this->df->select('b');
-    expect($select->max)->toBeFalse->and($select->min)->toBeNull;
+    expect($select->max)->toBeNull->and($select->min)->toBeNull;
 
     $select = $this->df->select('c');
-    expect($select->max)->toBe(0)->and($select->min)->toBeNull;
+    expect($select->max)->toBe(0)->and($select->min)->toBe(0);
 
     $select = $this->df->select('d');
-    expect($select->max)->toBe(42)->and($select->min)->toBeFalse;
+    expect($select->max)->toBe(42)->and($select->min)->toBe(42);
 });
