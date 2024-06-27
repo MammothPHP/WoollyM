@@ -9,7 +9,7 @@ use Countable;
 use MammothPHP\WoollyM\Exceptions\{InvalidSelectException, PropertyNotExistException};
 use MammothPHP\WoollyM\DataFrame;
 use MammothPHP\WoollyM\Statements\Statement;
-use MammothPHP\WoollyM\Stats\Modules;
+use MammothPHP\WoollyM\Stats\{AggProvider, Modules};
 
 class Select extends Statement implements Countable
 {
@@ -98,6 +98,11 @@ class Select extends Statement implements Countable
         }
 
         return $df;
+    }
+
+    public function groupBy(string|AggProvider ...$args): DataFrame
+    {
+        return $this->export()->extract()->groupBy(...$args);
     }
 
     /**
