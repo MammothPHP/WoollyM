@@ -104,7 +104,7 @@ class Extract
         return $this->to->insert()->append($results);
     }
 
-    public function group(string|AggProvider ...$args): DataFrame
+    public function groupBy(string|AggProvider ...$args): DataFrame
     {
         // Check invalid columns
         array_walk($args, fn(string|AggProvider $col) => $this->df->mustHaveColumn(\is_string($col) ? $col : $col->column));

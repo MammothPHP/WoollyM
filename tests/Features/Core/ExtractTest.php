@@ -85,14 +85,14 @@ test('simple group', function (): void {
         ['CompFirstName' => 'Johan', 'CompName' => 'Strauss', 'CompBirth' => 1825],
     ]);
 
-    expect($originalDf->group('CompFirstName')->toArray())->toBe([
+    expect($originalDf->groupBy('CompFirstName')->toArray())->toBe([
         ['CompFirstName' => 'Claude'],
         ['CompFirstName' => 'Johan'],
         ['CompFirstName' => 'Richard'],
         ['CompFirstName' => 'Frederick'],
     ]);
 
-    expect($originalDf->group('CompBirth')->toArray())->toBe([
+    expect($originalDf->groupBy('CompBirth')->toArray())->toBe([
         ['CompBirth' => 1862],
         ['CompBirth' => 1804],
         ['CompBirth' => 1813],
@@ -100,7 +100,7 @@ test('simple group', function (): void {
         ['CompBirth' => 1825],
     ]);
 
-    expect($originalDf->group('CompName', 'CompFirstName')->toArray())->toBe([
+    expect($originalDf->groupBy('CompName', 'CompFirstName')->toArray())->toBe([
         ['CompName' => 'Debussy', 'CompFirstName' => 'Claude'],
         ['CompName' => 'Strauss', 'CompFirstName' => 'Johan'],
         ['CompName' => 'Wagner', 'CompFirstName' => 'Richard'],
@@ -108,12 +108,12 @@ test('simple group', function (): void {
         ['CompName' => 'Strauss', 'CompFirstName' => 'Richard'],
     ]);
 
-    expect($originalDf->group('Nationality')->toArray())->toBe([
+    expect($originalDf->groupBy('Nationality')->toArray())->toBe([
         ['Nationality' => null],
         ['Nationality' => 'Austrian'],
     ]);
 
-    expect($originalDf->group('Nationality', 'CompFirstName')->toArray())->toBe([
+    expect($originalDf->groupBy('Nationality', 'CompFirstName')->toArray())->toBe([
         ['Nationality' => null, 'CompFirstName' => 'Claude'],
         ['Nationality' => 'Austrian', 'CompFirstName' => 'Johan'],
         ['Nationality' => null, 'CompFirstName' => 'Richard'],
@@ -129,12 +129,12 @@ test('group must has a valid col', function (): void {
         ['CompFirstName' => 'Johan', 'CompName' => 'Strauss', 'Nationality' => 'Austrian', 'CompBirth' => 1804],
     ]);
 
-    expect($originalDf->group('CompFirstName', 'Nationality')->toArray())->toBe([
+    expect($originalDf->groupBy('CompFirstName', 'Nationality')->toArray())->toBe([
         ['CompFirstName' => 'Johan', 'Nationality' => null],
         ['CompFirstName' => 'Johan', 'Nationality' => 'Austrian'],
     ]);
 
-    $originalDf->group('CompFirstName', 'DiedIn');
+    $originalDf->groupBy('CompFirstName', 'DiedIn');
 })->throws(InvalidSelectException::class);
 
 
@@ -149,7 +149,7 @@ test('group simple group aggregation', function (): void {
         ['a' => 4, 'b' => 5, 'c' => 9],
     ]);
 
-    $grouped = $df->group('a', Sum::col('b'));
+    $grouped = $df->groupBy('a', Sum::col('b'));
 
     expect($grouped->toArray())->tobe([
         ['a' => 1, 'b' => 5],
@@ -158,7 +158,7 @@ test('group simple group aggregation', function (): void {
         ['a' => 4, 'b' => 5],
     ]);
 
-    $grouped = $df->group('b', CountDistinctValues::col('a'));
+    $grouped = $df->groupBy('b', CountDistinctValues::col('a'));
 
     expect($grouped->toArray())->tobe([
         ['b' => 2, 'a' => 1],
@@ -175,7 +175,7 @@ test('group alias "as"', function (): void {
         ['a' => 'bar', 'b' => 42],
     ]);
 
-    $grouped = $df->group('a', Sum::col('b', as: 'total'));
+    $grouped = $df->groupBy('a', Sum::col('b', as: 'total'));
 
     expect($grouped->toArray())->toBe([
         ['a' => 'foo', 'total' => 14],
