@@ -157,7 +157,7 @@ test('groupBy', function (): void {
     ]);
 
     $grouped = $df->selectAll()
-        ->where(fn($r) => $r['a'] % 2 === 0) // a is even
+        ->whereColumnEqual('a', fn(int $v) => $v % 2 === 0) // a is even
         ->groupBy('a', Sum::col('b'));
 
     expect($grouped->toArray())->tobe([
