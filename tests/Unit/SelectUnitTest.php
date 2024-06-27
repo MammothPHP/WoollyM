@@ -18,7 +18,7 @@ beforeEach(function (): void {
 it('can retrieve a simple record', function (): void {
     expect($this->df->select()->record(1))->toBe($this->df[1]);
 
-    $stmt = $this->df->select()->whereColumnEqual('colA', 1);
+    $stmt = $this->df->select()->whereColumn('colA', equal: 1);
 
     expect($stmt->countRecords())->toBe(1);
     expect($stmt->record(1))->toBe($this->df[1]);
@@ -55,7 +55,7 @@ it('support select constructor', function (): void {
 });
 
 it('support whereColumn constructor', function (): void {
-    $select = $this->df->select('colA')->whereColumnEqual('colB', 42)->whereColumnEqual('colC', fn(mixed $v): bool => $v > 1);
+    $select = $this->df->select('colA')->whereColumn('colB', 42)->whereColumn('colC', fn(mixed $v): bool => $v > 1);
 
     expect($select->config(StatementClause::WHERE))->toBeArray()->toHaveCount(2);
     expect($select->config(StatementClause::WHERE)[1][0])->toBeInstanceOf(Closure::class);

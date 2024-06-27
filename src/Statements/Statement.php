@@ -114,9 +114,9 @@ abstract class Statement implements Iterator
         return $r;
     }
 
-    public function where(Closure|string ...$conditions): static
+    public function where(Closure|string ...$equal): static
     {
-        foreach ($conditions as $oneCondition) {
+        foreach ($equal as $oneCondition) {
             $this->and($oneCondition);
         }
 
@@ -155,15 +155,15 @@ abstract class Statement implements Iterator
         return $this;
     }
 
-    public function whereColumnEqual(string $column, mixed $condition): static
+    public function whereColumn(string $column, mixed $equal): static
     {
-        if ($condition instanceof Closure) {
-            $condition = static fn(mixed $v): bool => $condition($v[$column]);
+        if ($equal instanceof Closure) {
+            $equal = static fn(mixed $v): bool => $equal($v[$column]);
         } else {
-            $condition = static fn(mixed $v): bool => $condition === $v[$column];
+            $equal = static fn(mixed $v): bool => $equal === $v[$column];
         }
 
-        $this->and($condition);
+        $this->and($equal);
 
         return $this;
     }

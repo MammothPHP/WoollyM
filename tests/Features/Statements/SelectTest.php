@@ -52,7 +52,7 @@ it('count records', function (): void {
 
     expect($select->countRecords())
         ->toBe(5)
-        ->and($select->whereColumnEqual('colA', fn($v) => $v > 1)->countRecords())
+        ->and($select->whereColumn('colA', fn($v) => $v > 1)->countRecords())
         ->toBe(4)
         ->and($select->limit(2)->countRecords())
         ->toBe(2)
@@ -123,10 +123,10 @@ it('can use or condition', function (): void {
 
 test('whereColumn', function (): void {
     $select1 = $this->df->select('colA')
-        ->whereColumnEqual('colB', 8);
+        ->whereColumn('colB', equal: 8);
 
     $select2 = $this->df->select('colA')
-        ->whereColumnEqual('colB', fn($v): bool => $v === 8);
+        ->whereColumn('colB', fn($v): bool => $v === 8);
 
     expect($select1->export()->toArray())->toBe($select2->export()->toArray())->toBe([
         ['colA' => 7],
@@ -157,7 +157,7 @@ test('groupBy', function (): void {
     ]);
 
     $grouped = $df->selectAll()
-        ->whereColumnEqual('a', fn(int $v) => $v % 2 === 0) // a is even
+        ->whereColumn('a', fn(int $v) => $v % 2 === 0) // a is even
         ->groupBy('a', Sum::col('b'));
 
     expect($grouped->toArray())->tobe([

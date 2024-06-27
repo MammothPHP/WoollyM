@@ -26,7 +26,7 @@ test('delete record', function (): void {
 
 test('delete all statement', function (): void {
     $this->df->delete()
-        ->whereColumnEqual('colB', 5)
+        ->whereColumn('colB', 5)
         ->or(fn(array $record): bool => $record['colA'] >= 10)
         ->execute();
 

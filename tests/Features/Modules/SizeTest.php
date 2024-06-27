@@ -35,7 +35,7 @@ test('size with filters', function (): void {
         ['colA' => 77, 'colB' => 7, 'colC' => 8],
     ]);
 
-    expect($df->select('colA', 'colC')->whereColumnEqual('colA', 42)->size())->toBe(2 * 2);
+    expect($df->select('colA', 'colC')->whereColumn('colA', 42)->size())->toBe(2 * 2);
 });
 
 test('count column B', function (): void {

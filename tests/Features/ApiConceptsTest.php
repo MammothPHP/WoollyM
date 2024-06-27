@@ -12,7 +12,7 @@ test('tests some api concept', function (): void {
 
     $df->insert()->record(['colA' => 'foo', 'colB' => 42, 'colC' => 7]);
 
-    $r = $df->select('colB')->whereColumnEqual('colA', 'foo')->sum(); // 52
+    $r = $df->select('colB')->whereColumn('colA', 'foo')->sum(); // 52
     expect($r)->toBe(52);
 
     $exportedDf = $df->extract()->fromSqlQuery('SELECT colA, sum(colB) FROM dataframe GROUP BY 1;');
