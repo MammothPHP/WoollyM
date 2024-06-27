@@ -182,3 +182,11 @@ test('group alias "as"', function (): void {
         ['a' => 'bar', 'total' => 42],
     ]);
 });
+
+test('group column not exist', function (): void {
+    $this->df->groupBy('non-existent column');
+})->throws(InvalidSelectException::class);
+
+test('aggregation function on non-existent column', function (): void {
+    $this->df->groupBy('a', Sum::col('non-existent column'));
+})->throws(InvalidSelectException::class);
