@@ -133,6 +133,52 @@ test('whereColumn', function (): void {
     ]);
 });
 
+test('whereColumn contain', function (): void {
+    $df = new DataFrame([
+        ['composer' => 'Ravel'],
+        ['composer' => 'Debussy'],
+        ['composer' => 'Koechlin'],
+    ]);
+
+    $select = $df->selectAll()->whereColumn('composer', contain: 'D');
+    expect($select->export()->toArray())->toBe([
+        ['composer' => 'Debussy'],
+    ]);
+
+    $df[] = ['composer' => 41];
+
+    $select = $df->selectAll()->whereColumn('composer', contain: 'Ko');
+    expect($select->export()->toArray())->toBe([
+        ['composer' => 'Koechlin'],
+    ]);
+
+    $select = $df->selectAll()->whereColumn('composer', contain: '41');
+    expect($select->export()->toArray())->toBe([
+        ['composer' => 41],
+    ]);
+
+    $df[] = ['composer' => true];
+
+    // True dont' must dont must to match 1
+    $select = $df->selectAll()->whereColumn('composer', contain: '1');
+    expect($select->export()->toArray())->toBe([
+        ['composer' => 41],
+    ]);
+
+    $df[] = ['composer' => $stringable = new class {
+        public function __toString(): string
+        {
+            return 'Debussy';
+        }
+    }];
+
+    $select = $df->selectAll()->whereColumn('composer', contain: 'De');
+    expect($select->export()->toArray())->toBe([
+        ['composer' => 'Debussy'],
+        ['composer' => $stringable],
+    ]);
+});
+
 test('whereKeyBetween', function (): void {
     $select = $this->df->selectAll()->whereKeyBetween(1, 3);
 
@@ -142,7 +188,6 @@ test('whereKeyBetween', function (): void {
     expect($select->whereKeyBetween(2, 3)->countRecords())->toBe(2)->and($select->toArray())->toHaveCount(2)->toHaveKeys([2, 3]);
 
     expect($select->resetWhere()->countRecords())->toBe(5);
-
 });
 
 test('groupBy', function (): void {

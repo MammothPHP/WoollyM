@@ -6,8 +6,9 @@ namespace MammothPHP\WoollyM\Statements;
 
 use Closure;
 use Iterator;
-use MammothPHP\WoollyM\Exceptions\{InvalidSelectException, NotYetImplementedException};
+use MammothPHP\WoollyM\Exceptions\{InvalidSelectException, NotYetImplementedException, UnknownOptionException};
 use MammothPHP\WoollyM\{DataFrame, LinkedDataFrame};
+use Stringable;
 use WeakMap;
 
 /**
@@ -155,12 +156,29 @@ abstract class Statement implements Iterator
         return $this;
     }
 
-    public function whereColumn(string $column, mixed $equal): static
+    public function whereColumn(string $column, mixed $equal = null, ?string $contain = null): static
     {
-        if ($equal instanceof Closure) {
-            $equal = static fn(mixed $v): bool => $equal($v[$column]);
+        if ($equal !== null) {
+            if ($equal instanceof Closure) {
+                $equal = static fn(mixed $v): bool => $equal($v[$column]);
+            } else {
+                $equal = static fn(mixed $v): bool => $equal === $v[$column];
+            }
+        } elseif ($contain !== null) {
+
+            $equal = static function (mixed $v) use ($column, $contain): bool {
+                if (\is_string($v[$column]) ||
+                    \is_int($v[$column]) ||
+                    \is_float($v[$column]) ||
+                    $v[$column] instanceof Stringable
+                ) {
+                    return str_contains((string) $v[$column], $contain);
+                }
+
+                return false;
+            };
         } else {
-            $equal = static fn(mixed $v): bool => $equal === $v[$column];
+            throw new UnknownOptionException('Condition parameter is not set');
         }
 
         $this->and($equal);
