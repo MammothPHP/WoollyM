@@ -8,6 +8,7 @@ use Closure;
 use Iterator;
 use MammothPHP\WoollyM\Exceptions\{InvalidSelectException, NotYetImplementedException, UnknownOptionException};
 use MammothPHP\WoollyM\{DataFrame, LinkedDataFrame};
+use Spatie\Regex\Regex;
 use Stringable;
 use WeakMap;
 
@@ -156,7 +157,7 @@ abstract class Statement implements Iterator
         return $this;
     }
 
-    public function whereColumn(string $column, mixed $equal = null, ?string $contain = null): static
+    public function whereColumn(string $column, mixed $equal = null, ?string $contain = null, ?string $match = null): static
     {
         if ($equal !== null) {
             if ($equal instanceof Closure) {
@@ -165,7 +166,6 @@ abstract class Statement implements Iterator
                 $equal = static fn(mixed $v): bool => $equal === $v[$column];
             }
         } elseif ($contain !== null) {
-
             $equal = static function (mixed $v) use ($column, $contain): bool {
                 if (\is_string($v[$column]) ||
                     \is_int($v[$column]) ||
@@ -173,6 +173,19 @@ abstract class Statement implements Iterator
                     $v[$column] instanceof Stringable
                 ) {
                     return str_contains((string) $v[$column], $contain);
+                }
+
+                return false;
+            };
+        }
+        elseif ($match !== null) {
+            $equal = static function (mixed $v) use ($column, $match): bool {
+                if (\is_string($v[$column]) ||
+                \is_int($v[$column]) ||
+                \is_float($v[$column]) ||
+                $v[$column] instanceof Stringable
+                ) {
+                    return Regex::match($match, (string) $v[$column])->hasMatch();
                 }
 
                 return false;

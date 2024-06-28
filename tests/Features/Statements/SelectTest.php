@@ -179,6 +179,36 @@ test('whereColumn contain', function (): void {
     ]);
 });
 
+test('whereColumn match', function (): void {
+    $df = new DataFrame([
+        ['composer' => 'Ravel'],
+        ['composer' => 'Debussy'],
+        ['composer' => 'Koechlin'],
+    ]);
+
+    $select = $df->selectAll()->whereColumn('composer', match: '/Deb|el/');
+    expect($select->export()->toArray())->toBe([
+        ['composer' => 'Ravel'],
+        ['composer' => 'Debussy'],
+    ]);
+
+    $df[] = ['composer' => 41];
+    $df[] = ['composer' => $stringable = new class {
+        public function __toString(): string
+        {
+            return 'Debussy';
+        }
+    }];
+
+    $select = $df->selectAll()->whereColumn('composer', match: '/41|Debussy/');
+    expect($select->export()->toArray())->toBe([
+        ['composer' => 'Debussy'],
+        ['composer' => 41],
+        ['composer' => $stringable],
+    ]);
+
+});
+
 test('whereKeyBetween', function (): void {
     $select = $this->df->selectAll()->whereKeyBetween(1, 3);
 
