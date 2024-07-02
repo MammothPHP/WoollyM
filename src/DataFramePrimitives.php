@@ -318,6 +318,10 @@ abstract class DataFramePrimitives
                 $recordValue = $type->convert($recordValue);
             }
 
+            if ($recordValue === null) {
+                $recordValue = NullValue::create();
+            }
+
             $newRecord[$this->driverColumnModeText ? $recordKey : $columnKey] = $recordValue;
         }
 
