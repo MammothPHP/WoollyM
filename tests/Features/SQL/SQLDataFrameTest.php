@@ -18,9 +18,7 @@ test('tosql', function (): void {
     SQL::fromDataFrame($df)->toPDO($pdo, 'testTable');
     $result = $pdo->query('SELECT * FROM testTable;')->fetchAll(PDO::FETCH_ASSOC);
 
-    $df->fillInNonExistentsCol = true;
-    expect($df->toArray())->toEqual($result);
-    $df->fillInNonExistentsCol = false;
+    expect($df->toArray(true))->toEqual($result);
 
     $pdo->exec('DROP TABLE testTable;');
 });

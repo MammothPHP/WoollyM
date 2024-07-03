@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use MammothPHP\WoollyM\Record;
+
 /*
 |--------------------------------------------------------------------------
 | Test Case
@@ -26,6 +28,13 @@ uses(Tests\TestCase::class)->in('Unit');
 | to assert different things. Of course, you may extend the Expectation API at any time.
 |
 */
+
+expect()->extend('toBeSameRecord', function (Record $record) {
+    expect($this->value)->toBeInstanceOf(Record::class);
+    expect($this->value->toArray())->toBe($record->toArray())->and($this->value->recordKey)->tobe($record->recordKey);
+
+    return $this;
+});
 
 expect()->extend('dump', function () {
     fwrite(\STDERR, var_export($this->value, true));

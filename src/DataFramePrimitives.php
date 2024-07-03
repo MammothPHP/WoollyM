@@ -287,9 +287,18 @@ abstract class DataFramePrimitives
      * Get a record by key
      * @return array<string,array>
      */
-    public function getRecord(int $key): array
+    public function getRecord(int $key): Record
     {
-        return $this->convertAbstractRecordToArray($this->data->getRecordKey($key));
+        return $this->convertAbstractToRecordObject($this->data->getRecordKey($key));
+    }
+
+    /**
+     * Get a record by key and return an array
+     * @return array<string,array>
+     */
+    public function getRecordAsArray(int $key): array
+    {
+        return $this->getRecord($key)->toArray();
     }
 
     /**
@@ -328,7 +337,7 @@ abstract class DataFramePrimitives
 
     /* ******************************************* Internal Records API ***********************************************/
 
-    protected function convertAbstractRecordToArray(array $abstractRecord): array
+    protected function convertAbstractToRecordObject(array $abstractRecord): Record
     {
         $r = [];
 
@@ -343,6 +352,8 @@ abstract class DataFramePrimitives
                 $r[$cn] = $abstractRecord[$key];
             }
         }
+
+        return new Record($this, $key, $r);
 
         return $r;
     }

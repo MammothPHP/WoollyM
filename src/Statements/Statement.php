@@ -7,7 +7,7 @@ namespace MammothPHP\WoollyM\Statements;
 use Closure;
 use Iterator;
 use MammothPHP\WoollyM\Exceptions\{InvalidSelectException, NotYetImplementedException, UnknownOptionException};
-use MammothPHP\WoollyM\{DataFrame, LinkedDataFrame};
+use MammothPHP\WoollyM\{DataFrame, LinkedDataFrame, Record};
 use Spatie\Regex\Regex;
 use Stringable;
 use WeakMap;
@@ -177,8 +177,7 @@ abstract class Statement implements Iterator
 
                 return false;
             };
-        }
-        elseif ($match !== null) {
+        } elseif ($match !== null) {
             $equal = static function (mixed $v) use ($column, $match): bool {
                 if (\is_string($v[$column]) ||
                 \is_int($v[$column]) ||
@@ -328,6 +327,17 @@ abstract class Statement implements Iterator
         $this->moveToNextValidRecord();
     }
 
+    public function getRecordArray(Record $record): array {
+        $recordArray = $record->toArray();
+        $r = [];
+
+        foreach($this->getSelect() as $columnName) {
+            $r[$columnName] = $recordArray[$columnName] ?? null;
+        }
+
+        return $r;
+    }
+
     /**
      * @internal
      */
@@ -335,7 +345,7 @@ abstract class Statement implements Iterator
     {
         $r = $this->getLinkedDataFrame()->current();
 
-        return $this->filterColumn($r);
+        return $this->filterColumn($this->getRecordArray($r));
     }
 
     /**
@@ -343,7 +353,7 @@ abstract class Statement implements Iterator
      */
     protected function currentUnfiltered(): array
     {
-        return $this->getLinkedDataFrame()->current();
+        return $this->getLinkedDataFrame()->current()->toArray();
     }
 
     /**

@@ -136,7 +136,7 @@ class XLSX extends Builder
 
         $wsArray = [$this->fromDf->columnsNames()];
         foreach ($this->fromDf as $row) {
-            $line = array_values($row);
+            $line = array_values($row->toArray());
 
             foreach ($line as &$cell) {
                 if (\is_array($cell) || \is_object($cell)) {

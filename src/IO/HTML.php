@@ -27,16 +27,12 @@ class HTML
     ): string {
         $converter = (new HTMLConverter)->table($class ?? '', $id ?? '');
 
-        $backupFillInNonExistentsCol = $this->fromDf->fillInNonExistentsCol;
-        $this->fromDf->fillInNonExistentsCol = true;
-
-        $iterable = $this->fromDf->selectAll()->limit($limit)->offset($offset);
+        $iterable = $this->fromDf->selectAll()->limit($limit)->offset($offset)->toArray();
 
         try {
             $r = $converter->convert($iterable, $this->fromDf->columnsNames(), $this->fromDf->columnsNames());
         } catch (Exception $e) {
         } finally {
-            $this->fromDf->fillInNonExistentsCol = $backupFillInNonExistentsCol;
             ($e ?? null) instanceof Exception && throw $e;
         }
 

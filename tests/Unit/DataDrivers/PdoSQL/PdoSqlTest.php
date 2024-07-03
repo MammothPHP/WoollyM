@@ -29,11 +29,11 @@ beforeEach(function (): void {
 
 test('get a key, delete it, try again', function (): void {
 
-    expect($this->df->getRecord(2))->toBe(['a' => '4', 'b' => null, 'c' => '6']);
+    expect($this->df->getRecordAsArray(2))->toBe(['a' => '4', 'b' => null, 'c' => '6']);
 
     $this->df->removeRecord(2);
 
-    expect($this->df->getRecord(2))->toBe(['a' => '4', 'b' => null, 'c' => '6']);
+    expect($this->df->getRecordAsArray(2))->toBe(['a' => '4', 'b' => null, 'c' => '6']);
 })->throws(KeyNotExistException::class);
 
 test('count', function (): void {
@@ -43,20 +43,20 @@ test('count', function (): void {
 test('add record', function (): void {
     $this->df[] = ['c' => 'foo', 'a' => 42];
     expect($this->df)->toHaveCount(4);
-    expect($this->df->getRecord(4))->toBe(['a' => '42', 'b' => null, 'c' => 'foo']);
+    expect($this->df->getRecordAsArray(4))->toBe(['a' => '42', 'b' => null, 'c' => 'foo']);
 });
 
 test('update record', function (): void {
     $this->df[1] = ['c' => 'foo', 'a' => 42];
     expect($this->df)->toHaveCount(3);
-    expect($this->df->getRecord(1))->toBe(['a' => '42', 'b' => null, 'c' => 'foo']);
+    expect($this->df->getRecordAsArray(1))->toBe(['a' => '42', 'b' => null, 'c' => 'foo']);
 });
 
 test('iterator', function (): void {
     $r = [];
 
-    foreach ($this->df as $key => $value) {
-        $r[$key] = $value;
+    foreach ($this->df as $key => $record) {
+        $r[$key] = $record->toArray();
     }
 
     expect($r)->toBe([

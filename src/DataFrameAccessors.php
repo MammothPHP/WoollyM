@@ -7,6 +7,7 @@ namespace MammothPHP\WoollyM;
 use MammothPHP\WoollyM\Exceptions\{DataFrameException, InvalidSelectException};
 use Iterator;
 use ArrayAccess;
+use IteratorIterator;
 
 abstract class DataFrameAccessors extends DataFramePrimitives implements ArrayAccess, Iterator
 {
@@ -17,9 +18,9 @@ abstract class DataFrameAccessors extends DataFramePrimitives implements ArrayAc
     /**
      * Outputs a DataFrame as a two-dimensional associative array.
      */
-    public function toArray(): array
+    public function toArray(bool $fillAllColumn = false): array
     {
-        return iterator_to_array($this, true);
+        return iterator_to_array($this->getRecordsAsArrayIterator($fillAllColumn), true);
     }
 
     /* *****************************************************************************************************************
@@ -40,7 +41,7 @@ abstract class DataFrameAccessors extends DataFramePrimitives implements ArrayAc
      * @internal
      * @throws InvalidSelectException
      */
-    public function offsetGet(mixed $index): mixed
+    public function offsetGet(mixed $index): Record
     {
         return $this->getRecord($index);
     }
@@ -82,7 +83,7 @@ abstract class DataFrameAccessors extends DataFramePrimitives implements ArrayAc
      */
     public function current(): mixed
     {
-        return $this->convertAbstractRecordToArray($this->driverIterator->current());
+        return $this->convertAbstractToRecordObject($this->driverIterator->current());
     }
 
     /**
@@ -124,5 +125,29 @@ abstract class DataFrameAccessors extends DataFramePrimitives implements ArrayAc
     public function rewind(): void
     {
         $this->initDriverIterator();
+    }
+
+    /* *****************************************************************************************************************
+     ********************************************* RecordArray Iterator ************************************************
+     ******************************************************************************************************************/
+
+    public function getRecordsAsArrayIterator(bool $fillAllColumn = false): Iterator
+    {
+        if ($fillAllColumn) {
+            return new class ($this) extends IteratorIterator {
+                public function current(): array
+                {
+                    return parent::current()->toContextualArray();
+                }
+            };
+        }
+        else {
+            return new class ($this) extends IteratorIterator {
+                public function current(): array
+                {
+                    return parent::current()->toArray();
+                }
+            };
+        }
     }
 }

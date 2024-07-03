@@ -49,8 +49,8 @@ test('remove column', function (): void {
 });
 
 test('for each', function (): void {
-    foreach ($this->df as $i => $row) {
-        expect($this->input[$i])->toEqual($row);
+    foreach ($this->df as $i => $record) {
+        expect($this->input[$i])->toEqual($record->toArray());
     }
 });
 

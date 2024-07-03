@@ -16,12 +16,12 @@ beforeEach(function (): void {
 });
 
 it('can retrieve a simple record', function (): void {
-    expect($this->df->select()->record(1))->toBe($this->df[1]);
+    expect($this->df->select()->record(1))->toBeSameRecord($this->df[1]);
 
     $stmt = $this->df->select()->whereColumn('colA', equal: 1);
 
     expect($stmt->countRecords())->toBe(1);
-    expect($stmt->record(1))->toBe($this->df[1]);
+    expect($stmt->record(1))->toBeSameRecord($this->df[1]);
 });
 
 it('return a select object', function (): void {
@@ -156,7 +156,7 @@ it('support cloning (selections tests)', function (): void {
     $select1 = $this->df->select('colA');
     $select2 = clone $select1;
 
-    expect($select1->getSelect())->toBe($select2->getSelect());
+    expect($select1->getSelect())->toBe($select2->getSelect())->toBe(['colA']);
 
     $select2->select('colA', 'colB');
     expect($select1->getSelect())->not->toBe($select2->getSelect());

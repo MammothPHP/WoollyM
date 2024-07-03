@@ -174,7 +174,7 @@ class ColumnRepresentation extends FixedSelect implements Stringable
             throw new DataFrameException($msg);
         }
 
-        $this->apply(fn(mixed $value, int $position): mixed => current($df->getRecord($position)));
+        $this->apply(fn(mixed $value, int $position): mixed => current($df->getRecordAsArray($position)));
     }
 
     /**
@@ -186,9 +186,9 @@ class ColumnRepresentation extends FixedSelect implements Stringable
         $target_df = $this->getLinkedDataFrame();
         $target_colName = $this->columnIndex->get()->getName();
 
-        foreach ($target_df as $i => $row) {
-            $row[$target_colName] = $f($row[$target_colName] ?? null, $i);
-            $target_df[$i] = $row;
+        foreach ($target_df->getRecordsAsArrayIterator() as $i => $record) {
+            $record[$target_colName] = $f($record[$target_colName] ?? null, $i);
+            $target_df[$i] = $record;
         }
     }
 

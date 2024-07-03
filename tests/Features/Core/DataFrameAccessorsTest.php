@@ -44,5 +44,5 @@ test('offset set value array', function (): void {
 });
 
 test('offset get', function (): void {
-    expect($this->df[2])->toBe(['a' => 7, 'b' => 8, 'c' => 9]);
+    expect($this->df[2]->toArray())->toBe(['a' => 7, 'b' => 8, 'c' => 9]);
 });

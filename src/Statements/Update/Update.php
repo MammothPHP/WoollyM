@@ -31,7 +31,7 @@ class Update extends Statement
     {
         $df = $this->getLinkedDataFrame();
 
-        $mergeValue = array_merge($df->getRecord($key), $mergeValue);
+        $mergeValue = array_merge($df->getRecordAsArray($key), $mergeValue);
 
         return $df->updateRecord($key, $mergeValue);
     }

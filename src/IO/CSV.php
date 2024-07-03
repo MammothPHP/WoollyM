@@ -235,11 +235,6 @@ class CSV extends Builder
         $writeHeader && $writer->insertOne($this->fromDf->columnsNames());
 
         // Records
-        $previousParameter = $this->fromDf->fillInNonExistentsCol;
-        $this->fromDf->fillInNonExistentsCol = true;
-
-        $writer->insertAll($this->fromDf);
-
-        $this->fromDf->fillInNonExistentsCol = $previousParameter;
+        $writer->insertAll($this->fromDf->getRecordsAsArrayIterator(true));
     }
 }

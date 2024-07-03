@@ -7,7 +7,7 @@ namespace MammothPHP\WoollyM\Statements\Select;
 use BadMethodCallException;
 use Countable;
 use MammothPHP\WoollyM\Exceptions\{InvalidSelectException, PropertyNotExistException};
-use MammothPHP\WoollyM\DataFrame;
+use MammothPHP\WoollyM\{DataFrame, Record};
 use MammothPHP\WoollyM\Statements\Statement;
 use MammothPHP\WoollyM\Stats\{AggProvider, Modules};
 
@@ -78,7 +78,7 @@ class Select extends Statement implements Countable
     /**
      * Get a record by key
      */
-    public function record(int $key): array
+    public function record(int $key): Record
     {
         return $this->getLinkedDataFrame()->getRecord($key);
     }

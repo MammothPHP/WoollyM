@@ -101,10 +101,7 @@ class SQL
         $chunk = [];
 
         try {
-            $originalFillNonExistentColOpt = $this->fromDf->fillInNonExistentsCol;
-            $this->fromDf->fillInNonExistentsCol = true;
-
-            foreach ($this->fromDf as $record) {
+            foreach ($this->fromDf->getRecordsAsArrayIterator(true) as $record) {
                 $chunk[] = $record;
 
                 if (\count($chunk) >= $this->chunkSize) {
@@ -119,8 +116,6 @@ class SQL
         } catch (PDOException $e) {
             $this->pdo->rollBack();
         } finally {
-            $this->fromDf->fillInNonExistentsCol = $originalFillNonExistentColOpt;
-
             ($e ?? null) instanceof PDOException && throw $e;
         }
 

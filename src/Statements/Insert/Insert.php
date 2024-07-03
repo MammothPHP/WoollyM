@@ -29,6 +29,10 @@ class Insert
     {
         $df = $this->getLinkedDataFrame();
 
+        if ($iterable instanceof DataFrame) {
+            $iterable = $iterable->getRecordsAsArrayIterator();
+        }
+
         foreach ($iterable as $dfRow) {
             $df->addRecord($dfRow);
         }
