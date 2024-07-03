@@ -7,8 +7,7 @@ namespace MammothPHP\WoollyM;
 use ArrayAccess;
 use Countable;
 use Iterator;
-use MammothPHP\WoollyM\Exceptions\NotYetImplementedException;
-use MammothPHP\WoollyM\Exceptions\SourceDataFrameNoLongerExist;
+use MammothPHP\WoollyM\Exceptions\{NotYetImplementedException, SourceDataFrameNoLongerExist};
 use WeakReference;
 
 class Record implements ArrayAccess, Countable, Iterator

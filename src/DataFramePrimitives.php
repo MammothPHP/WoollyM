@@ -21,12 +21,6 @@ abstract class DataFramePrimitives
      *********************************************** Core Implementation ***********************************************
      ******************************************************************************************************************/
 
-    /**
-     * If True, returned records systematically behave like all known columns in the DataFrame, not just those it actually contains.
-     * They will have a NULL value indistinguishable from columns actually containing an explicitly declared null value.
-     */
-    public bool $fillInNonExistentsCol = false;
-
     protected DataDriverInterface $data;
     public readonly bool $driverColumnModeText;
 
@@ -344,18 +338,12 @@ abstract class DataFramePrimitives
         foreach ($this->columnsNames() as $ck => $cn) {
             $key = $this->driverColumnModeText ? $cn : $ck;
 
-            $keyExist = \array_key_exists($key, $abstractRecord);
-
-            if ($this->fillInNonExistentsCol && !$keyExist) {
-                $r[$cn] = null;
-            } elseif ($keyExist) {
+            if (\array_key_exists($key, $abstractRecord)) {
                 $r[$cn] = $abstractRecord[$key];
             }
         }
 
         return new Record($this, $key, $r);
-
-        return $r;
     }
 
     /* *****************************************************************************************************************

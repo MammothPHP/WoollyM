@@ -264,15 +264,6 @@ abstract class Statement implements Iterator
         return $this;
     }
 
-    protected function filterColumn(array $record): array
-    {
-        return array_filter(
-            array: $record,
-            callback: fn(string $k): bool => \in_array($k, $this->getSelect(), true),
-            mode: \ARRAY_FILTER_USE_KEY
-        );
-    }
-
     protected function passWhereStatement(int $key, array $record): bool
     {
         foreach ($this->where as $conditionsGroup) {
@@ -327,11 +318,12 @@ abstract class Statement implements Iterator
         $this->moveToNextValidRecord();
     }
 
-    public function getRecordArray(Record $record): array {
+    public function getRecordArray(Record $record): array
+    {
         $recordArray = $record->toArray();
         $r = [];
 
-        foreach($this->getSelect() as $columnName) {
+        foreach ($this->getSelect() as $columnName) {
             $r[$columnName] = $recordArray[$columnName] ?? null;
         }
 
@@ -345,7 +337,7 @@ abstract class Statement implements Iterator
     {
         $r = $this->getLinkedDataFrame()->current();
 
-        return $this->filterColumn($this->getRecordArray($r));
+        return $this->getRecordArray($r);
     }
 
     /**

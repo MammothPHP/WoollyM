@@ -18,9 +18,9 @@ abstract class DataFrameAccessors extends DataFramePrimitives implements ArrayAc
     /**
      * Outputs a DataFrame as a two-dimensional associative array.
      */
-    public function toArray(bool $fillAllColumn = false): array
+    public function toArray(bool $fillInNonExistentCol = false): array
     {
-        return iterator_to_array($this->getRecordsAsArrayIterator($fillAllColumn), true);
+        return iterator_to_array($this->getRecordsAsArrayIterator($fillInNonExistentCol), true);
     }
 
     /* *****************************************************************************************************************
@@ -140,8 +140,7 @@ abstract class DataFrameAccessors extends DataFramePrimitives implements ArrayAc
                     return parent::current()->toContextualArray();
                 }
             };
-        }
-        else {
+        } else {
             return new class ($this) extends IteratorIterator {
                 public function current(): array
                 {
