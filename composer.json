@@ -21,7 +21,8 @@
     "nunomaduro/phpinsights": "^2.11",
     "phploc/phploc": "dev-main",
     "pestphp/pest-plugin-type-coverage": "^2.8",
-    "saggre/phpdocumentor-markdown": "^0.1"
+    "saggre/phpdocumentor-markdown": "^0.1",
+    "tomasvotruba/lines": "^0.6.0"
   },
   "autoload": {
     "psr-4": { "MammothPHP\\WoollyM\\": "src/"}
