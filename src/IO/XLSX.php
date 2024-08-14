@@ -147,8 +147,8 @@ class XLSX extends Builder
             $wsArray[] = $line;
         }
 
-        $worksheet->fromArray($wsArray, null, 'A1', false);
         $spreadsheet->addSheet($worksheet);
+        $worksheet->fromArray($wsArray, null, 'A1', false);
 
         return $worksheet;
     }
