@@ -7,7 +7,7 @@
 > Documentation: __[WoollyM.dev](https://woollym.dev)__  
 > Main Author: [Julien Boudry](https://www.linkedin.com/in/julienboudry/)  
 > License: [BSD-3](LICENSE.txt) - _Please [say hello](https://github.com/MammothPHP/WoollyM/discussions/categories/your-projects-with-woolly) if you like or use this code!_  
-> Donation: ₿ [bc1q3jllk3qd9fjvvuqy07tawkv7t6h7qjf55fc2gh](https://blockchair.com/bitcoin/address/bc1q3jllk3qd9fjvvuqy07tawkv7t6h7qjf55fc2gh) or [Github Sponsor Page](https://github.com/sponsors/julien-boudry)  
+> Donation: ₿ [bc1qf6046u5ar3pfnazvtdl7la52zq7ueywxu8sy2s](https://blockchair.com/bitcoin/address/bc1qf6046u5ar3pfnazvtdl7la52zq7ueywxu8sy2s) or [Github Sponsor Page](https://github.com/sponsors/julien-boudry)  
 > _You can also offer me a bottle of [yellow wine from JURA](https://en.wikipedia.org/wiki/Vin_jaune)_  
 
 > [!WARNING]
