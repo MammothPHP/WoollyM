@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace MammothPHP\WoollyM\Stats;
 
 use MammothPHP\WoollyM\Exceptions\NotYetImplementedException;
-use MammothPHP\WoollyM\Stats\Interfaces\StatsMethodInterface;
-use MammothPHP\WoollyM\Stats\Interfaces\StatsPropertyInterface;
+use MammothPHP\WoollyM\Stats\Interfaces\{StatsMethodInterface, StatsPropertyInterface};
 use MammothPHP\WoollyM\Stats\Modules\{Average, CountDistinctValues, Describe, Max, Mean, Min, Size, Sum};
 
 abstract class Modules

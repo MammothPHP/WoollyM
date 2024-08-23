@@ -23,25 +23,26 @@ class SumOdd extends AbstractAgg
                 $value = \floatval($value);
             }
 
-        if($value % 2 !== 0)
-            $this->agg += $value;
+            if ($value % 2 !== 0) {
+                $this->agg += $value;
+            }
         }
     }
 }
 
 
-test('register modules', function(): void {
+test('register modules', function (): void {
     Modules::registerModule(SumOdd::class);
 
     // Use it!
 
     $df = new DataFrame([
-        ['colA' => 42, 'colB' => 7 , 'colC' => 8],
-        ['colA' => 77, 'colB' => 7 , 'colC' => 42],
-        ['colA' => 77, 'colB' => 9 , 'colC' => 8],
-        ['colA' => 42, 'colB' => 7 , 'colC' => 42],
-        ['colA' => 77, 'colB' => 8 , 'colC' => 8],
+        ['colA' => 42, 'colB' => 7, 'colC' => 8],
+        ['colA' => 77, 'colB' => 7, 'colC' => 42],
+        ['colA' => 77, 'colB' => 9, 'colC' => 8],
+        ['colA' => 42, 'colB' => 7, 'colC' => 42],
+        ['colA' => 77, 'colB' => 8, 'colC' => 8],
     ]);
 
-    expect($df->select('colB')->sumOdd())->toBe(7+7+9+7);
+    expect($df->select('colB')->sumOdd())->toBe(7 + 7 + 9 + 7);
 });

@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace MammothPHP\WoollyM\Stats;
 
-use MammothPHP\WoollyM\Stats\Interfaces\StatsMethodInterface;
-use MammothPHP\WoollyM\Stats\Interfaces\StatsPropertyInterface;
+use MammothPHP\WoollyM\Stats\Interfaces\{StatsMethodInterface, StatsPropertyInterface};
 
 enum ModuleType: string
 {

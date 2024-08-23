@@ -268,7 +268,7 @@ test('sort record by columns', function (): void {
 
     $unordered_df->sortRecordsByColumns(['b', 'a']);
 
-    expect(\array_values($unordered_df->toArray()))->toBe($ordered_df->toArray());
+    expect(array_values($unordered_df->toArray()))->toBe($ordered_df->toArray());
 });
 
 test('apply index map values', function (): void {

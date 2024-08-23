@@ -5,10 +5,7 @@ declare(strict_types=1);
 namespace MammothPHP\WoollyM\Stats\Helpers;
 
 use MammothPHP\WoollyM\Statements\Select\Select;
-use MammothPHP\WoollyM\Stats\Helpers\AggGroup;
-use MammothPHP\WoollyM\Stats\Interfaces\AggInterface;
-use MammothPHP\WoollyM\Stats\Interfaces\StatsMethodInterface;
-use MammothPHP\WoollyM\Stats\Interfaces\StatsPropertyInterface;
+use MammothPHP\WoollyM\Stats\Interfaces\{AggInterface, StatsMethodInterface, StatsPropertyInterface};
 
 abstract class AbstractAgg implements AggInterface, StatsMethodInterface, StatsPropertyInterface
 {
