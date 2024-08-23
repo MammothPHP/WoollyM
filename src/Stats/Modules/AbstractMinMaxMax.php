@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace MammothPHP\WoollyM\Stats\Modules;
 
+use MammothPHP\WoollyM\Stats\Helpers\AbstractAgg;
+
 abstract class AbstractMinMaxMax extends AbstractAgg
 {
     protected bool $isFirst = true;

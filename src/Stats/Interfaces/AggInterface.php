@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 
-namespace MammothPHP\WoollyM\Stats;
+namespace MammothPHP\WoollyM\Stats\Interfaces;
+
+use MammothPHP\WoollyM\Stats\AggProvider;
 
 interface AggInterface
 {

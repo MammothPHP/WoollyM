@@ -7,7 +7,8 @@ namespace MammothPHP\WoollyM;
 use Closure;
 use MammothPHP\WoollyM\DataDrivers\DataDriverInterface;
 use MammothPHP\WoollyM\IO\SQL;
-use MammothPHP\WoollyM\Stats\{AggInterface, AggProvider};
+use MammothPHP\WoollyM\Stats\AggProvider;
+use MammothPHP\WoollyM\Stats\Interfaces\AggInterface;
 use PDO;
 
 class Extract

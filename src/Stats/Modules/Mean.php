@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MammothPHP\WoollyM\Stats\Modules;
 
 use MammothPHP\WoollyM\Exceptions\NotYetImplementedException;
+use MammothPHP\WoollyM\Stats\Helpers\AbstractAgg;
 
 class Mean extends AbstractAgg
 {
