@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use MammothPHP\WoollyM\DataFrame;
-use MammothPHP\WoollyM\Stats\Helpers\AbstractAgg;
+use MammothPHP\WoollyM\Stats\Bases\AbstractAgg;
 use MammothPHP\WoollyM\Stats\Modules;
 
 class SumOdd extends AbstractAgg

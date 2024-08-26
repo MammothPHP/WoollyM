@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace MammothPHP\WoollyM\Stats\Modules;
 
-use MammothPHP\WoollyM\Stats\Helpers\AbstractAgg;
+use MammothPHP\WoollyM\Stats\Bases\AbstractAgg;
 
 abstract class AbstractMinMaxMax extends AbstractAgg
 {

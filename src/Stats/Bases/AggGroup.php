@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MammothPHP\WoollyM\Stats\Helpers;
+namespace MammothPHP\WoollyM\Stats\Bases;
 
 use MammothPHP\WoollyM\Stats\AggProvider;
 

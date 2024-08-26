@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MammothPHP\WoollyM\Stats\Helpers;
+namespace MammothPHP\WoollyM\Stats\Bases;
 
 use MammothPHP\WoollyM\Statements\Select\Select;
 use MammothPHP\WoollyM\Stats\StatsModuleTypes\{AggInterface, StatsMethodInterface, StatsPropertyInterface};
