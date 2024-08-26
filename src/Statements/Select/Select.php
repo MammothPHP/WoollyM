@@ -9,7 +9,7 @@ use Countable;
 use MammothPHP\WoollyM\Exceptions\{InvalidSelectException, PropertyNotExistException};
 use MammothPHP\WoollyM\{DataFrame, Record};
 use MammothPHP\WoollyM\Statements\Statement;
-use MammothPHP\WoollyM\Stats\{AggProvider, Modules};
+use MammothPHP\WoollyM\Stats\{AggProvider, StmtModules};
 
 class Select extends Statement implements Countable
 {
@@ -32,7 +32,7 @@ class Select extends Statement implements Countable
     {
         $this->isAliveOrThrowInvalidSelectException();
 
-        if ($module = Modules::getStatsPropertyModule($name)) {
+        if ($module = StmtModules::getStatsPropertyModule($name)) {
             return $module->executeProperty($this);
         }
 
@@ -46,7 +46,7 @@ class Select extends Statement implements Countable
     {
         $this->isAliveOrThrowInvalidSelectException();
 
-        return Modules::getStatsPropertyModule($name) ? true : false;
+        return StmtModules::getStatsPropertyModule($name) ? true : false;
     }
 
     /**
@@ -56,7 +56,7 @@ class Select extends Statement implements Countable
     {
         $this->isAliveOrThrowInvalidSelectException();
 
-        if ($module = Modules::getStatsMethodModule($name)) {
+        if ($module = StmtModules::getStatsMethodModule($name)) {
             return $module->executeMethod($this, $arguments);
         }
 
@@ -64,7 +64,7 @@ class Select extends Statement implements Countable
     }
 
     /**
-     * 
+     *
      */
     public function describe(): array
     {

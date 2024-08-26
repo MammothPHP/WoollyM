@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MammothPHP\WoollyM\Stats\StatsModuleTypes;
+namespace MammothPHP\WoollyM\Stats\ModuleTypes;
 
 use MammothPHP\WoollyM\Stats\AggProvider;
 

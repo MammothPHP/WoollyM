@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use MammothPHP\WoollyM\DataFrame;
 use MammothPHP\WoollyM\Stats\Bases\AbstractAgg;
-use MammothPHP\WoollyM\Stats\Modules;
+use MammothPHP\WoollyM\Stats\StmtModules;
 
 class SumOdd extends AbstractAgg
 {
@@ -32,7 +32,7 @@ class SumOdd extends AbstractAgg
 
 
 test('register modules', function (): void {
-    Modules::registerModule(SumOdd::class);
+    StmtModules::registerModule(SumOdd::class);
 
     // Use it!
 

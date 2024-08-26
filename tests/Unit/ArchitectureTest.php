@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use MammothPHP\WoollyM\Stats\StatsInterface;
+use MammothPHP\WoollyM\Stats\ModuleTypes\StatsInterface;
 
 arch('strict types')->skipOnWindows()->expect('MammothPHP\WoollyM')->toUseStrictTypes();
 

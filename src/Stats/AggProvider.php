@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace MammothPHP\WoollyM\Stats;
 
-use MammothPHP\WoollyM\Stats\StatsModuleTypes\AggInterface;
+use MammothPHP\WoollyM\Stats\ModuleTypes\AggInterface;
 
 final readonly class AggProvider
 {

@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace MammothPHP\WoollyM\Stats;
 
 use MammothPHP\WoollyM\Exceptions\NotYetImplementedException;
-use MammothPHP\WoollyM\Stats\StatsModuleTypes\{StatsMethodInterface, StatsPropertyInterface};
-use MammothPHP\WoollyM\Stats\Modules\{Average, CountDistinctValues, Describe, Max, Mean, Min, Size, Sum};
+use MammothPHP\WoollyM\Stats\ModuleTypes\{ModuleStmtAccessType, StatsInterface, StatsMethodInterface, StatsPropertyInterface};
+use MammothPHP\WoollyM\Stats\Modules\{Average, CountDistinctValues, Max, Mean, Min, Size, Sum};
 
-abstract class Modules
+abstract class StmtModules
 {
     protected static ?array $modules = null;
 
@@ -28,7 +28,7 @@ abstract class Modules
         }
     }
 
-    protected static function getModule(string $name, ModuleType $type): ?StatsInterface
+    protected static function getModule(string $name, ModuleStmtAccessType $type): ?StatsInterface
     {
         self::init();
 
@@ -46,7 +46,7 @@ abstract class Modules
      */
     public static function getStatsPropertyModule(string $property): ?StatsPropertyInterface
     {
-        return self::getModule($property, ModuleType::StatsProperty);
+        return self::getModule($property, ModuleStmtAccessType::StatsProperty);
     }
 
     /**
@@ -54,7 +54,7 @@ abstract class Modules
      */
     public static function getStatsMethodModule(string $method): ?StatsMethodInterface
     {
-        return self::getModule($method, ModuleType::StatsMethod);
+        return self::getModule($method, ModuleStmtAccessType::StatsMethod);
     }
 
     public static function registerModule(string $moduleClass): void
