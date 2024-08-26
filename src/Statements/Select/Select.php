@@ -64,6 +64,21 @@ class Select extends Statement implements Countable
     }
 
     /**
+     * 
+     */
+    public function describe(): array
+    {
+        return [
+            'count records' => $this->countRecords(),
+            'size' => $this->size(),
+            'sum' => $this->average(),
+            'mean' => $this->mean(),
+            'max' => $this->max(),
+            'min' => $this->min(),
+        ];
+    }
+
+    /**
      * Alias of countRecords. Implement Countable.
      * @internal
      */

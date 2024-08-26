@@ -17,9 +17,6 @@ abstract class Modules
         if (self::$modules === null) {
             self::$modules = [];
 
-            // Summary
-            self::registerModule(Describe::class);
-
             // Calculation
             self::registerModule(Average::class);
             self::registerModule(CountDistinctValues::class);
