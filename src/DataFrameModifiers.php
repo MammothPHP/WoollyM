@@ -7,6 +7,7 @@ namespace MammothPHP\WoollyM;
 use Closure;
 use MammothPHP\WoollyM\DataDrivers\SortableDriverInterface;
 use MammothPHP\WoollyM\DataDrivers\DriversExceptions\SortNotSupportedByDriverException;
+use MammothPHP\WoollyM\Sort\{Asc, Sort};
 use MammothPHP\WoollyM\Statements\Delete\Delete;
 use MammothPHP\WoollyM\Statements\Insert\Insert;
 use MammothPHP\WoollyM\Statements\Update\Update;
@@ -71,19 +72,20 @@ abstract class DataFrameModifiers extends DataFrameStatements
     /**
      * Sort the records by columns
      */
-    public function sortRecordsByColumns(array|string $by, bool $ascending = true): static
+    public function orderBy(Sort|string ...$by): static
     {
         if (!$this->data instanceof SortableDriverInterface) {
             throw new SortNotSupportedByDriverException;
         }
 
-        if (!\is_array($by)) {
-            $by = [$by];
-        }
+        $this->data->uasort(function (array $row_a, array $row_b) use ($by): int {
+            foreach ($by as $sort) {
+                if (\is_string($sort)) {
+                    $sort = Asc::col($sort);
+                }
 
-        $this->data->uasort(function (array $row_a, array $row_b) use ($by, $ascending): int {
-            foreach ($by as $col) {
-                $col = $this->getColumnKey($col);
+                $col = $this->getColumnKey($sort->col);
+                $ascending = $sort instanceof Asc;
 
                 if ($row_a[$col] > $row_b[$col]) {
                     return $ascending ? 1 : -1;

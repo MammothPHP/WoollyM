@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 use MammothPHP\WoollyM\DataFrame;
+use MammothPHP\WoollyM\Sort\{Asc, Desc};
 
 beforeEach(function (): void {
     $this->input = [
@@ -209,7 +210,7 @@ test('sort record by columns', function (): void {
         ['a' => 4, 'x' => 'd'],
     ]);
 
-    $unordered_df->sortRecordsByColumns('a');
+    $unordered_df->orderBy(by: 'a');
 
     expect($ordered_df->toArray())->toBe(array_values($unordered_df->toArray()));
 
@@ -228,7 +229,7 @@ test('sort record by columns', function (): void {
         ['a' => 1, 'x' => 'a'],
     ]);
 
-    $unordered_df->sortRecordsByColumns(by: 'a', ascending: false);
+    $unordered_df->orderBy(by: Desc::col('a'));
 
     expect(array_values($unordered_df->toArray()))->toBe($ordered_df->toArray());
 
@@ -247,7 +248,7 @@ test('sort record by columns', function (): void {
         ['a' => 4, 'b' => 1, 'x' => 'b'],
     ]);
 
-    $unordered_df->sortRecordsByColumns(['a', 'x']);
+    $unordered_df->orderBy('a', 'x');
 
     expect(array_values($unordered_df->toArray()))->toBe($ordered_df->toArray());
 
@@ -266,7 +267,7 @@ test('sort record by columns', function (): void {
         ['a' => 4, 'b' => 5, 'x' => 'd'],
     ]);
 
-    $unordered_df->sortRecordsByColumns(['b', 'a']);
+    $unordered_df->orderBy(Asc::col('b'), Asc::col('a'));
 
     expect(array_values($unordered_df->toArray()))->toBe($ordered_df->toArray());
 });

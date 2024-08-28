@@ -43,5 +43,5 @@ class NotSortableDriver implements DataDriverInterface
 test('sort require a compatible driver', function (): void {
     $df = new DataFrame(dataDriver: new NotSortableDriver);
 
-    $df->sortRecordsByColumns('col1');
+    $df->orderBy('col1');
 })->throws(SortNotSupportedByDriverException::class);
