@@ -1,0 +1,72 @@
+{
+    "5": {
+        "composer": "Verdi",
+        "total_performances": 19871,
+        "distincts_work": 34,
+        "distincts_countries": 71,
+        "distincts_cities": 697
+    },
+    "1": {
+        "composer": "Mozart",
+        "total_performances": 14248,
+        "distincts_work": 36,
+        "distincts_countries": 70,
+        "distincts_cities": 698
+    },
+    "2": {
+        "composer": "Puccini",
+        "total_performances": 13863,
+        "distincts_work": 17,
+        "distincts_countries": 69,
+        "distincts_cities": 674
+    },
+    "10": {
+        "composer": "Rossini",
+        "total_performances": 6240,
+        "distincts_work": 44,
+        "distincts_countries": 61,
+        "distincts_cities": 478
+    },
+    "7": {
+        "composer": "Donizetti",
+        "total_performances": 5483,
+        "distincts_work": 38,
+        "distincts_countries": 61,
+        "distincts_cities": 510
+    },
+    "13": {
+        "composer": "Wagner,Richard",
+        "total_performances": 5233,
+        "distincts_work": 25,
+        "distincts_countries": 54,
+        "distincts_cities": 311
+    },
+    "6": {
+        "composer": "Bizet",
+        "total_performances": 4682,
+        "distincts_work": 5,
+        "distincts_countries": 62,
+        "distincts_cities": 492
+    },
+    "24": {
+        "composer": "Strauss,J",
+        "total_performances": 3621,
+        "distincts_work": 11,
+        "distincts_countries": 39,
+        "distincts_cities": 267
+    },
+    "12": {
+        "composer": "Tchaikovsky,P",
+        "total_performances": 3244,
+        "distincts_work": 8,
+        "distincts_countries": 47,
+        "distincts_cities": 231
+    },
+    "11": {
+        "composer": "Strauss,R",
+        "total_performances": 2683,
+        "distincts_work": 17,
+        "distincts_countries": 38,
+        "distincts_cities": 221
+    }
+}
