@@ -20,6 +20,7 @@ abstract class Statement implements Iterator
     use LinkedDataFrame;
 
     protected WeakMap $select;
+    protected bool $byPassColumnFilter = false;
     protected array $where = [];
     protected ?int $limit = null;
     protected int $offset = 0;
@@ -321,13 +322,18 @@ abstract class Statement implements Iterator
     public function getRecordArray(Record $record): array
     {
         $recordArray = $record->toArray();
-        $r = [];
 
-        foreach ($this->getSelect() as $columnName) {
-            $r[$columnName] = $recordArray[$columnName] ?? null;
+        if ($this->byPassColumnFilter) {
+            return $recordArray;
+        } else {
+            $r = [];
+
+            foreach ($this->getSelect() as $columnName) {
+                $r[$columnName] = $recordArray[$columnName] ?? null;
+            }
+
+            return $r;
         }
-
-        return $r;
     }
 
     /**

@@ -8,7 +8,6 @@ use Closure;
 use MammothPHP\WoollyM\DataDrivers\DataDriverInterface;
 use MammothPHP\WoollyM\IO\SQL;
 use MammothPHP\WoollyM\Stats\AggProvider;
-use MammothPHP\WoollyM\Stats\ModuleTypes\AggInterface;
 use PDO;
 
 class Extract
@@ -107,48 +106,6 @@ class Extract
 
     public function groupBy(string|AggProvider ...$args): DataFrame
     {
-        // Check invalid columns
-        array_walk($args, fn(string|AggProvider $col) => $this->df->mustHaveColumn(\is_string($col) ? $col : $col->column));
-
-
-        $r = [];
-
-        foreach ($this->df as $record) {
-            $hash = hash_init('sha224');
-
-            foreach ($args as $col) {
-                if (\is_string($col)) {
-                    hash_update($hash, serialize($record[$col] ?? null));
-                }
-            }
-
-            $hash = hash_final($hash, false);
-
-            if (!isset($r[$hash])) {
-                foreach ($args as $col) {
-                    if (\is_string($col)) {
-                        $r[$hash][$col] = $record[$col] ?? null;
-                    } else {
-                        $r[$hash][$col->as] = $col->getAggObjectProvider();
-                    }
-                }
-            }
-
-            foreach ($args as $col) {
-                if (!\is_string($col)) {
-                    $r[$hash][$col->as]->addValue($record[$col->column]);
-                }
-            }
-        }
-
-        foreach ($r as &$record) {
-            foreach ($record as &$value) {
-                if ($value instanceof AggInterface) {
-                    $value = $value->getResult();
-                }
-            }
-        }
-
-        return DataFrame::fromArray($r);
+        return $this->df->selectAll()->groupBy(...$args);
     }
 }

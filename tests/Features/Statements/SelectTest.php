@@ -235,8 +235,32 @@ test('groupBy', function (): void {
         ->whereColumn('a', fn(int $v) => $v % 2 === 0) // a is even
         ->groupBy('a', Sum::col('b'));
 
-    expect($grouped->toArray())->tobe([
+    expect($grouped)->toBeInstanceOf(DataFrame::class);
+
+    expect($grouped->toArray())->toBe([
         ['a' => 2, 'b' => 8],
         ['a' => 4, 'b' => 5],
     ]);
 });
+
+test('groupBy external column', function (): void {
+    $df = new DataFrame([
+        ['a' => 1, 'b' => 2, 'c' => 3],
+        ['a' => 1, 'b' => 3, 'c' => 4],
+        ['a' => 2, 'b' => 4, 'c' => 5],
+        ['a' => 2, 'b' => 4, 'c' => 6],
+        ['a' => 3, 'b' => 5, 'c' => 7],
+        ['a' => 3, 'b' => 5, 'c' => 8],
+        ['a' => 4, 'b' => 5, 'c' => 9],
+    ]);
+
+    $grouped = $df->select('b', 'c')
+        ->groupBy('a');
+
+    expect($grouped->toArray())->toBe([
+        ['b' => 2, 'c' => 3],
+        ['b' => 4, 'c' => 5],
+        ['b' => 5, 'c' => 7],
+        ['b' => 5, 'c' => 9],
+    ]);
+})->todo();

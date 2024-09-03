@@ -279,7 +279,6 @@ abstract class DataFramePrimitives
 
     /**
      * Get a record by key
-     * @return array<string,array>
      */
     public function getRecord(int $key): Record
     {
