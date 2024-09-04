@@ -8,7 +8,7 @@ use BadMethodCallException;
 use Countable;
 use MammothPHP\WoollyM\Exceptions\{InvalidSelectException, PropertyNotExistException};
 use MammothPHP\WoollyM\{DataFrame, Record};
-use MammothPHP\WoollyM\Statements\Statement;
+use MammothPHP\WoollyM\Statements\{Statement, StatementClause};
 use MammothPHP\WoollyM\Stats\{AggProvider, StmtModules};
 use MammothPHP\WoollyM\Stats\Bases\Group;
 use MammothPHP\WoollyM\Stats\ModuleTypes\AggInterface;
@@ -29,6 +29,15 @@ class Select extends Statement implements Countable
     public function __clone(): void
     {
         $this->select = clone $this->select;
+    }
+
+    public function config(StatementClause $param): array|int|null
+    {
+        if ($param === StatementClause::SELECT) {
+            return $this->getSelect();
+        }
+
+        return parent::config($param);
     }
 
     public function reset(): static

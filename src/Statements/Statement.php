@@ -33,7 +33,6 @@ abstract class Statement implements Iterator
     public function config(StatementClause $param): array|int|null
     {
         return match ($param) {
-            StatementClause::SELECT => $this->getSelect(),
             StatementClause::WHERE => $this->where,
             StatementClause::LIMIT => $this->limit,
             StatementClause::OFFSET => $this->offset,
