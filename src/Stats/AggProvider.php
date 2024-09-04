@@ -11,11 +11,11 @@ final readonly class AggProvider
     public readonly string $as;
 
     public function __construct(
-        public string $column,
+        public string $col,
         public string $provideClass,
         ?string $as,
     ) {
-        $this->as = $as ?? $this->column;
+        $this->as = $as ?? $this->col;
     }
 
     public function getAggObjectProvider(): AggInterface

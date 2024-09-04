@@ -8,6 +8,8 @@ use Closure;
 use Iterator;
 use MammothPHP\WoollyM\Exceptions\{InvalidSelectException, NotYetImplementedException, UnknownOptionException};
 use MammothPHP\WoollyM\{DataFrame, LinkedDataFrame, Record};
+use MammothPHP\WoollyM\Stats\AggProvider;
+use MammothPHP\WoollyM\Stats\Bases\Group;
 use Spatie\Regex\Regex;
 use Stringable;
 use WeakMap;
@@ -25,7 +27,7 @@ abstract class Statement implements Iterator
     protected ?int $limit = null;
     protected int $offset = 0;
 
-    public function __construct(DataFrame $df, string ...$selections)
+    public function __construct(DataFrame $df, string|Group|AggProvider ...$selections)
     {
         $this->setLinkedDataFrame($df);
         $this->resetSelect();
@@ -69,14 +71,18 @@ abstract class Statement implements Iterator
      * @param $selections - Valid columns names to select
      * @throws InvalidSelectException
      */
-    public function select(string ...$selections): static
+    public function select(string|Group|AggProvider ...$selections): static
     {
         $this->isAliveOrThrowInvalidSelectException();
 
         $df = $this->getLinkedDataFrame();
 
         foreach ($selections as $oneSelection) {
-            $this->select[$df->getColumnIndexObject($oneSelection)] = null;
+            if (\is_string($oneSelection)) {
+                $this->select[$df->getColumnIndexObject($oneSelection)] = null;
+            } else {
+                $this->select[$oneSelection->col] = $oneSelection;
+            }
         }
 
         return $this;

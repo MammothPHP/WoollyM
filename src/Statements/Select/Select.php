@@ -119,7 +119,7 @@ class Select extends Statement implements Countable
     public function groupBy(string|AggProvider ...$args): DataFrame
     {
         // Check invalid columns
-        array_walk($args, fn(string|AggProvider $col) => $this->df->mustHaveColumn(\is_string($col) ? $col : $col->column));
+        array_walk($args, fn(string|AggProvider $col) => $this->df->mustHaveColumn(\is_string($col) ? $col : $col->col));
 
         $this->byPassColumnFilter = true;
         $r = [];
@@ -147,7 +147,7 @@ class Select extends Statement implements Countable
 
             foreach ($args as $col) {
                 if (!\is_string($col)) {
-                    $r[$hash][$col->as]->addValue($record[$col->column]);
+                    $r[$hash][$col->as]->addValue($record[$col->col]);
                 }
             }
         }
