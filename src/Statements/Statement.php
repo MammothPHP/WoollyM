@@ -8,11 +8,8 @@ use Closure;
 use Iterator;
 use MammothPHP\WoollyM\Exceptions\{InvalidSelectException, NotYetImplementedException, UnknownOptionException};
 use MammothPHP\WoollyM\{DataFrame, LinkedDataFrame, Record};
-use MammothPHP\WoollyM\Stats\AggProvider;
-use MammothPHP\WoollyM\Stats\Bases\Group;
 use Spatie\Regex\Regex;
 use Stringable;
-use WeakMap;
 
 /**
  * @internal
@@ -20,24 +17,13 @@ use WeakMap;
 abstract class Statement implements Iterator
 {
     use LinkedDataFrame;
-
-    protected WeakMap $select;
-    protected bool $byPassColumnFilter = false;
     protected array $where = [];
     protected ?int $limit = null;
     protected int $offset = 0;
 
-    public function __construct(DataFrame $df, string|Group|AggProvider ...$selections)
+    public function __construct(DataFrame $df)
     {
         $this->setLinkedDataFrame($df);
-        $this->resetSelect();
-
-        $this->select(...$selections);
-    }
-
-    public function __clone(): void
-    {
-        $this->select = clone $this->select;
     }
 
 
@@ -57,70 +43,13 @@ abstract class Statement implements Iterator
     /// Public API, config
 
     /**
-     * Reset all filters from this Select object
+     * Reset all filters from this statement
      * @throws InvalidSelectException
      * @throws NotYetImplementedException
      */
     public function reset(): static
     {
-        return $this->resetSelect()->resetWhere()->resetLimit(); // resetLimit also reset offSet
-    }
-
-    /**
-     * Add columns to the Select object
-     * @param $selections - Valid columns names to select
-     * @throws InvalidSelectException
-     */
-    public function select(string|Group|AggProvider ...$selections): static
-    {
-        $this->isAliveOrThrowInvalidSelectException();
-
-        $df = $this->getLinkedDataFrame();
-
-        foreach ($selections as $oneSelection) {
-            if (\is_string($oneSelection)) {
-                $this->select[$df->getColumnIndexObject($oneSelection)] = null;
-            } else {
-                $this->select[$oneSelection->col] = $oneSelection;
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * Reset and set columns to the select object
-     * @param $selections - Valid columns names to select
-     * @throws InvalidSelectException
-     */
-    public function replaceSelect(string ...$selections): static
-    {
-        return $this->resetSelect()->select(...$selections);
-    }
-
-    /**
-     * Unselect all columns from the Select object
-     */
-    public function resetSelect(): static
-    {
-        $this->select = new WeakMap;
-
-        return $this;
-    }
-
-    /**
-     * Get the selected columns
-     * @return string[]
-     */
-    public function getSelect(): array
-    {
-        $r = [];
-
-        foreach ($this->select as $col => $v) {
-            $r[] = $col->getName();
-        }
-
-        return $r;
+        return $this->resetWhere()->resetLimit(); // resetLimit also reset offSet
     }
 
     public function where(Closure|string ...$equal): static
@@ -325,21 +254,9 @@ abstract class Statement implements Iterator
         $this->moveToNextValidRecord();
     }
 
-    public function getRecordArray(Record $record): array
+    protected function getRecordArray(Record $record): array
     {
-        $recordArray = $record->toArray();
-
-        if ($this->byPassColumnFilter) {
-            return $recordArray;
-        } else {
-            $r = [];
-
-            foreach ($this->getSelect() as $columnName) {
-                $r[$columnName] = $recordArray[$columnName] ?? null;
-            }
-
-            return $r;
-        }
+        return $record->toArray();
     }
 
     /**
