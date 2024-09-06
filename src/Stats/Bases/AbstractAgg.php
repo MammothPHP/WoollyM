@@ -13,14 +13,14 @@ abstract class AbstractAgg implements AggInterface, StatsMethodInterface, StatsP
 
     protected int|float $agg = 0;
 
-    public function executeProperty(Select $select): int|float|null
+    public function executeProperty(Select $select): mixed
     {
         $this->execute($select);
 
         return $this->getResult();
     }
 
-    public function executeMethod(Select $select, array $arguments): int|float|null
+    public function executeMethod(Select $select, array $arguments): mixed
     {
         $this->execute($select);
 
@@ -29,7 +29,7 @@ abstract class AbstractAgg implements AggInterface, StatsMethodInterface, StatsP
 
     abstract public function addValue(mixed $value): void;
 
-    public function getResult(): int|float|null
+    public function getResult(): mixed
     {
         return $this->agg;
     }

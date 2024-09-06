@@ -17,6 +17,7 @@ use Stringable;
 abstract class Statement implements Iterator
 {
     use LinkedDataFrame;
+    protected DataFrame|CacheStatus $cache = CacheStatus::UNUSED;
     protected array $where = [];
     protected ?int $limit = null;
     protected int $offset = 0;
@@ -26,6 +27,19 @@ abstract class Statement implements Iterator
         $this->setLinkedDataFrame($df);
     }
 
+    public function getCacheStatus(): CacheStatus
+    {
+        if ($this->cache instanceof CacheStatus) {
+            return $this->cache;
+        }
+
+        return CacheStatus::SET;
+    }
+
+    protected function invalidateCache(): void
+    {
+        $this->cache = CacheStatus::UNUSED;
+    }
 
     /**
      * Get the current filters configuration for this Select object
@@ -53,6 +67,8 @@ abstract class Statement implements Iterator
 
     public function where(Closure|string ...$equal): static
     {
+        $this->invalidateCache();
+
         foreach ($equal as $oneCondition) {
             $this->and($oneCondition);
         }
@@ -154,6 +170,8 @@ abstract class Statement implements Iterator
 
     public function limit(?int $limit = null, int $offset = 0): static
     {
+        $this->invalidateCache();
+
         $this->isAliveOrThrowInvalidSelectException();
 
         if ($limit !== null && $limit < 0) {
@@ -178,6 +196,8 @@ abstract class Statement implements Iterator
 
     public function offset(int $offset): static
     {
+        $this->invalidateCache();
+
         $this->isAliveOrThrowInvalidSelectException();
 
         if ($offset < 0) {
@@ -225,6 +245,11 @@ abstract class Statement implements Iterator
     protected int $limitCount = 0;
     protected int $offsetCount = 0;
 
+    protected function getStmtSourceIterator(): DataFrame
+    {
+        return $this->getCacheStatus() === CacheStatus::SET ? $this->cache : $this->getLinkedDataFrame();
+    }
+
     protected function moveToNextValidRecord(): void
     {
         if ($this->valid()) {
@@ -249,8 +274,11 @@ abstract class Statement implements Iterator
     {
         $this->limitCount = 0;
         $this->offsetCount = 0;
-        $this->getLinkedDataFrame()->rewind();
-        $this->moveToNextValidRecord();
+        $this->getStmtSourceIterator()->rewind();
+
+        if ($this->getCacheStatus() !== CacheStatus::SET) {
+            $this->moveToNextValidRecord();
+        }
     }
 
     protected function getRecordArray(Record $record): array
@@ -263,7 +291,7 @@ abstract class Statement implements Iterator
      */
     public function current(): mixed
     {
-        $r = $this->getLinkedDataFrame()->current();
+        $r = $this->getStmtSourceIterator()->current();
 
         return $this->getRecordArray($r);
     }
@@ -273,7 +301,7 @@ abstract class Statement implements Iterator
      */
     protected function currentUnfiltered(): array
     {
-        return $this->getLinkedDataFrame()->current()->toArray();
+        return $this->getStmtSourceIterator()->current()->toArray();
     }
 
     /**
@@ -281,7 +309,13 @@ abstract class Statement implements Iterator
      */
     public function key(): int
     {
-        return $this->getLinkedDataFrame()->key();
+        $k = $this->getStmtSourceIterator()->key();
+
+        if ($this->getCacheStatus() == CacheStatus::SET) {
+            $b = $k + 1;
+        }
+
+        return $k;
     }
 
     /**
@@ -289,8 +323,11 @@ abstract class Statement implements Iterator
      */
     public function next(): void
     {
-        $this->getLinkedDataFrame()->next();
-        $this->moveToNextValidRecord();
+        $this->getStmtSourceIterator()->next();
+
+        if ($this->getCacheStatus() !== CacheStatus::SET) {
+            $this->moveToNextValidRecord();
+        }
     }
 
     /**
@@ -298,7 +335,7 @@ abstract class Statement implements Iterator
      */
     public function valid(): bool
     {
-        return $this->getLinkedDataFrame()->valid();
+        return $this->getStmtSourceIterator()->valid();
     }
 
 }

@@ -6,6 +6,7 @@ namespace MammothPHP\WoollyM;
 
 use MammothPHP\WoollyM\Exceptions\InvalidSelectException;
 use MammothPHP\WoollyM\Statements\Select\{ColumnRepresentation, Select, SelectAll};
+use MammothPHP\WoollyM\Stats\AggProvider;
 
 abstract class DataFrameStatements extends DataFrameAccessors
 {
@@ -17,7 +18,7 @@ abstract class DataFrameStatements extends DataFrameAccessors
      * Return a Select object
      * @param string[] $selections column(s) name(s) to select
      */
-    public function select(string ...$selections): Select
+    public function select(string|AggProvider ...$selections): Select
     {
         return new Select($this, ...$selections);
     }

@@ -16,7 +16,7 @@ trait SelectAllMode
         $this->setLinkedDataFrame($df);
     }
 
-    public function getSelect(): array
+    public function getSelect(bool $forceString = false): array
     {
         return $this->getLinkedDataFrame()->columnsNames();
     }

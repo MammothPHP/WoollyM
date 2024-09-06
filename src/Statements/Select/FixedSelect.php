@@ -6,7 +6,6 @@ namespace MammothPHP\WoollyM\Statements\Select;
 
 use MammothPHP\WoollyM\Exceptions\UnavailableMethodInContext;
 use MammothPHP\WoollyM\Stats\AggProvider;
-use MammothPHP\WoollyM\Stats\Bases\Group;
 use Override;
 
 abstract class FixedSelect extends Select
@@ -16,7 +15,7 @@ abstract class FixedSelect extends Select
      * @internal
      */
     #[Override]
-    public function select(string|Group|AggProvider ...$selections): static
+    public function select(string|AggProvider ...$selections): static
     {
         throw new UnavailableMethodInContext;
     }

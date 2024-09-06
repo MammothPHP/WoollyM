@@ -15,7 +15,7 @@ final readonly class AggProvider
         public string $provideClass,
         ?string $as,
     ) {
-        $this->as = $as ?? $this->col;
+        $this->as = $as ?? $this->provideClass::NAME . '(' . $this->col . ')';
     }
 
     public function getAggObjectProvider(): AggInterface

@@ -106,6 +106,16 @@ class Extract
 
     public function groupBy(string|AggProvider ...$args): DataFrame
     {
-        return $this->df->selectAll()->groupBy(...$args);
+        $stmt = $this->df->select();
+
+        foreach ($args as $arg) {
+            $stmt->select($arg);
+
+            if (\is_string($arg)) {
+                $stmt->groupBy($arg);
+            }
+        }
+
+        return $stmt->export();
     }
 }

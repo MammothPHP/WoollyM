@@ -73,7 +73,7 @@ class ColumnRepresentation extends FixedSelect implements Stringable
     }
 
     #[Override]
-    public function getSelect(): array
+    public function getSelect(bool $forceString = false): array
     {
         return [$this->getName()];
     }

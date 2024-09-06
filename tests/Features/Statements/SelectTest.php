@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use MammothPHP\WoollyM\DataFrame;
+use MammothPHP\WoollyM\Statements\Select\Select;
 use MammothPHP\WoollyM\Stats\Modules\Sum;
 
 beforeEach(function (): void {
@@ -220,7 +221,7 @@ test('whereKeyBetween', function (): void {
     expect($select->resetWhere()->countRecords())->toBe(5);
 });
 
-test('groupBy', function (): void {
+test('select groupBy', function (): void {
     $df = new DataFrame([
         ['a' => 1, 'b' => 2, 'c' => 3],
         ['a' => 1, 'b' => 3, 'c' => 4],
@@ -231,15 +232,15 @@ test('groupBy', function (): void {
         ['a' => 4, 'b' => 5, 'c' => 9],
     ]);
 
-    $grouped = $df->selectAll()
+    $grouped = $df->select('a', Sum::col('b'))
         ->whereColumn('a', fn(int $v) => $v % 2 === 0) // a is even
-        ->groupBy('a', Sum::col('b'));
+        ->groupBy('a');
 
-    expect($grouped)->toBeInstanceOf(DataFrame::class);
+    expect($grouped)->toBeInstanceOf(Select::class);
 
     expect($grouped->toArray())->toBe([
-        ['a' => 2, 'b' => 8],
-        ['a' => 4, 'b' => 5],
+        ['a' => 2, 'sum(b)' => 8],
+        ['a' => 4, 'sum(b)' => 5],
     ]);
 });
 
@@ -263,4 +264,4 @@ test('groupBy external column', function (): void {
         ['b' => 5, 'c' => 7],
         ['b' => 5, 'c' => 9],
     ]);
-})->todo();
+});

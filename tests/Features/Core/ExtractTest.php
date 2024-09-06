@@ -138,7 +138,7 @@ test('group must has a valid col', function (): void {
 })->throws(InvalidSelectException::class);
 
 
-test('group simple group aggregation', function (): void {
+test('group aggregation', function (): void {
     $df = new DataFrame([
         ['a' => 1, 'b' => 2, 'c' => 3],
         ['a' => 1, 'b' => 3, 'c' => 4],
@@ -151,20 +151,20 @@ test('group simple group aggregation', function (): void {
 
     $grouped = $df->groupBy('a', Sum::col('b'));
 
-    expect($grouped->toArray())->tobe([
-        ['a' => 1, 'b' => 5],
-        ['a' => 2, 'b' => 8],
-        ['a' => 3, 'b' => 10],
-        ['a' => 4, 'b' => 5],
+    expect($grouped->toArray())->toBe([
+        ['a' => 1, 'sum(b)' => 5],
+        ['a' => 2, 'sum(b)' => 8],
+        ['a' => 3, 'sum(b)' => 10],
+        ['a' => 4, 'sum(b)' => 5],
     ]);
 
     $grouped = $df->groupBy('b', CountDistinctValues::col('a'));
 
-    expect($grouped->toArray())->tobe([
-        ['b' => 2, 'a' => 1],
-        ['b' => 3, 'a' => 1],
-        ['b' => 4, 'a' => 1],
-        ['b' => 5, 'a' => 2],
+    expect($grouped->toArray())->toBe([
+        ['b' => 2, 'countDistinctValues(a)' => 1],
+        ['b' => 3, 'countDistinctValues(a)' => 1],
+        ['b' => 4, 'countDistinctValues(a)' => 1],
+        ['b' => 5, 'countDistinctValues(a)' => 2],
     ]);
 });
 
