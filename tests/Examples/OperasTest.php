@@ -40,13 +40,15 @@ test('rank composers runs', function (): void {
     expect($this->df->selectAll()->size())->toBe($lines * \count($this->df->columnsNames()));
 
     expect(
-        $this->df->groupBy(
+        $this->df->select(
             'composer',
             Sum::col('performances', as: 'total_performances'),
             CountDistinctValues::col('work', as: 'distincts_work'),
             CountDistinctValues::col('iso', as: 'distincts_countries'),
             CountDistinctValues::col('city', as: 'distincts_cities'),
         )
+            ->groupBy('composer')
+            ->export()
             ->orderBy(Desc::col('total_performances'))
             ->head(10)
     )->toMatchSnapshot();

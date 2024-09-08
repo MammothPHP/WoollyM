@@ -67,8 +67,6 @@ abstract class Statement implements Iterator
 
     public function where(Closure|string ...$equal): static
     {
-        $this->invalidateCache();
-
         foreach ($equal as $oneCondition) {
             $this->and($oneCondition);
         }
@@ -79,6 +77,8 @@ abstract class Statement implements Iterator
 
     public function and(Closure|string ...$conditions): static
     {
+        $this->invalidateCache();
+
         $this->isAliveOrThrowInvalidSelectException();
 
         foreach ($conditions as $oneCondition) {
@@ -90,6 +90,8 @@ abstract class Statement implements Iterator
 
     public function or(Closure|string ...$conditions): static
     {
+        $this->invalidateCache();
+
         $this->isAliveOrThrowInvalidSelectException();
 
         foreach ($conditions as $oneCondition) {
@@ -151,6 +153,8 @@ abstract class Statement implements Iterator
 
     public function whereKeyBetween(int $start = 0, ?int $end = null): static
     {
+        $this->invalidateCache();
+
         $this->isAliveOrThrowInvalidSelectException();
 
         $this->where['keyBetween'] = [static fn(mixed $v, int $k): bool => $k >= $start && ($k <= $end || $end === null)];
@@ -163,6 +167,8 @@ abstract class Statement implements Iterator
      */
     public function resetWhere(): static
     {
+        $this->invalidateCache();
+
         $this->where = [];
 
         return $this;

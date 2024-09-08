@@ -221,7 +221,7 @@ test('whereKeyBetween', function (): void {
     expect($select->resetWhere()->countRecords())->toBe(5);
 });
 
-test('select groupBy', function (): void {
+test('select groupBy where', function (): void {
     $df = new DataFrame([
         ['a' => 1, 'b' => 2, 'c' => 3],
         ['a' => 1, 'b' => 3, 'c' => 4],
@@ -244,10 +244,10 @@ test('select groupBy', function (): void {
     ]);
 });
 
-test('groupBy external column', function (): void {
+test('groupBy non selected column', function (): void {
     $df = new DataFrame([
-        ['a' => 1, 'b' => 2, 'c' => 3],
-        ['a' => 1, 'b' => 3, 'c' => 4],
+        ['a' => 1, 'b' => 3, 'c' => 3],
+        ['a' => 1, 'b' => 2, 'c' => 4],
         ['a' => 2, 'b' => 4, 'c' => 5],
         ['a' => 2, 'b' => 4, 'c' => 6],
         ['a' => 3, 'b' => 5, 'c' => 7],
@@ -259,9 +259,79 @@ test('groupBy external column', function (): void {
         ->groupBy('a');
 
     expect($grouped->toArray())->toBe([
-        ['b' => 2, 'c' => 3],
+        ['b' => 3, 'c' => 3],
         ['b' => 4, 'c' => 5],
         ['b' => 5, 'c' => 7],
         ['b' => 5, 'c' => 9],
     ]);
 });
+
+test('groupBy with limit', function (): void {
+    $df = new DataFrame([
+        ['a' => 1, 'b' => 3, 'c' => 3],
+        ['a' => 1, 'b' => 2, 'c' => 4],
+        ['a' => 2, 'b' => 4, 'c' => 5],
+        ['a' => 2, 'b' => 4, 'c' => 6],
+        ['a' => 3, 'b' => 5, 'c' => 7],
+        ['a' => 3, 'b' => 5, 'c' => 8],
+        ['a' => 4, 'b' => 5, 'c' => 9],
+    ]);
+
+    $stmt = $df->select('a', Sum::col('c'))->groupBy('a')->limit(2);
+
+    expect($stmt->toArray())->toBe([
+        ['a' => 1, 'sum(c)' => 7],
+        ['a' => 2, 'sum(c)' => 11],
+    ]);
+})->todo();
+
+test('groupBy with where column', function (): void {
+    $df = new DataFrame([
+        ['a' => 1, 'b' => 3, 'c' => 3],
+        ['a' => 1, 'b' => 2, 'c' => 4],
+        ['a' => 2, 'b' => 4, 'c' => 5],
+        ['a' => 2, 'b' => 4, 'c' => 6],
+        ['a' => 3, 'b' => 5, 'c' => 7],
+        ['a' => 3, 'b' => 5, 'c' => 8],
+        ['a' => 4, 'b' => 5, 'c' => 9],
+    ]);
+
+    $stmt = $df->select('c', 'a')->groupBy('a');
+
+    $stmt->whereColumn('a', equal: 3);
+
+    expect($stmt->toArray())->toBe([
+        ['c' => 7, 'a' => 3],
+    ]);
+});
+
+test('groupBy with offset', function (): void {
+    $df = new DataFrame([
+        ['a' => 1, 'b' => 3, 'c' => 3],
+        ['a' => 1, 'b' => 2, 'c' => 4],
+        ['a' => 2, 'b' => 4, 'c' => 5],
+        ['a' => 2, 'b' => 4, 'c' => 6],
+        ['a' => 3, 'b' => 5, 'c' => 7],
+        ['a' => 3, 'b' => 5, 'c' => 8],
+        ['a' => 4, 'b' => 5, 'c' => 9],
+    ]);
+
+    $stmt = $df->select(Sum::col('c'), 'a')
+        ->groupBy('a')
+        ->offset(2);
+
+    expect($stmt->toArray())->toBe([
+        ['sum(c)' => 15, 'a' => 3],
+        ['sum(c)' => 9, 'a' => 4],
+    ]);
+
+    $stmt->whereColumn('a', equal: 3);
+
+    expect($stmt->toArray())->toBe([]);
+
+    $stmt->resetWhere()->limit(1);
+
+    expect($stmt->toArray())->toBe([
+        ['sum(c)' => 7, 'a' => 1],
+    ]);
+})->todo();
