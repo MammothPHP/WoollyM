@@ -16,11 +16,8 @@
   },
   "require-dev": {
     "laravel/pint": "^1.17",
-    "pestphp/pest": "^2.35",
+    "pestphp/pest": "^3.0",
     "phpbench/phpbench": "^1.3",
-    "nunomaduro/phpinsights": "^2.11",
-    "phploc/phploc": "dev-main",
-    "pestphp/pest-plugin-type-coverage": "^2.8",
     "saggre/phpdocumentor-markdown": "^0.1",
     "tomasvotruba/lines": "^0.6.0"
   },
