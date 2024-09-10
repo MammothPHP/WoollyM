@@ -7,21 +7,23 @@ namespace MammothPHP\WoollyM\Statements\Select;
 use BadMethodCallException;
 use Countable;
 use MammothPHP\WoollyM\Exceptions\{InvalidSelectException, PropertyNotExistException};
-use MammothPHP\WoollyM\{DataFrame, Record};
+use MammothPHP\WoollyM\{ColumnIndex, DataFrame, Record};
 use MammothPHP\WoollyM\Statements\{CacheStatus, Statement, StatementClause};
 use MammothPHP\WoollyM\Stats\{AggProvider, StmtModules};
-use MammothPHP\WoollyM\Stats\Modules\{First};
+use MammothPHP\WoollyM\Stats\Modules\First;
 use MammothPHP\WoollyM\Stats\ModuleTypes\AggInterface;
 use WeakMap;
 
 class Select extends Statement implements Countable
 {
     protected WeakMap $select;
-    protected array $groupBy = [];
+    protected WeakMap $groupBy;
     protected bool $byPassColumnFilter = false;
 
     public function __construct(DataFrame $df, string|AggProvider ...$selections)
     {
+        $this->groupBy = new WeakMap;
+
         parent::__construct($df);
 
         $this->resetSelect()->select(...$selections);
@@ -88,7 +90,7 @@ class Select extends Statement implements Countable
      * Get the selected columns
      * @return string[]
      */
-    public function getSelect(bool $forceString = false): array
+    public function getSelect(bool $forceString = false, bool $provideColumnIndex = false): array
     {
         $r = [];
 
@@ -98,14 +100,14 @@ class Select extends Statement implements Countable
                 $r[] = $col->getName();
             }
             // regular select but in a groupBy context
-            elseif ($v === null && !empty($this->groupBy) && !\in_array($col->getName(), $this->groupBy, true)) {
+            elseif ($v === null && $this->countGroupBy() !== 0 && !isset($this->groupBy[$col])) {
                 $r[] = First::col(column: $col->getName(), as: $col->getName());
             }
             // is an agg provider
             elseif ($v instanceof AggProvider) {
                 $r[] = $v;
             } else {
-                $r[] = $col->getName();
+                $r[] = $provideColumnIndex ? $col : $col->getName();
             }
 
 
@@ -122,9 +124,16 @@ class Select extends Statement implements Countable
         $group = array_unique($group, \SORT_REGULAR);
         array_walk($group, fn(string $col) => $this->df->mustHaveColumn($col));
 
-        array_push($this->groupBy, ...$group);
+        foreach ($group as $col) {
+            $this->groupBy[$this->df->getColumnIndexObject($col)] = null;
+        }
 
         return $this;
+    }
+
+    public function countGroupBy()
+    {
+        return \count($this->groupBy ?? []);
     }
 
     protected function executeGroupBy(): DataFrame
@@ -138,19 +147,18 @@ class Select extends Statement implements Countable
             // Group by hash
             $hash = hash_init('sha224');
 
-            foreach ($this->groupBy as $col) {
-                hash_update($hash, serialize($record[$col] ?? null));
+            foreach ($this->groupBy as $col => $v) {
+                hash_update($hash, serialize($record[$col->getName()] ?? null));
             }
 
             $hash = hash_final($hash, false);
 
             // Hash combination not exist yet
             if (!isset($r[$hash])) {
-                foreach ($this->getSelect() as $col) {
-
+                foreach ($this->getSelect(provideColumnIndex: true) as $col) {
                     // col is grouped and selected
-                    if (\is_string($col) && \in_array($col, $this->groupBy, true)) {
-                        $r[$hash][$col] = $record[$col] ?? null;
+                    if ($col instanceof ColumnIndex && isset($this->groupBy[$col])) {
+                        $r[$hash][$col->getName()] = $record[$col->getName()] ?? null;
                     }
                     // col is aggregated or not part or group
                     elseif ($col instanceof AggProvider) {
@@ -167,9 +175,9 @@ class Select extends Statement implements Countable
         }
 
         foreach ($r as &$record) {
-            foreach ($record as &$value) {
-                if ($value instanceof AggInterface) {
-                    $value = $value->getResult();
+            foreach ($record as &$agg) {
+                if ($agg instanceof AggInterface) {
+                    $agg = $agg->getResult();
                 }
             }
         }
@@ -182,7 +190,7 @@ class Select extends Statement implements Countable
     // Modify Iterator
     public function rewind(): void
     {
-        if ($this->cache === CacheStatus::UNUSED && !empty($this->groupBy)) {
+        if ($this->cache === CacheStatus::UNUSED && $this->countGroupBy() !== 0) {
             $this->cache = CacheStatus::BUILDING;
             $this->cache = $this->executeGroupBy();
         }

@@ -10,6 +10,7 @@ use MammothPHP\WoollyM\{ColumnIndex, DataFrame, DataType};
 use MammothPHP\WoollyM\Exceptions\{DataFrameException, InvalidSelectException};
 use Override;
 use Stringable;
+use WeakMap;
 use WeakReference;
 
 /**
@@ -21,6 +22,7 @@ class ColumnRepresentation extends FixedSelect implements Stringable
 
     public function __construct(ColumnIndex $columnIndex)
     {
+        $this->groupBy = new WeakMap;
         $this->columnIndex = WeakReference::create($columnIndex);
         $this->setLinkedDataFrame($columnIndex->df->get());
     }
@@ -73,7 +75,7 @@ class ColumnRepresentation extends FixedSelect implements Stringable
     }
 
     #[Override]
-    public function getSelect(bool $forceString = false): array
+    public function getSelect(bool $forceString = false, bool $provideColumnIndex = false): array
     {
         return [$this->getName()];
     }
