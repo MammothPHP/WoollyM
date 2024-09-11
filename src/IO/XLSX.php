@@ -97,9 +97,9 @@ class XLSX extends Builder
     /**
      * Write an Excel file
      */
-    public function toFile(string|SplFileInfo $file, bool $overwriteFile = false, string $worksheetTitle = 'DataFrame'): void
+    public function toFile(string|SplFileInfo $filePath, bool $overwriteFile = false, string $worksheetTitle = 'DataFrame'): void
     {
-        if ($convertedFile = $this->prepareToFileInput($file, $overwriteFile)) {
+        if ($convertedFile = $this->prepareToFileInput($filePath, $overwriteFile)) {
             $spreadsheet = new Spreadsheet;
             $this->toExcelSpreadsheet(spreadsheet: $spreadsheet, worksheetTitle: $worksheetTitle);
         } else {

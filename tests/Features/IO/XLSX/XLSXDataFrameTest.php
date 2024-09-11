@@ -146,7 +146,7 @@ test('to xlsx file', function (): void {
     ];
 
     $df1 = new DataFrame($sheetA);
-    IOXLSX::fromDataFrame($df1)->toFile(file: $fileName, overwriteFile: true);
+    IOXLSX::fromDataFrame($df1)->toFile(filePath: $fileName, overwriteFile: true);
 
     $df2 = IOXLSX::fromFilePath($fileName)->import();
 
