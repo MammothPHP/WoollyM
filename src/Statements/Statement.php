@@ -225,7 +225,10 @@ abstract class Statement implements Iterator
         return $this;
     }
 
-    protected function passWhereStatement(int $key, array $record): bool
+    /**
+     * @internal
+     */
+    public function passWhereStatement(int $key, array $record): bool
     {
         foreach ($this->where as $conditionsGroup) {
             $r = false;
@@ -251,7 +254,10 @@ abstract class Statement implements Iterator
     protected int $limitCount = 0;
     protected int $offsetCount = 0;
 
-    protected function getStmtSourceIterator(): DataFrame
+    /**
+     * @internal
+     */
+    public function getStmtSourceIterator(): DataFrame
     {
         return $this->getCacheStatus() === CacheStatus::SET ? $this->cache : $this->getLinkedDataFrame();
     }
