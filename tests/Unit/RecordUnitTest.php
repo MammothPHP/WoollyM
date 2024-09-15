@@ -40,3 +40,36 @@ test('dataFrame link', function (): void {
 
     expect($record->toArray())->toBeArray()->toHaveCount(2);
 });
+
+test('update record', function (): void {
+    $i = 0;
+    $df = DataFrame::fromArray([
+        ['a' => ++$i, 'b' => ++$i],
+        ['a' => ++$i, 'b' => ++$i],
+        ['a' => ++$i, 'b' => ++$i],
+        ['a' => ++$i, 'b' => ++$i],
+    ]);
+
+    $r = $df->getRecord(1);
+
+    expect($r->toArray())->toBe(['a' => 3, 'b' => 4]);
+
+    $r['b'] = 42;
+
+    expect($df->getRecord(1)->toArray())
+        ->toBe(['a' => 3, 'b' => 42])
+        ->toBe($r->toArray());
+
+    $r['c'] = 'insert';
+
+    expect($df->getRecord(1)->toArray())
+        ->toBe(['a' => 3, 'b' => 42, 'c' => 'insert'])
+        ->toBe($r->toArray());
+
+
+    unset($r['a']);
+    expect($df->getRecord(1)->toArray())
+        ->toBe(['b' => 42, 'c' => 'insert'])
+        ->toBe($r->toArray());
+});
+

@@ -22,6 +22,10 @@ class Record implements ArrayAccess, Countable, Iterator
         $this->dataFrame = WeakReference::create($dataFrame);
     }
 
+    public function hydrate(): void {
+        $this->recordArray = $this->getDataFrame()->getRecord($this->recordKey)->toArray();
+    }
+
     public function toArray(): array
     {
         return $this->recordArray;
@@ -79,12 +83,15 @@ class Record implements ArrayAccess, Countable, Iterator
 
     public function offsetSet(mixed $offset, mixed $value): void
     {
-        throw new NotYetImplementedException('Record object are immutable');
+        $this->getDataFrame()->updateRecord(key: $this->recordKey, recordArray: array_merge($this->recordArray, [$offset => $value]));
+        $this->hydrate();
     }
 
     public function offsetUnset(mixed $offset): void
     {
-        throw new NotYetImplementedException('Record object are immutable');
+        $this->hydrate();
+        unset($this->recordArray[$offset]);
+        $this->getDataFrame()->updateRecord(key: $this->recordKey, recordArray: $this->recordArray);
     }
 
 
