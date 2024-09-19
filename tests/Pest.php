@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 use MammothPHP\WoollyM\Record;
 
+pest()->project()->github('MammothPHP/WoollyM');
+
 /*
 |--------------------------------------------------------------------------
 | Test Case

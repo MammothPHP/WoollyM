@@ -280,9 +280,9 @@ abstract class DataFramePrimitives
     /**
      * Get a record by key
      */
-    public function getRecord(int $key): Record
+    public function getRecord(int $recordKey): Record
     {
-        return $this->convertAbstractToRecordObject($this->data->getRecordKey($key));
+        return $this->convertAbstractToRecordObject($this->data->getRecordKey($recordKey), $recordKey);
     }
 
     /**
@@ -330,19 +330,19 @@ abstract class DataFramePrimitives
 
     /* ******************************************* Internal Records API ***********************************************/
 
-    protected function convertAbstractToRecordObject(array $abstractRecord): Record
+    protected function convertAbstractToRecordObject(array $abstractRecord, int $recordKey): Record
     {
         $r = [];
 
         foreach ($this->columnsNames() as $ck => $cn) {
-            $key = $this->driverColumnModeText ? $cn : $ck;
+            $columnKey = $this->driverColumnModeText ? $cn : $ck;
 
-            if (\array_key_exists($key, $abstractRecord)) {
-                $r[$cn] = $abstractRecord[$key];
+            if (\array_key_exists($columnKey, $abstractRecord)) {
+                $r[$cn] = $abstractRecord[$columnKey];
             }
         }
 
-        return new Record($this, $key, $r);
+        return new Record($this, $recordKey, $r);
     }
 
     /* *****************************************************************************************************************

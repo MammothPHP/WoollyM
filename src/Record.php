@@ -7,7 +7,7 @@ namespace MammothPHP\WoollyM;
 use ArrayAccess;
 use Countable;
 use Iterator;
-use MammothPHP\WoollyM\Exceptions\{NotYetImplementedException, SourceDataFrameNoLongerExist};
+use MammothPHP\WoollyM\Exceptions\{SourceDataFrameNoLongerExist};
 use WeakReference;
 
 class Record implements ArrayAccess, Countable, Iterator
@@ -22,7 +22,8 @@ class Record implements ArrayAccess, Countable, Iterator
         $this->dataFrame = WeakReference::create($dataFrame);
     }
 
-    public function hydrate(): void {
+    public function hydrate(): void
+    {
         $this->recordArray = $this->getDataFrame()->getRecord($this->recordKey)->toArray();
     }
 
