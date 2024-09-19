@@ -87,7 +87,6 @@ test('bug/ bad recordKey', function (): void {
 
     $expected = array_map(function (array $e): array {
         $e['test'] = 42;
-
         return $e;
     }, $input);
 
@@ -96,4 +95,4 @@ test('bug/ bad recordKey', function (): void {
     }
 
     expect($df->toArray())->toBe($expected);
-})->done(issue: '34');
+})->done(issue: 34);
