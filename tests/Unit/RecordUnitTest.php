@@ -73,3 +73,27 @@ test('update record', function (): void {
         ->toBe($r->toArray());
 });
 
+test('bug/ bad recordKey', function (): void {
+    $i = 0;
+    $df = DataFrame::fromArray($input = [
+        ['a' => $i++],
+        ['a' => $i++],
+        ['a' => $i++],
+        ['a' => $i++],
+        ['a' => $i++],
+        ['a' => $i++],
+        ['a' => $i++], # 6
+    ]);
+
+    $expected = array_map(function (array $e): array {
+        $e['test'] = 42;
+
+        return $e;
+    }, $input);
+
+    for ($i = 0; $i < \count($expected); $i++) {
+        $df->getRecord($i)['test'] = 42;
+    }
+
+    expect($df->toArray())->toBe($expected);
+})->done(issue: '34');
