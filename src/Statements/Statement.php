@@ -6,18 +6,21 @@ namespace MammothPHP\WoollyM\Statements;
 
 use Closure;
 use Iterator;
+use IteratorAggregate;
+use LimitIterator;
 use MammothPHP\WoollyM\Exceptions\{InvalidSelectException, NotYetImplementedException, UnknownOptionException};
 use MammothPHP\WoollyM\{DataFrame, LinkedDataFrame, Record};
+use MammothPHP\WoollyM\Statements\Iterators\{GroupByIterator, StatementRegularIterator};
 use Spatie\Regex\Regex;
 use Stringable;
 
 /**
  * @internal
  */
-abstract class Statement implements Iterator
+abstract class Statement implements IteratorAggregate
 {
     use LinkedDataFrame;
-    protected DataFrame|CacheStatus $cache = CacheStatus::UNUSED;
+    protected GroupByIterator|CacheStatus $cache = CacheStatus::UNUSED;
     protected array $where = [];
     protected ?int $limit = null;
     protected int $offset = 0;
@@ -225,13 +228,16 @@ abstract class Statement implements Iterator
         return $this;
     }
 
-    protected function passWhereStatement(int $key, array $record): bool
+    /**
+     * @internal
+     */
+    public function passWhereStatement(int $key, Record $record): bool
     {
         foreach ($this->where as $conditionsGroup) {
             $r = false;
 
             foreach ($conditionsGroup as $condition) {
-                if ($condition($record, $key)) {
+                if ($condition($record->toArray(), $key)) {
                     $r = true;
 
                     break;
@@ -248,100 +254,19 @@ abstract class Statement implements Iterator
 
 
     // Iterator
-    protected int $limitCount = 0;
-    protected int $offsetCount = 0;
-
-    protected function getStmtSourceIterator(): DataFrame
+    public function getIterator(): StatementRegularIterator|GroupByIterator|LimitIterator
     {
-        return $this->getCacheStatus() === CacheStatus::SET ? $this->cache : $this->getLinkedDataFrame();
-    }
+        $baseIterator = $this->getBaseIterator();
 
-    protected function moveToNextValidRecord(): void
-    {
-        if ($this->valid()) {
-            if ($this->limit !== null && $this->limitCount >= $this->limit) {
-                $this->next();
-            } elseif ($this->passWhereStatement($this->key(), $this->currentUnfiltered())) {
-                if ($this->offsetCount++ < $this->offset) {
-                    $this->next();
-                } else {
-                    $this->limitCount++;
-                }
-            } else {
-                $this->next();
-            }
-        }
-    }
-
-    /**
-     * @internal
-     */
-    public function rewind(): void
-    {
-        $this->limitCount = 0;
-        $this->offsetCount = 0;
-        $this->getStmtSourceIterator()->rewind();
-
-        if ($this->getCacheStatus() !== CacheStatus::SET) {
-            $this->moveToNextValidRecord();
-        }
-    }
-
-    protected function getRecordArray(Record $record): array
-    {
-        return $record->toArray();
-    }
-
-    /**
-     * @internal
-     */
-    public function current(): mixed
-    {
-        $r = $this->getStmtSourceIterator()->current();
-
-        return $this->getRecordArray($r);
-    }
-
-    /**
-     * @internal
-     */
-    protected function currentUnfiltered(): array
-    {
-        return $this->getStmtSourceIterator()->current()->toArray();
-    }
-
-    /**
-     * @internal
-     */
-    public function key(): int
-    {
-        $k = $this->getStmtSourceIterator()->key();
-
-        if ($this->getCacheStatus() == CacheStatus::SET) {
-            $b = $k + 1;
+        if ($this->limit !== null || $this->offset > 0) {
+            return new LimitIterator(iterator: $baseIterator, limit: $this->limit ?? -1, offset: $this->offset);
         }
 
-        return $k;
+        return $baseIterator;
     }
 
-    /**
-     * @internal
-     */
-    public function next(): void
+    protected function getBaseIterator(): StatementRegularIterator|Iterator
     {
-        $this->getStmtSourceIterator()->next();
-
-        if ($this->getCacheStatus() !== CacheStatus::SET) {
-            $this->moveToNextValidRecord();
-        }
+        return new StatementRegularIterator($this);
     }
-
-    /**
-     * @internal
-     */
-    public function valid(): bool
-    {
-        return $this->getStmtSourceIterator()->valid();
-    }
-
 }

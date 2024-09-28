@@ -6,12 +6,13 @@ namespace MammothPHP\WoollyM\Statements\Select;
 
 use BadMethodCallException;
 use Countable;
+use Iterator;
 use MammothPHP\WoollyM\Exceptions\{InvalidSelectException, PropertyNotExistException};
-use MammothPHP\WoollyM\{ColumnIndex, DataFrame, Record};
+use MammothPHP\WoollyM\{DataFrame, Record};
 use MammothPHP\WoollyM\Statements\{CacheStatus, Statement, StatementClause};
+use MammothPHP\WoollyM\Statements\Iterators\{GroupByIterator, StatementRegularIterator, StatementUnfilteredColumnIterator};
 use MammothPHP\WoollyM\Stats\{AggProvider, StmtModules};
 use MammothPHP\WoollyM\Stats\Modules\First;
-use MammothPHP\WoollyM\Stats\ModuleTypes\AggInterface;
 use WeakMap;
 
 class Select extends Statement implements Countable
@@ -32,6 +33,21 @@ class Select extends Statement implements Countable
     public function __clone(): void
     {
         $this->select = clone $this->select;
+    }
+    protected function getBaseIterator(): StatementRegularIterator|Iterator
+    {
+        if ($this->countGroupBy() !== 0) {
+            if ($this->cache === CacheStatus::UNUSED) {
+                $this->cache = new GroupByIterator(
+                    statementIterator: new StatementUnfilteredColumnIterator($this),
+                    groupBy: $this->groupBy
+                );
+            }
+
+            return $this->cache->getIterator();
+        }
+
+        return parent::getBaseIterator();
     }
 
     public function config(StatementClause $param): array|int|null
@@ -131,91 +147,12 @@ class Select extends Statement implements Countable
         return $this;
     }
 
-    public function countGroupBy()
+    /**
+     * @internal
+     */
+    public function countGroupBy(): int
     {
         return \count($this->groupBy ?? []);
-    }
-
-    protected function executeGroupBy(): DataFrame
-    {
-        $this->byPassColumnFilter = true; // Use all available columns
-        $r = [];
-
-        // Iterate over all filtered Dataframe
-        foreach ($this as $record) {
-
-            // Group by hash
-            $hash = hash_init('sha224');
-
-            foreach ($this->groupBy as $col => $v) {
-                hash_update($hash, serialize($record[$col->getName()] ?? null));
-            }
-
-            $hash = hash_final($hash, false);
-
-            // Hash combination not exist yet
-            if (!isset($r[$hash])) {
-                foreach ($this->getSelect(provideColumnIndex: true) as $col) {
-                    // col is grouped and selected
-                    if ($col instanceof ColumnIndex && isset($this->groupBy[$col])) {
-                        $r[$hash][$col->getName()] = $record[$col->getName()] ?? null;
-                    }
-                    // col is aggregated or not part or group
-                    elseif ($col instanceof AggProvider) {
-                        $r[$hash][$col->as] = $col->getAggObjectProvider();
-                    }
-                }
-            }
-
-            foreach ($this->getSelect() as $col) {
-                if ($col instanceof AggProvider) {
-                    $r[$hash][$col->as]->addValue($record[$col->col] ?? null);
-                }
-            }
-        }
-
-        foreach ($r as &$record) {
-            foreach ($record as &$agg) {
-                if ($agg instanceof AggInterface) {
-                    $agg = $agg->getResult();
-                }
-            }
-        }
-
-        $this->byPassColumnFilter = false;
-
-        return DataFrame::fromArray($r);
-    }
-
-    // Modify Iterator
-    public function rewind(): void
-    {
-        if ($this->cache === CacheStatus::UNUSED && $this->countGroupBy() !== 0) {
-            $this->cache = CacheStatus::BUILDING;
-            $this->cache = $this->executeGroupBy();
-        }
-
-        parent::rewind();
-    }
-
-    // Record array
-
-    protected function getRecordArray(Record $record): array
-    {
-        if ($this->getCacheStatus() === CacheStatus::SET) {
-            return $record->toArray();
-        } elseif ($this->byPassColumnFilter) {
-            return parent::getRecordArray($record);
-        } else {
-            $recordArray = $record->toArray();
-            $r = [];
-
-            foreach ($this->getSelect(true) as $columnName) {
-                $r[$columnName] = $recordArray[$columnName] ?? null;
-            }
-
-            return $r;
-        }
     }
 
     // MODULES Implementation
@@ -336,13 +273,7 @@ class Select extends Statement implements Countable
      */
     public function countRecords(): int
     {
-        $c = 0;
-
-        foreach ($this as $record) {
-            $c++;
-        }
-
-        return $c;
+        return iterator_count($this);
     }
 
 }
