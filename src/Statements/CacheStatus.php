@@ -7,6 +7,5 @@ namespace MammothPHP\WoollyM\Statements;
 enum CacheStatus
 {
     case UNUSED;
-    case BUILDING;
     case SET;
 }

@@ -9,7 +9,7 @@ use Countable;
 use Iterator;
 use MammothPHP\WoollyM\Exceptions\{InvalidSelectException, PropertyNotExistException};
 use MammothPHP\WoollyM\{DataFrame, Record};
-use MammothPHP\WoollyM\Statements\{Statement, StatementClause};
+use MammothPHP\WoollyM\Statements\{CacheStatus, Statement, StatementClause};
 use MammothPHP\WoollyM\Statements\Iterators\{GroupByIterator, StatementRegularIterator, StatementUnfilteredColumnIterator};
 use MammothPHP\WoollyM\Stats\{AggProvider, StmtModules};
 use MammothPHP\WoollyM\Stats\Modules\First;
@@ -37,7 +37,14 @@ class Select extends Statement implements Countable
     protected function getBaseIterator(): StatementRegularIterator|Iterator
     {
         if ($this->countGroupBy() !== 0) {
-            return (new GroupByIterator(new StatementUnfilteredColumnIterator($this), $this->groupBy))->getIterator();
+            if ($this->cache === CacheStatus::UNUSED) {
+                $this->cache = new GroupByIterator(
+                    statementIterator: new StatementUnfilteredColumnIterator($this),
+                    groupBy: $this->groupBy
+                );
+            }
+
+            return $this->cache->getIterator();
         }
 
         return parent::getBaseIterator();

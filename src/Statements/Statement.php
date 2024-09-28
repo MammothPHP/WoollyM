@@ -20,7 +20,7 @@ use Stringable;
 abstract class Statement implements IteratorAggregate
 {
     use LinkedDataFrame;
-    protected DataFrame|CacheStatus $cache = CacheStatus::UNUSED;
+    protected GroupByIterator|CacheStatus $cache = CacheStatus::UNUSED;
     protected array $where = [];
     protected ?int $limit = null;
     protected int $offset = 0;
