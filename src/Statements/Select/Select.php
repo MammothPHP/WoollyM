@@ -187,37 +187,6 @@ class Select extends Statement implements Countable
         return DataFrame::fromArray($r);
     }
 
-    // Modify Iterator
-    public function rewind(): void
-    {
-        if ($this->cache === CacheStatus::UNUSED && $this->countGroupBy() !== 0) {
-            $this->cache = CacheStatus::BUILDING;
-            $this->cache = $this->executeGroupBy();
-        }
-
-        parent::rewind();
-    }
-
-    // Record array
-
-    protected function getRecordArray(Record $record): array
-    {
-        if ($this->getCacheStatus() === CacheStatus::SET) {
-            return $record->toArray();
-        } elseif ($this->byPassColumnFilter) {
-            return parent::getRecordArray($record);
-        } else {
-            $recordArray = $record->toArray();
-            $r = [];
-
-            foreach ($this->getSelect(true) as $columnName) {
-                $r[$columnName] = $recordArray[$columnName] ?? null;
-            }
-
-            return $r;
-        }
-    }
-
     // MODULES Implementation
 
     // Implement property & methods overloading
@@ -336,13 +305,7 @@ class Select extends Statement implements Countable
      */
     public function countRecords(): int
     {
-        $c = 0;
-
-        foreach ($this as $record) {
-            $c++;
-        }
-
-        return $c;
+        return iterator_count($this);
     }
 
 }

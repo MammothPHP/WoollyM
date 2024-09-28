@@ -6,15 +6,18 @@ namespace MammothPHP\WoollyM\Statements;
 
 use Closure;
 use Iterator;
+use IteratorAggregate;
+use LimitIterator;
 use MammothPHP\WoollyM\Exceptions\{InvalidSelectException, NotYetImplementedException, UnknownOptionException};
 use MammothPHP\WoollyM\{DataFrame, LinkedDataFrame, Record};
+use MammothPHP\WoollyM\Statements\Iterators\StatementRegularIterator;
 use Spatie\Regex\Regex;
 use Stringable;
 
 /**
  * @internal
  */
-abstract class Statement implements Iterator
+abstract class Statement implements IteratorAggregate
 {
     use LinkedDataFrame;
     protected DataFrame|CacheStatus $cache = CacheStatus::UNUSED;
@@ -228,13 +231,13 @@ abstract class Statement implements Iterator
     /**
      * @internal
      */
-    public function passWhereStatement(int $key, array $record): bool
+    public function passWhereStatement(int $key, Record $record): bool
     {
         foreach ($this->where as $conditionsGroup) {
             $r = false;
 
             foreach ($conditionsGroup as $condition) {
-                if ($condition($record, $key)) {
+                if ($condition($record->toArray(), $key)) {
                     $r = true;
 
                     break;
@@ -251,103 +254,14 @@ abstract class Statement implements Iterator
 
 
     // Iterator
-    protected int $limitCount = 0;
-    protected int $offsetCount = 0;
-
-    /**
-     * @internal
-     */
-    public function getStmtSourceIterator(): DataFrame
+    public function getIterator(): Iterator
     {
-        return $this->getCacheStatus() === CacheStatus::SET ? $this->cache : $this->getLinkedDataFrame();
-    }
+        $statementIterator = new StatementRegularIterator($this);
 
-    protected function moveToNextValidRecord(): void
-    {
-        if ($this->valid()) {
-            if ($this->limit !== null && $this->limitCount >= $this->limit) {
-                $this->next();
-            } elseif ($this->passWhereStatement($this->key(), $this->currentUnfiltered())) {
-                if ($this->offsetCount++ < $this->offset) {
-                    $this->next();
-                } else {
-                    $this->limitCount++;
-                }
-            } else {
-                $this->next();
-            }
-        }
-    }
-
-    /**
-     * @internal
-     */
-    public function rewind(): void
-    {
-        $this->limitCount = 0;
-        $this->offsetCount = 0;
-        $this->getStmtSourceIterator()->rewind();
-
-        if ($this->getCacheStatus() !== CacheStatus::SET) {
-            $this->moveToNextValidRecord();
-        }
-    }
-
-    protected function getRecordArray(Record $record): array
-    {
-        return $record->toArray();
-    }
-
-    /**
-     * @internal
-     */
-    public function current(): mixed
-    {
-        $r = $this->getStmtSourceIterator()->current();
-
-        return $this->getRecordArray($r);
-    }
-
-    /**
-     * @internal
-     */
-    protected function currentUnfiltered(): array
-    {
-        return $this->getStmtSourceIterator()->current()->toArray();
-    }
-
-    /**
-     * @internal
-     */
-    public function key(): int
-    {
-        $k = $this->getStmtSourceIterator()->key();
-
-        if ($this->getCacheStatus() == CacheStatus::SET) {
-            $b = $k + 1;
+        if ($this->limit !== null || $this->offset > 0) {
+            $statementIterator = new LimitIterator(iterator: $statementIterator, limit: $this->limit ?? -1, offset: $this->offset);
         }
 
-        return $k;
+        return $statementIterator;
     }
-
-    /**
-     * @internal
-     */
-    public function next(): void
-    {
-        $this->getStmtSourceIterator()->next();
-
-        if ($this->getCacheStatus() !== CacheStatus::SET) {
-            $this->moveToNextValidRecord();
-        }
-    }
-
-    /**
-     * @internal
-     */
-    public function valid(): bool
-    {
-        return $this->getStmtSourceIterator()->valid();
-    }
-
 }

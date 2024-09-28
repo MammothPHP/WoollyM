@@ -81,7 +81,7 @@ abstract class DataFrameAccessors extends DataFramePrimitives implements ArrayAc
      * @internal
      * @link   http://php.net/manual/en/iterator.current.php
      */
-    public function current(): mixed
+    public function current(): Record
     {
         return $this->convertAbstractToRecordObject($this->driverIterator->current(), $this->key());
     }

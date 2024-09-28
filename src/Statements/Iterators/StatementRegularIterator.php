@@ -6,22 +6,14 @@ namespace MammothPHP\WoollyM\Statements\Iterators;
 
 use Iterator;
 use MammothPHP\WoollyM\Record;
+use MammothPHP\WoollyM\Statements\Select\Select;
 use MammothPHP\WoollyM\Statements\Statement;
 
 class StatementRegularIterator implements Iterator
 {
-    public function __construct (public readonly Statement $statement) {}
+    public function __construct(public readonly Statement $statement) {}
 
     // Iterator
-
-    protected function moveToNextValidRecord(): void
-    {
-        if ($this->valid()) {
-            if (!$this->statement->passWhereStatement($this->key(), $this->currentUnfiltered())) {
-                $this->next();
-            }
-        }
-    }
 
     /**
      * @internal
@@ -29,11 +21,7 @@ class StatementRegularIterator implements Iterator
     public function rewind(): void
     {
         $this->statement->getLinkedDataFrame()->rewind();
-    }
-
-    protected function getRecordArrayEligibleColumns(Record $record): array
-    {
-        return $record->toArray();
+        $this->moveToNextValidRecord();
     }
 
     /**
@@ -41,17 +29,27 @@ class StatementRegularIterator implements Iterator
      */
     public function current(): mixed
     {
-        $r = $this->statement->getLinkedDataFrame()->current();
+        $recordArray = $this->currentRecord()->toArray();
 
-        return $this->getRecordArrayEligibleColumns($r);
+        if ($this->statement instanceof Select) {
+            $r = [];
+
+            foreach ($this->statement->getSelect(true) as $columnName) {
+                $r[$columnName] = $recordArray[$columnName] ?? null;
+            }
+
+            return $r;
+        }
+
+        return $recordArray;
     }
 
     /**
      * @internal
      */
-    protected function currentUnfiltered(): array
+    public function currentRecord(): Record
     {
-        return $this->statement->getLinkedDataFrame()->current()->toArray();
+        return $this->statement->getLinkedDataFrame()->current();
     }
 
     /**
@@ -68,6 +66,17 @@ class StatementRegularIterator implements Iterator
     public function next(): void
     {
         $this->statement->getLinkedDataFrame()->next();
+
+        $this->moveToNextValidRecord();
+    }
+
+    protected function moveToNextValidRecord(): void
+    {
+        if ($this->valid()) {
+            if (!$this->statement->passWhereStatement($this->key(), $this->currentRecord())) {
+                $this->next();
+            }
+        }
     }
 
     /**
