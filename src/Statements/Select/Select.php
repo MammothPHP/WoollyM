@@ -97,6 +97,8 @@ class Select extends Statement implements Countable
      */
     public function resetSelect(): static
     {
+        $this->invalidateCache();
+
         $this->select = new WeakMap;
 
         return $this;
