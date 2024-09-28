@@ -255,8 +255,7 @@ test('groupBy non selected column', function (): void {
         ['a' => 4, 'b' => 5, 'c' => 9],
     ]);
 
-    $grouped = $df->select('b', 'c')
-        ->groupBy('a');
+    $grouped = $df->select('b', 'c')->groupBy('a');
 
     expect($grouped->toArray())->toBe([
         ['b' => 3, 'c' => 3],
@@ -283,7 +282,7 @@ test('groupBy with limit', function (): void {
         ['a' => 1, 'sum(c)' => 7],
         ['a' => 2, 'sum(c)' => 11],
     ]);
-})->todo();
+});
 
 test('groupBy with where column', function (): void {
     $df = new DataFrame([
@@ -321,8 +320,8 @@ test('groupBy with offset', function (): void {
         ->offset(2);
 
     expect($stmt->toArray())->toBe([
-        ['sum(c)' => 15, 'a' => 3],
-        ['sum(c)' => 9, 'a' => 4],
+        2 => ['sum(c)' => 15, 'a' => 3],
+        3 => ['sum(c)' => 9, 'a' => 4],
     ]);
 
     $stmt->whereColumn('a', equal: 3);
@@ -334,4 +333,4 @@ test('groupBy with offset', function (): void {
     expect($stmt->toArray())->toBe([
         ['sum(c)' => 7, 'a' => 1],
     ]);
-})->todo();
+});

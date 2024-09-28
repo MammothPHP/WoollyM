@@ -11,6 +11,8 @@ use MammothPHP\WoollyM\Statements\Statement;
 
 class StatementRegularIterator implements Iterator
 {
+    protected const bool UNFILTERED_COLUMN = false;
+
     public function __construct(public readonly Statement $statement) {}
 
     // Iterator
@@ -31,7 +33,7 @@ class StatementRegularIterator implements Iterator
     {
         $recordArray = $this->currentRecord()->toArray();
 
-        if ($this->statement instanceof Select) {
+        if (!static::UNFILTERED_COLUMN && $this->statement instanceof Select) {
             $r = [];
 
             foreach ($this->statement->getSelect(true) as $columnName) {

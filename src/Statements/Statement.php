@@ -10,7 +10,7 @@ use IteratorAggregate;
 use LimitIterator;
 use MammothPHP\WoollyM\Exceptions\{InvalidSelectException, NotYetImplementedException, UnknownOptionException};
 use MammothPHP\WoollyM\{DataFrame, LinkedDataFrame, Record};
-use MammothPHP\WoollyM\Statements\Iterators\StatementRegularIterator;
+use MammothPHP\WoollyM\Statements\Iterators\{GroupByIterator, StatementRegularIterator};
 use Spatie\Regex\Regex;
 use Stringable;
 
@@ -254,14 +254,19 @@ abstract class Statement implements IteratorAggregate
 
 
     // Iterator
-    public function getIterator(): Iterator
+    public function getIterator(): StatementRegularIterator|GroupByIterator|LimitIterator
     {
-        $statementIterator = new StatementRegularIterator($this);
+        $baseIterator = $this->getBaseIterator();
 
         if ($this->limit !== null || $this->offset > 0) {
-            $statementIterator = new LimitIterator(iterator: $statementIterator, limit: $this->limit ?? -1, offset: $this->offset);
+            return new LimitIterator(iterator: $baseIterator, limit: $this->limit ?? -1, offset: $this->offset);
         }
 
-        return $statementIterator;
+        return $baseIterator;
+    }
+
+    protected function getBaseIterator(): StatementRegularIterator|Iterator
+    {
+        return new StatementRegularIterator($this);
     }
 }
