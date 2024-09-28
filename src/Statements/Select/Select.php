@@ -18,7 +18,7 @@ use WeakMap;
 class Select extends Statement implements Countable
 {
     protected WeakMap $select;
-    public WeakMap $groupBy;
+    protected WeakMap $groupBy;
     protected bool $byPassColumnFilter = false;
 
     public function __construct(DataFrame $df, string|AggProvider ...$selections)
@@ -37,7 +37,7 @@ class Select extends Statement implements Countable
     protected function getBaseIterator(): StatementRegularIterator|Iterator
     {
         if ($this->countGroupBy() !== 0) {
-            return (new GroupByIterator(new StatementUnfilteredColumnIterator($this)))->getIterator();
+            return (new GroupByIterator(new StatementUnfilteredColumnIterator($this), $this->groupBy))->getIterator();
         }
 
         return parent::getBaseIterator();

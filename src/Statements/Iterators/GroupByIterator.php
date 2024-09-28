@@ -9,13 +9,14 @@ use MammothPHP\WoollyM\{ColumnIndex, DataFrame};
 use MammothPHP\WoollyM\Statements\Select\Select;
 use MammothPHP\WoollyM\Stats\AggProvider;
 use MammothPHP\WoollyM\Stats\ModuleTypes\AggInterface;
+use WeakMap;
 
 class GroupByIterator implements IteratorAggregate
 {
     public readonly Select $statement;
     protected readonly DataFrame $cache;
 
-    public function __construct(protected readonly StatementUnfilteredColumnIterator $statementIterator)
+    public function __construct(protected readonly StatementUnfilteredColumnIterator $statementIterator, protected readonly WeakMap $groupBy)
     {
         $this->statement = $this->statementIterator->statement;
         $this->cache = $this->executeGroupBy();
@@ -36,7 +37,7 @@ class GroupByIterator implements IteratorAggregate
             // Group by hash
             $hash = hash_init('sha224');
 
-            foreach ($this->statement->groupBy as $col => $v) {
+            foreach ($this->groupBy as $col => $v) {
                 hash_update($hash, serialize($record[$col->getName()] ?? null));
             }
 
@@ -46,7 +47,7 @@ class GroupByIterator implements IteratorAggregate
             if (!isset($r[$hash])) {
                 foreach ($this->statement->getSelect(provideColumnIndex: true) as $col) {
                     // col is grouped and selected
-                    if ($col instanceof ColumnIndex && isset($this->statement->groupBy[$col])) {
+                    if ($col instanceof ColumnIndex && isset($this->groupBy[$col])) {
                         $r[$hash][$col->getName()] = $record[$col->getName()] ?? null;
                     }
                     // col is aggregated
