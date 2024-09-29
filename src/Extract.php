@@ -73,7 +73,6 @@ class Extract
     /**
      * Allows SQL to be used to perform operations on the DataFrame
      * Table name will always be 'dataframe'
-     * @throws DataFrameException
      */
     public function fromSqlQuery(string $sql): DataFrame
     {

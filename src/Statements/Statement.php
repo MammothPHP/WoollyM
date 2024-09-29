@@ -254,7 +254,7 @@ abstract class Statement implements IteratorAggregate
 
 
     // Iterator
-    public function getIterator(): StatementRegularIterator|GroupByIterator|LimitIterator
+    public function getIterator(): StatementRegularIterator|Iterator|LimitIterator
     {
         $baseIterator = $this->getBaseIterator();
 

@@ -16,7 +16,7 @@ abstract class DataFrameStatements extends DataFrameAccessors
 
     /**
      * Return a Select object
-     * @param string[] $selections column(s) name(s) to select
+     * @param string|AggProvider $selections column(s) name(s) to select
      */
     public function select(string|AggProvider ...$selections): Select
     {

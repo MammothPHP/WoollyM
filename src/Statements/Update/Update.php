@@ -142,8 +142,6 @@ class Update extends Statement
      *          'some_int'    => 'INT',
      *          'some_date'   => 'DATE'
      *      ], ['Y-m-d'], 'm/d/Y');
-     *
-     * @throws Exception
      */
     public function convertTypes(array $typeMap, array|string|null $fromDateFormat = null, ?string $toDateFormat = null): DataFrame
     {

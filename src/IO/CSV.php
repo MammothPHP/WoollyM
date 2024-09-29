@@ -123,9 +123,7 @@ class CSV extends Builder
 
     protected function ReaderFromFileObject(bool &$applyOptions): void
     {
-        if (!$this->file instanceof SplFileObject) {
-            $file = $this->file->openFile('r');
-        }
+        $file = $this->file->openFile('r');
 
         $this->csvReader = Reader::createFromFileObject($file);
 
@@ -235,6 +233,6 @@ class CSV extends Builder
         $writeHeader && $writer->insertOne($this->fromDf->columnsNames());
 
         // Records
-        $writer->insertAll($this->fromDf->getRecordsAsArrayIterator(true));
+        $writer->insertAll($this->fromDf->selectAll());
     }
 }

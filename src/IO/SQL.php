@@ -36,12 +36,14 @@ class SQL
     {
         self::configurePdo($pdo);
 
-        $builder = new static($query, $pdo);
+        $builder = new static;
         $builder->pdo = self::configurePdo($pdo);
         $builder->query = $query;
 
         return $builder;
     }
+
+    final public function __construct() {}
 
     public function import(DataFrame $df = new DataFrame): DataFrame
     {

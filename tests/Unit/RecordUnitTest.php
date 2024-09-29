@@ -87,6 +87,7 @@ test('bug/ bad recordKey', function (): void {
 
     $expected = array_map(function (array $e): array {
         $e['test'] = 42;
+
         return $e;
     }, $input);
 

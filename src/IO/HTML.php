@@ -27,14 +27,9 @@ class HTML
     ): string {
         $converter = (new HTMLConverter)->table($class ?? '', $id ?? '');
 
-        $iterable = $this->fromDf->selectAll()->limit($limit)->offset($offset)->toArray();
+        $iterable = $this->fromDf->selectAll()->limit($limit)->offset($offset);
 
-        try {
-            $r = $converter->convert($iterable, $this->fromDf->columnsNames(), $this->fromDf->columnsNames());
-        } catch (Exception $e) {
-        } finally {
-            ($e ?? null) instanceof Exception && throw $e;
-        }
+        $r = $converter->convert($iterable, $this->fromDf->columnsNames(), $this->fromDf->columnsNames());
 
         if ($pretty) {
             $tidy = new tidy;

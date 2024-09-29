@@ -15,6 +15,7 @@ trait BuilderExport
 
     public static function fromDataFrame(DataFrame $df): static
     {
+        // @phpstan-ignore new.static
         $builder = new static;
         $builder->fromDf = $df;
 

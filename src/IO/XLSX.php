@@ -47,8 +47,6 @@ class XLSX extends Builder
 
     /**
      * Loads the file which the CSV class was instantiated with.
-     * @param $sheetname - The name of the worksheet to load. Defaults to first worksheet (default: null)
-     * @param $colRow - The row of the spreadsheet which contains column data (default: 1)
      * @throws \MammothPHP\WoollyM\Exceptions\UnknownOptionException
      * @throws \PhpOffice\PhpSpreadsheet\Exception
      */
@@ -135,9 +133,7 @@ class XLSX extends Builder
         $worksheet = new Worksheet($spreadsheet, $worksheetTitle);
 
         $wsArray = [$this->fromDf->columnsNames()];
-        foreach ($this->fromDf as $row) {
-            $line = array_values($row->toArray());
-
+        foreach ($this->fromDf->selectAll() as $line) {
             foreach ($line as &$cell) {
                 if (\is_array($cell) || \is_object($cell)) {
                     $cell = json_encode($cell, \JSON_PRETTY_PRINT);

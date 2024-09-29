@@ -6,7 +6,7 @@ namespace MammothPHP\WoollyM\Sort;
 
 abstract readonly class Sort
 {
-    public function __construct(public readonly string $col) {}
+    final public function __construct(public readonly string $col) {}
 
     public static function col(string $col): static
     {

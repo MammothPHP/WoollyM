@@ -28,7 +28,7 @@ trait LinkedDataFrame
     }
 
     /**
-     * @return - false if linked dataFrame no longer exist.
+     * @return bool false if linked dataFrame no longer exist.
      * @internal
      */
     public function isAlive(): bool

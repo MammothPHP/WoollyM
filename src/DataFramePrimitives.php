@@ -250,7 +250,6 @@ abstract class DataFramePrimitives
 
     /**
      * Update a record by record key. If key does not exist, record will be created.
-     * @param array<string, mixed>
      */
     public function updateRecord(int $key, array $recordArray): static
     {

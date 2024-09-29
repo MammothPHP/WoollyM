@@ -13,6 +13,8 @@ abstract class Builder
     public readonly SplFileInfo $file;
     public readonly string $input;
 
+    final public function __construct() {}
+
     public static function fromFilePath(string $path): static
     {
         $file = new SplFileInfo($path);
