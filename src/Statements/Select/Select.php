@@ -214,11 +214,11 @@ class Select extends Statement implements Countable
     {
         return [
             'count records' => $this->countRecords(),
-            'size' => $this->size(),
-            'sum' => $this->average(),
-            'mean' => $this->mean(),
-            'max' => $this->max(),
-            'min' => $this->min(),
+            'size' => $this->size(), // @phpstan-ignore method.notFound
+            'sum' => $this->average(), // @phpstan-ignore method.notFound
+            'mean' => $this->mean(), // @phpstan-ignore method.notFound
+            'max' => $this->max(), // @phpstan-ignore method.notFound
+            'min' => $this->min(), // @phpstan-ignore method.notFound
         ];
     }
 

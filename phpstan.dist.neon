@@ -2,3 +2,10 @@ parameters:
 	level: 5
 	paths:
 		- src
+	treatPhpDocTypesAsCertain: false
+	ignoreErrors:
+		-
+			identifier: property.uninitializedReadonly
+		-
+			identifier: property.readOnlyAssignNotInConstructor
+		- '#constructor expects .*DataFrame, \$this\(.*DataFrame.* given\.#'

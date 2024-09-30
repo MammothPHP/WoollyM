@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace MammothPHP\WoollyM\IO;
 
-use Exception;
 use League\Csv\HTMLConverter;
 use tidy;
 

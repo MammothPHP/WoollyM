@@ -23,7 +23,7 @@ class XLSX extends Builder
 
     public function import(DataFrame $to = new DataFrame): DataFrame
     {
-        $fileName = $this?->file->getPathname() ?? $this->input ?? false;
+        $fileName = $this->file?->getPathname() ?? $this->input ?? false;
 
         if ($fileName === false) {
             throw new NotYetImplementedException('Invalid file');

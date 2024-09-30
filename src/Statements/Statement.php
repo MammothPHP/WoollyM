@@ -53,6 +53,7 @@ abstract class Statement implements IteratorAggregate
             StatementClause::WHERE => $this->where,
             StatementClause::LIMIT => $this->limit,
             StatementClause::OFFSET => $this->offset,
+            default => null
         };
     }
 

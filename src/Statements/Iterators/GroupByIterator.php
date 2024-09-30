@@ -18,13 +18,13 @@ class GroupByIterator implements IteratorAggregate
 
     public function __construct(protected readonly StatementUnfilteredColumnIterator $statementIterator, protected readonly WeakMap $groupBy)
     {
-        $this->statement = $this->statementIterator->statement;
+        $this->statement = $this->statementIterator->statement; // @phpstan-ignore assign.propertyType (only Select statement are pertinent. Else type error at runtime is justified)
         $this->cache = $this->executeGroupBy();
     }
 
     public function getIterator(): StatementRegularIterator
     {
-        return $this->cache->selectAll()->getIterator();
+        return $this->cache->selectAll()->getIterator(); // @phpstan-ignore return.type (It's a runtime check.)
     }
 
     protected function executeGroupBy(): DataFrame

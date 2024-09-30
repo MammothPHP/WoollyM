@@ -47,7 +47,7 @@ abstract class StmtModules
      */
     public static function getStatsPropertyModule(string $property): ?StatsPropertyInterface
     {
-        return self::getModule($property, ModuleStmtAccessType::StatsProperty);
+        return self::getModule($property, ModuleStmtAccessType::StatsProperty); // @phpstan-ignore return.type (runtime check)
     }
 
     /**
@@ -55,7 +55,7 @@ abstract class StmtModules
      */
     public static function getStatsMethodModule(string $method): ?StatsMethodInterface
     {
-        return self::getModule($method, ModuleStmtAccessType::StatsMethod);
+        return self::getModule($method, ModuleStmtAccessType::StatsMethod); // @phpstan-ignore return.type (runtime check)
     }
 
     public static function registerModule(string $moduleClass): void

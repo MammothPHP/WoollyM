@@ -26,6 +26,7 @@ enum DataType
             DataType::DATETIME => DataType::convertDatetime($value, $fromDateFormat, $toDateFormat),
             DataType::CURRENCY => DataType::convertCurrency($value),
             DataType::ACCOUNTING => DataType::convertAccounting($value),
+            default => $value
         };
     }
 
@@ -49,7 +50,7 @@ enum DataType
 
         $value = \floatval($value);
 
-        return (\is_int($value / 1)) ? \intval($value) : $value;
+        return \is_int($value / 1) ? \intval($value) : $value; // @phpstan-ignore function.impossibleType (phpstan bug, argument can be int)
     }
 
     public static function convertInt(mixed $value): int

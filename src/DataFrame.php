@@ -12,6 +12,6 @@ class DataFrame extends DataFrameHelpers
      */
     public static function fromArray(array $data): static
     {
-        return new self($data);
+        return new static($data); // @phpstan-ignore new.static
     }
 }
