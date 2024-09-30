@@ -9,7 +9,6 @@
         "cast_spaces": true,
         "class_reference_name_casing": true,
         "combine_consecutive_issets": true,
-        "comment_to_phpdoc": true,
         "constant_case": true,
         "declare_strict_types": true,
         "dir_constant": true,

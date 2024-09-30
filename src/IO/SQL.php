@@ -91,7 +91,7 @@ class SQL
 
         try {
             $this->identifyAnyMissingColumns($columns, $tableName);
-        } catch (PDOException) {
+        } catch (PDOException) { // @phpstan-ignore catch.neverThrown
             // If this function throws a PDO exception then it's probably just a unit test running a SQLite query
             // SQLite doesn't support "show columns like" syntax
         } catch (InvalidSelectException $ice) {

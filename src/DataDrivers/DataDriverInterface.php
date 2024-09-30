@@ -5,11 +5,14 @@ declare(strict_types=1);
 namespace MammothPHP\WoollyM\DataDrivers;
 
 use Countable;
+use Iterator;
 use IteratorAggregate;
 
 interface DataDriverInterface extends Countable, IteratorAggregate
 {
     public const ColumnKeyType COLUMN_KEY_TYPE = ColumnKeyType::COLUMN_KEY;
+
+    public function getIterator(): Iterator;
 
     public function getRecordKey(int $recordKey): array;
 

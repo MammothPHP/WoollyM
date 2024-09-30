@@ -10,7 +10,6 @@ use MammothPHP\WoollyM\DataDrivers\DriversExceptions\KeyNotExistException;
 use MammothPHP\WoollyM\Exceptions\{FeatureNotImplementedYet, NotYetImplementedException};
 use PDO;
 use PDOStatement;
-use Traversable;
 
 /**
  * @internal
@@ -88,14 +87,14 @@ class PdoSql implements DataDriverInterface
         return trim(str_replace("'", '', $this->db->quote($columnName)));
     }
 
-    public function getIterator(): Traversable
+    public function getIterator(): Iterator
     {
         $stmt = $this->db->query('SELECT * FROM ' . $this->escapeTableName() . ';');
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
 
         $iterator = $stmt->getIterator();
 
-        return new class ($iterator, $this->keyColumn) implements Iterator {
+        return new class ($iterator, $this->keyColumn) implements Iterator { // @phpstan-ignore argument.type (phpstan bug)
             public function __construct(public readonly Iterator $iterator, public readonly string $keyColumn) {}
 
             public function current(): mixed

@@ -23,7 +23,7 @@ class XLSX extends Builder
 
     public function import(DataFrame $to = new DataFrame): DataFrame
     {
-        $fileName = $this->file?->getPathname() ?? $this->input ?? false;
+        $fileName = $this->file?->getPathname() ?? $this->input ?? false; // @phpstan-ignore nullsafe.neverNull (phpstan bug, syntax also deal with unset properties)
 
         if ($fileName === false) {
             throw new NotYetImplementedException('Invalid file');
