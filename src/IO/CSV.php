@@ -123,7 +123,11 @@ class CSV extends Builder
 
     protected function ReaderFromFileObject(bool &$applyOptions): void
     {
-        $file = $this->file->openFile('r');
+        if (!($this->file instanceof SplFileObject) || !$this->file->isWritable()) {
+            $file = $this->file->openFile('r');
+        } else {
+            $file = $this->file;
+        }
 
         $this->csvReader = Reader::createFromFileObject($file);
 
