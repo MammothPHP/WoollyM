@@ -10,7 +10,7 @@
     "ext-mbstring": "*",
     "ext-pdo_sqlite": "*",
     "phpoffice/phpspreadsheet": "^3.3",
-    "league/csv": "^9.16",
+    "league/csv": "^9.17",
     "halaxa/json-machine": "^1.1",
     "spatie/regex": "^3.1"
   },
