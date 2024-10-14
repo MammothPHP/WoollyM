@@ -7,13 +7,13 @@ namespace MammothPHP\WoollyM\DataDrivers\PhpArray;
 use ArrayIterator;
 use Closure;
 use MammothPHP\WoollyM\DataDrivers\DriversExceptions\KeyNotExistException;
-use MammothPHP\WoollyM\DataDrivers\{DataDriverInterface, SortableDriverInterface};
+use MammothPHP\WoollyM\DataDrivers\{SortableDriver, WritableDriver};
 use MammothPHP\WoollyM\Exceptions\DataFrameException;
 
 /**
  * @internal
  */
-class PhpArrayDriver implements DataDriverInterface, SortableDriverInterface
+class PhpArrayDriver implements SortableDriver, WritableDriver
 {
     protected array $data = [];
 

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace MammothPHP\WoollyM\DataDrivers\PdoSql;
 
 use Iterator;
-use MammothPHP\WoollyM\DataDrivers\{ColumnKeyType, DataDriverInterface};
+use MammothPHP\WoollyM\DataDrivers\{ColumnKeyType, WritableDriver};
 use MammothPHP\WoollyM\DataDrivers\DriversExceptions\KeyNotExistException;
 use MammothPHP\WoollyM\Exceptions\{FeatureNotImplementedYet, NotYetImplementedException};
 use PDO;
@@ -14,7 +14,7 @@ use PDOStatement;
 /**
  * @internal
  */
-class PdoSql implements DataDriverInterface
+class PdoSql implements WritableDriver
 {
     public const ColumnKeyType COLUMN_KEY_TYPE = ColumnKeyType::COLUMN_NAME;
 

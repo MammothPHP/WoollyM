@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace MammothPHP\WoollyM;
 
 use Closure;
-use MammothPHP\WoollyM\DataDrivers\SortableDriverInterface;
+use MammothPHP\WoollyM\DataDrivers\SortableDriver;
 use MammothPHP\WoollyM\DataDrivers\DriversExceptions\SortNotSupportedByDriverException;
 use MammothPHP\WoollyM\Sort\{Asc, Sort};
 use MammothPHP\WoollyM\Statements\Delete\Delete;
@@ -31,6 +31,8 @@ abstract class DataFrameModifiers extends DataFrameStatements
      */
     public function delete(): Delete
     {
+        $this->mustBeWritableDriver();
+
         return new Delete($this);
     }
 
@@ -39,6 +41,8 @@ abstract class DataFrameModifiers extends DataFrameStatements
      */
     public function insert(): Insert
     {
+        $this->mustBeWritableDriver();
+
         return new Insert($this);
     }
 
@@ -47,6 +51,8 @@ abstract class DataFrameModifiers extends DataFrameStatements
      */
     public function update(): Update
     {
+        $this->mustBeWritableDriver();
+
         return new Update($this);
     }
 
@@ -74,7 +80,7 @@ abstract class DataFrameModifiers extends DataFrameStatements
      */
     public function orderBy(Sort|string ...$by): static
     {
-        if (!$this->data instanceof SortableDriverInterface) {
+        if (!$this->data instanceof SortableDriver) {
             throw new SortNotSupportedByDriverException;
         }
 

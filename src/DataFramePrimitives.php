@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace MammothPHP\WoollyM;
 
 use Iterator;
-use MammothPHP\WoollyM\Exceptions\InvalidSelectException;
-use MammothPHP\WoollyM\DataDrivers\{ColumnKeyType, DataDriverInterface};
-use MammothPHP\WoollyM\DataDrivers\DriversExceptions\{InvalidDriverClassException, KeyNotExistException};
+use MammothPHP\WoollyM\Exceptions\{InvalidSelectException};
+use MammothPHP\WoollyM\DataDrivers\{ColumnKeyType, DataDriver, WritableDriver};
+use MammothPHP\WoollyM\DataDrivers\DriversExceptions\{DriverIsNotWritableException, InvalidDriverClassException, KeyNotExistException};
 use MammothPHP\WoollyM\DataDrivers\PhpArray\PhpArrayDriver;
 use MammothPHP\WoollyM\Statements\Insert\Insert;
 use MammothPHP\WoollyM\Statements\Select\ColumnRepresentation;
@@ -21,7 +21,7 @@ abstract class DataFramePrimitives
      *********************************************** Core Implementation ***********************************************
      ******************************************************************************************************************/
 
-    protected DataDriverInterface $data;
+    protected DataDriver $data;
     public readonly bool $driverColumnModeText;
 
     protected array $columnIndexes = [];
@@ -39,7 +39,7 @@ abstract class DataFramePrimitives
      * @param $dataDriver - Class of custom driver to use. if null, the PhpArray (in-memory) driver will used.
      * @throws InvalidDriverClassException
      */
-    public function __construct(array $data = [], ?DataDriverInterface $dataDriver = null)
+    public function __construct(array $data = [], ?DataDriver $dataDriver = null)
     {
         $dataDriver ??= new self::$defaultDataDriverClass;
 
@@ -48,7 +48,10 @@ abstract class DataFramePrimitives
 
         $this->columnRepresentations = new WeakMap;
 
-        $this->insert()->append($data);
+        if (!empty($data)) {
+            $this->mustBeWritableDriver();
+            $this->insert()->append($data);
+        }
     }
 
     public function __clone()
@@ -68,6 +71,13 @@ abstract class DataFramePrimitives
         $this->driverIterator = null;
     }
 
+    protected function mustBeWritableDriver(): void
+    {
+        if (!($this->data instanceof WritableDriver)) {
+            throw new DriverIsNotWritableException;
+        }
+    }
+
     /* *****************************************************************************************************************
      ********************************************* Columns *************************************************************
      ******************************************************************************************************************/
@@ -79,6 +89,8 @@ abstract class DataFramePrimitives
      */
     public function addColumn(string $columnName): static
     {
+        $this->mustBeWritableDriver();
+
         if (!$this->hasColumn($columnName)) {
             $this->columnIndexes[] = $newColumnIndex = new ColumnIndex($columnName, $this);
             $this->createColumnRepresentation($newColumnIndex);
@@ -106,6 +118,7 @@ abstract class DataFramePrimitives
      */
     public function removeColumn(string $columnName): static
     {
+        $this->mustBeWritableDriver();
         $this->mustHaveColumn($columnName);
 
         $deletedKey = array_search(
@@ -243,6 +256,7 @@ abstract class DataFramePrimitives
      */
     public function addRecord(array $recordArray): static
     {
+        $this->mustBeWritableDriver();
         $this->data->addRecord($this->convertRecordToAbstract($recordArray));
 
         return $this;
@@ -253,6 +267,8 @@ abstract class DataFramePrimitives
      */
     public function updateRecord(int $key, array $recordArray): static
     {
+        $this->mustBeWritableDriver();
+
         $this->data->setRecord($key, $this->convertRecordToAbstract($recordArray));
 
         return $this;
@@ -260,6 +276,8 @@ abstract class DataFramePrimitives
 
     public function updateCell(int $recordKey, string $column, mixed $newValue): static
     {
+        $this->mustBeWritableDriver();
+
         $this->data->setRecordColumn($recordKey, $this->getColumnKey($column), $newValue);
 
         return $this;
@@ -271,6 +289,8 @@ abstract class DataFramePrimitives
      */
     public function removeRecord(int $key): static
     {
+        $this->mustBeWritableDriver();
+
         $this->data->removeRecord($key);
 
         return $this;

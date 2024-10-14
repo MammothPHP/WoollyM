@@ -8,7 +8,7 @@ use Closure;
 use Countable;
 use IteratorAggregate;
 
-interface SortableDriverInterface extends Countable, IteratorAggregate
+interface SortableDriver extends Countable, IteratorAggregate
 {
     public function uasort(Closure $callback): void;
 }
