@@ -27,7 +27,7 @@ class Delete extends Statement
      */
     public function record(int $key): DataFrame
     {
-        return $this->getLinkedDataFrame()->removeRecord($key);
+        return $this->getLinkedDataFrame()->deleteRecord($key);
     }
 
     /**
@@ -40,7 +40,7 @@ class Delete extends Statement
 
         foreach ($this as $recordKey => $recordData) {
             if ($f($recordData, $recordKey) === true) {
-                $df->removeRecord($recordKey);
+                $df->deleteRecord($recordKey);
             }
         }
 

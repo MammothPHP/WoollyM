@@ -287,11 +287,11 @@ abstract class DataFramePrimitives
      * Remove a record by key
      * @throws KeyNotExistException
      */
-    public function removeRecord(int $key): static
+    public function deleteRecord(int $key): static
     {
         $this->mustBeWritableDriver();
 
-        $this->data->removeRecord($key);
+        $this->data->deleteRecord($key);
 
         return $this;
     }

@@ -31,7 +31,7 @@ test('get a key, delete it, try again', function (): void {
 
     expect($this->df->getRecordAsArray(2))->toBe(['a' => '4', 'b' => null, 'c' => '6']);
 
-    $this->df->removeRecord(2);
+    $this->df->deleteRecord(2);
 
     expect($this->df->getRecordAsArray(2))->toBe(['a' => '4', 'b' => null, 'c' => '6']);
 })->throws(KeyNotExistException::class);

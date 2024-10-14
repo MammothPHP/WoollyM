@@ -64,7 +64,7 @@ abstract class DataFrameAccessors extends DataFramePrimitives implements ArrayAc
      */
     public function offsetUnset(mixed $offset): void
     {
-        $this->removeRecord($offset);
+        $this->deleteRecord($offset);
     }
 
     /* *****************************************************************************************************************

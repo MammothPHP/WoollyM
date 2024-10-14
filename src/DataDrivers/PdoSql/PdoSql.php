@@ -20,7 +20,7 @@ class PdoSql implements WritableDriver
 
     protected readonly PDOStatement $STMT_keyExist;
     protected readonly PDOStatement $STMT_getRecordKey;
-    protected readonly PDOStatement $STMT_remove;
+    protected readonly PDOStatement $STMT_delete;
 
     public function __construct(
         public readonly PDO $db,
@@ -54,7 +54,7 @@ class PdoSql implements WritableDriver
             ';'
         );
 
-        $this->STMT_remove = $this->db->prepare(
+        $this->STMT_delete = $this->db->prepare(
             'DELETE FROM ' . $this->escapeTableName() . ' ' .
             'WHERE ' . $this->escapePrimaryKeyColumnName() . ' = ? ' .
             ';'
@@ -161,10 +161,10 @@ class PdoSql implements WritableDriver
         throw new FeatureNotImplementedYet;
     }
 
-    public function removeRecord(int $recordKey): void
+    public function deleteRecord(int $recordKey): void
     {
-        $this->STMT_remove->bindValue(1, $recordKey, PDO::PARAM_INT);
-        $this->STMT_remove->execute();
+        $this->STMT_delete->bindValue(1, $recordKey, PDO::PARAM_INT);
+        $this->STMT_delete->execute();
     }
 
     public function keyExist(int $recordKey): bool

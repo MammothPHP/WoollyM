@@ -46,7 +46,7 @@ it('require a writable driver', function (): void {
         ->toThrow(DriverIsNotWritableException::class);
     expect(fn() => $df->updateRecord(0, []))
         ->toThrow(DriverIsNotWritableException::class);
-    expect(fn() => $df->removeRecord(0))
+    expect(fn() => $df->deleteRecord(0))
         ->toThrow(DriverIsNotWritableException::class);
     expect(fn() => $df->insert())
         ->toThrow(DriverIsNotWritableException::class);

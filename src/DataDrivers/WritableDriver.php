@@ -12,5 +12,5 @@ interface WritableDriver extends DataDriver
 
     public function addRecord(array $recordData): void;
 
-    public function removeRecord(int $recordKey): void;
+    public function deleteRecord(int $recordKey): void;
 }

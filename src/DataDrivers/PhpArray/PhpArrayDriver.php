@@ -59,7 +59,7 @@ class PhpArrayDriver implements SortableDriver, WritableDriver
         $this->data[] = $recordData;
     }
 
-    public function removeRecord(int $recordKey): void
+    public function deleteRecord(int $recordKey): void
     {
         $this->mustHaveValidRecordKey($recordKey);
 
