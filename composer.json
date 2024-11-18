@@ -20,7 +20,7 @@
     "phpbench/phpbench": "^1.3",
     "saggre/phpdocumentor-markdown": "^0.1",
     "tomasvotruba/lines": "^0.6.0",
-    "phpstan/phpstan": "^1.12"
+    "phpstan/phpstan": "^2.0"
   },
   "autoload": {
     "psr-4": { "MammothPHP\\WoollyM\\": "src/"}
