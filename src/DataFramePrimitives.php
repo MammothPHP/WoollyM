@@ -137,7 +137,7 @@ abstract class DataFramePrimitives
                     mode: \ARRAY_FILTER_USE_KEY
                 );
 
-                $this->data->setRecord($recordKey, $row);
+                $this->data->setRecord($recordKey, $row); //@phpstan-ignore method.notFound
             }
         }
 
@@ -257,7 +257,8 @@ abstract class DataFramePrimitives
     public function addRecord(array $recordArray): static
     {
         $this->mustBeWritableDriver();
-        $this->data->addRecord($this->convertRecordToAbstract($recordArray));
+
+        $this->data->addRecord($this->convertRecordToAbstract($recordArray)); //@phpstan-ignore method.notFound
 
         return $this;
     }
@@ -269,7 +270,7 @@ abstract class DataFramePrimitives
     {
         $this->mustBeWritableDriver();
 
-        $this->data->setRecord($key, $this->convertRecordToAbstract($recordArray));
+        $this->data->setRecord($key, $this->convertRecordToAbstract($recordArray)); //@phpstan-ignore method.notFound
 
         return $this;
     }
@@ -278,7 +279,7 @@ abstract class DataFramePrimitives
     {
         $this->mustBeWritableDriver();
 
-        $this->data->setRecordColumn($recordKey, $this->getColumnKey($column), $newValue);
+        $this->data->setRecordColumn($recordKey, $this->getColumnKey($column), $newValue); //@phpstan-ignore method.notFound
 
         return $this;
     }
@@ -291,7 +292,7 @@ abstract class DataFramePrimitives
     {
         $this->mustBeWritableDriver();
 
-        $this->data->deleteRecord($key);
+        $this->data->deleteRecord($key); //@phpstan-ignore method.notFound
 
         return $this;
     }

@@ -60,7 +60,6 @@ abstract class DataFrameAccessors extends DataFramePrimitives implements ArrayAc
      *      ie: unset($df['column'])
      *
      * @internal
-     * @throws InvalidSelectException
      */
     public function offsetUnset(mixed $offset): void
     {
