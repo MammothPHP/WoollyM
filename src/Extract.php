@@ -14,8 +14,6 @@ class Extract
 {
     use LinkedDataFrame;
 
-    public ?DataDriver $dataDriver = null;
-
     public function __construct(DataFrame $df, public readonly DataFrame $to)
     {
         $this->setLinkedDataFrame($df);

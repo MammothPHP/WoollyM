@@ -19,7 +19,9 @@ class XLSX extends Builder
     public ?string $sheetName = self::DEFAULT_SHEET_NAME;
 
     public const int DEFAULT_COLROW = 1;
-    public int $colRow = self::DEFAULT_COLROW;
+    public int $colRow = self::DEFAULT_COLROW {
+        set => $value >= 1 ? $value : throw new \Exception;
+    }
 
     public function import(DataFrame $to = new DataFrame): DataFrame
     {

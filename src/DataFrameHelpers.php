@@ -55,6 +55,6 @@ abstract class DataFrameHelpers extends DataFrameModifiers implements Countable
      */
     public function groupBy(string|AggProvider ...$args): DataFrame
     {
-        return (new Extract($this, new DataFrame))->groupBy(...$args);
+        return new Extract($this, new DataFrame)->groupBy(...$args);
     }
 }

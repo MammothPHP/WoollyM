@@ -33,7 +33,7 @@ trait LinkedDataFrame
      */
     public function isAlive(): bool
     {
-        return (new ReflectionProperty($this, 'df'))->isInitialized($this);
+        return new ReflectionProperty($this, 'df')->isInitialized($this);
     }
 
     /**

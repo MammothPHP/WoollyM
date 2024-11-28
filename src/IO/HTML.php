@@ -24,7 +24,7 @@ class HTML
         ?string $class = null,
         ?string $id = null
     ): string {
-        $converter = (new HTMLConverter)->table($class ?? '', $id ?? '');
+        $converter = new HTMLConverter()->table($class ?? '', $id ?? '');
 
         $iterable = $this->fromDf->selectAll()->limit($limit)->offset($offset);
 

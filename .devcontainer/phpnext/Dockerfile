@@ -1,4 +1,4 @@
-FROM php:8.4.0RC1-cli
+FROM php:8.4-cli
 
 RUN apt-get update && apt-get install -y \
 		libfreetype-dev \
