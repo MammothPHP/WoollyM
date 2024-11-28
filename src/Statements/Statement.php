@@ -21,6 +21,10 @@ abstract class Statement implements IteratorAggregate
 {
     use LinkedDataFrame;
     protected GroupByIterator|CacheStatus $cache = CacheStatus::UNUSED;
+    public CacheStatus $cacheStatus {
+        get => $this->cache instanceof CacheStatus ? $this->cache : CacheStatus::SET;
+    }
+
     protected array $where = [];
     protected ?int $limit = null;
     protected int $offset = 0;
@@ -28,15 +32,6 @@ abstract class Statement implements IteratorAggregate
     public function __construct(DataFrame $df)
     {
         $this->setLinkedDataFrame($df);
-    }
-
-    public function getCacheStatus(): CacheStatus
-    {
-        if ($this->cache instanceof CacheStatus) {
-            return $this->cache;
-        }
-
-        return CacheStatus::SET;
     }
 
     protected function invalidateCache(): void
