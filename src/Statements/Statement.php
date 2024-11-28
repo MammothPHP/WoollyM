@@ -26,8 +26,8 @@ abstract class Statement implements IteratorAggregate
     }
 
     protected array $where = [];
-    protected ?int $limit = null;
-    protected int $offset = 0;
+    public protected(set) ?int $limit = null;
+    public protected(set) int $offset = 0;
 
     public function __construct(DataFrame $df)
     {

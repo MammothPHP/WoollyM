@@ -20,7 +20,7 @@ class XLSX extends Builder
 
     public const int DEFAULT_COLROW = 1;
     public int $colRow = self::DEFAULT_COLROW {
-        set => $value >= 1 ? $value : throw new \Exception;
+        set => $value >= 1 ? $value : throw new \UnexpectedValueException;
     }
 
     public function import(DataFrame $to = new DataFrame): DataFrame

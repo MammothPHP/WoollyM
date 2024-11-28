@@ -180,3 +180,7 @@ test('to xlsx with array data from direct input', function (): void {
 
     expect($df2->toArray())->toBe($sheetA);
 });
+
+test('bad colRow', function (): void {
+    IOXLSX::fromDataFrame(new DataFrame)->colRow = 0;
+})->throws(UnexpectedValueException::class);

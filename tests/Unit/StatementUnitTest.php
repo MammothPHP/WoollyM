@@ -18,7 +18,7 @@ it('can can be count with Pest/PHPunit', function (): void {
     expect($this->df->select())->toHaveCount(3);
 });
 
-it('has a cache status', function(): void {
+it('has a cache status', function (): void {
     $stmt = $this->df->select('colA')->whereColumn('colA', equal: 1)->groupBy('colA');
 
     expect($stmt->cacheStatus)->toBe(CacheStatus::UNUSED);
@@ -29,7 +29,7 @@ it('has a cache status', function(): void {
 
     $stmt->resetWhere();
     expect($stmt->cacheStatus)->toBe(CacheStatus::UNUSED);
-    $stmt->whereKeyBetween(0,2);
+    $stmt->whereKeyBetween(0, 2);
 
     expect($stmt->cacheStatus)->toBe(CacheStatus::UNUSED);
 

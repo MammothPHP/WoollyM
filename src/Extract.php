@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace MammothPHP\WoollyM;
 
 use Closure;
-use MammothPHP\WoollyM\DataDrivers\DataDriver;
 use MammothPHP\WoollyM\IO\SQL;
 use MammothPHP\WoollyM\Stats\AggProvider;
 use PDO;
