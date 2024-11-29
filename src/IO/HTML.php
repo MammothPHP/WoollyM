@@ -7,15 +7,11 @@ namespace MammothPHP\WoollyM\IO;
 use League\Csv\HTMLConverter;
 use tidy;
 
+use function MammothPHP\WoollyM\Statements\offset;
+
 class HTML
 {
     use BuilderExport;
-
-    public bool $pretty;
-    public ?int $limit;
-    public ?int $offset;
-    public ?string $class;
-    public ?string $id;
 
     public function toString(
         bool $pretty = true,
@@ -24,6 +20,14 @@ class HTML
         ?string $class = null,
         ?string $id = null
     ): string {
+        if ($limit !== null && $limit < 1) {
+            throw new \ValueError('$limit can\'t be less than 1');
+        }
+        elseif ($offset !== null && $offset < 0) {
+            throw new \ValueError('$offset can\'t be less than 0');
+        }
+
+
         $converter = new HTMLConverter()->table($class ?? '', $id ?? '');
 
         $iterable = $this->fromDf->selectAll()->limit($limit)->offset($offset);

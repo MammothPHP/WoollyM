@@ -183,4 +183,4 @@ test('to xlsx with array data from direct input', function (): void {
 
 test('bad colRow', function (): void {
     IOXLSX::fromDataFrame(new DataFrame)->colRow = 0;
-})->throws(UnexpectedValueException::class);
+})->throws(ValueError::class);
