@@ -29,7 +29,7 @@ class PdoSql implements WritableDriver
         public bool $isWritable = true,
         public readonly bool $createMode = false,
     ) {
-        // Cannot create table an column if it's not writable
+        // Cannot create table and column if it's not writable
         if (!$this->isWritable && $this->createMode) {
             throw new NotYetImplementedException;
         }
