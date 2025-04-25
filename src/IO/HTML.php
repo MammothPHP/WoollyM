@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace MammothPHP\WoollyM\IO;
 
+use IteratorIterator;
 use League\Csv\HTMLConverter;
 use tidy;
-
-use function MammothPHP\WoollyM\Statements\offset;
 
 class HTML
 {
@@ -32,7 +31,22 @@ class HTML
 
         $iterable = $this->fromDf->selectAll()->limit($limit)->offset($offset);
 
-        $r = $converter->convert($iterable, $this->fromDf->columnsNames(), $this->fromDf->columnsNames());
+        $transformer = new class ($iterable) extends IteratorIterator {
+            public function current(): array
+            {
+                $row = parent::current();
+
+                foreach ($row as $key => $value) {
+                    if (!is_string($value)) {
+                        $row[$key] = (string) $value;
+                    }
+                }
+
+                return $row;
+            }
+        };
+
+        $r = $converter->convert($transformer, $this->fromDf->columnsNames(), $this->fromDf->columnsNames());
 
         if ($pretty) {
             $tidy = new tidy;

@@ -1,1 +1,1 @@
-<table class="" id="myid"><thead><tr><th scope="col">a</th></tr></thead><tfoot><tr><th scope="col">a</th></tr></tfoot><tbody><tr><td>1</td></tr></tbody></table>
+<table id="myid"><thead><tr><th scope="col">a</th></tr></thead><tfoot><tr><th scope="col">a</th></tr></tfoot><tbody><tr><td>1</td></tr></tbody></table>
