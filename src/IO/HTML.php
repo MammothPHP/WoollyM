@@ -6,7 +6,6 @@ namespace MammothPHP\WoollyM\IO;
 
 use IteratorIterator;
 use League\Csv\HTMLConverter;
-use tidy;
 
 class HTML
 {
@@ -49,11 +48,14 @@ class HTML
         $r = $converter->convert($transformer, $this->fromDf->columnsNames(), $this->fromDf->columnsNames());
 
         if ($pretty) {
-            $tidy = new tidy;
-            $tidy->parseString($r, ['indent' => true, 'newline' => "\n"], 'utf8');
-            $tidy->cleanRepair();
+            $dom = new \DOMDocument('1.0', 'UTF-8');
+            $dom->preserveWhiteSpace = false;
+            $dom->formatOutput = true;
 
-            $r = tidy_get_output($tidy);
+            libxml_use_internal_errors(true);
+            $dom->loadHTML($r, \LIBXML_HTML_NOIMPLIED | \LIBXML_HTML_NODEFDTD);
+            libxml_clear_errors();
+            $r = $dom->saveHTML();
         }
 
         return $r;
