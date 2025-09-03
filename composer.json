@@ -19,7 +19,7 @@
     "pestphp/pest": "^4.0",
     "phpbench/phpbench": "^1.4",
     "saggre/phpdocumentor-markdown": "^0.1",
-    "tomasvotruba/lines": "^0.6",
+    "tomasvotruba/lines": "^0.7",
     "phpstan/phpstan": "^2.1"
   },
   "autoload": {
