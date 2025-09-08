@@ -9,7 +9,7 @@
     "php": "^8.4",
     "ext-mbstring": "*",
     "ext-pdo_sqlite": "*",
-    "phpoffice/phpspreadsheet": "^5.0",
+    "phpoffice/phpspreadsheet": "^5.1",
     "league/csv": "^9.24",
     "halaxa/json-machine": "^1.2",
     "spatie/regex": "^3.1"
