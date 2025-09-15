@@ -16,7 +16,7 @@
   },
   "require-dev": {
     "laravel/pint": "^1.22",
-    "pestphp/pest": "^4.0",
+    "pestphp/pest": "^4.1",
     "phpbench/phpbench": "^1.4",
     "saggre/phpdocumentor-markdown": "^0.1",
     "tomasvotruba/lines": "^0.7",
