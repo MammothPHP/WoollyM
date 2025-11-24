@@ -33,6 +33,7 @@ class Select extends Statement implements Countable
     public function __clone(): void
     {
         $this->select = clone $this->select;
+        $this->groupBy = clone $this->groupBy;
     }
     protected function getBaseIterator(): StatementRegularIterator|Iterator
     {
@@ -154,7 +155,7 @@ class Select extends Statement implements Countable
      */
     public function countGroupBy(): int
     {
-        return \count($this->groupBy ?? []);
+        return \count($this->groupBy);
     }
 
     // MODULES Implementation
