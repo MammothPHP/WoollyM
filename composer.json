@@ -18,7 +18,6 @@
     "laravel/pint": "^1.25",
     "pestphp/pest": "^4.1",
     "phpbench/phpbench": "^1.4",
-    "saggre/phpdocumentor-markdown": "^0.1",
     "tomasvotruba/lines": "^1.0",
     "phpstan/phpstan": "^2.1"
   },
