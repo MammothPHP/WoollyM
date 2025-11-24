@@ -94,7 +94,7 @@ class PdoSql implements WritableDriver
 
         $iterator = $stmt->getIterator();
 
-        return new class ($iterator, $this->keyColumn) implements Iterator { // @phpstan-ignore argument.type (phpstan bug)
+        return new class ($iterator, $this->keyColumn) implements Iterator {
             public function __construct(public readonly Iterator $iterator, public readonly string $keyColumn) {}
 
             public function current(): mixed
