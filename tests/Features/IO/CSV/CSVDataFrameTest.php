@@ -31,7 +31,7 @@ test('from csv', function (Closure $file): void {
 })->with([
     'file path' => fn(string $fileName): string => $fileName,
     'stream' => fn(string $fileName) => fopen($fileName, 'r'),
-    'reader' => fn(string $fileName): Reader => Reader::createFromPath($fileName)->setHeaderOffset(0),
+    'reader' => fn(string $fileName): Reader => Reader::from($fileName)->setHeaderOffset(0),
     'spl file info' => fn(string $fileName): SplFileInfo => new SplFileInfo($fileName),
     'string' => fn(string $fileName): string => file_get_contents($fileName),
 ]);
@@ -166,7 +166,7 @@ test('save csv', function (Closure $file): void {
 })->with([
     'file path' => fn(string $fileName): string => $fileName,
     'stream' => fn(string $fileName) => fopen($fileName, 'w+'),
-    'writer' => fn(string $fileName): Writer => Writer::createFromPath($fileName, 'w+'),
+    'writer' => fn(string $fileName): Writer => Writer::from($fileName, 'w+'),
 ]);
 
 test('save csv with traps', function (): void {

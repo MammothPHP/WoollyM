@@ -129,7 +129,7 @@ class CSV extends Builder
             $file = $this->file;
         }
 
-        $this->csvReader = Reader::createFromFileObject($file);
+        $this->csvReader = Reader::from($file);
 
         if (($file->getFlags() & SplFileObject::READ_CSV)) {
             $applyOptions = false;
@@ -138,12 +138,12 @@ class CSV extends Builder
 
     protected function ReaderFromString(): void
     {
-        $this->csvReader = Reader::createFromString($this->input);
+        $this->csvReader = Reader::fromString($this->input);
     }
 
     protected function ReaderFromStream(): void
     {
-        $this->csvReader = Reader::createFromStream($this->ressource);
+        $this->csvReader = Reader::from($this->ressource);
     }
 
     protected function importFromCsvReader(DataFrame $to): DataFrame
@@ -195,7 +195,7 @@ class CSV extends Builder
         if ($file instanceof Writer) {
             $writer = $file;
         } elseif ($convertedFile = $this->prepareToFileInput($file, $overwriteFile)) {
-            $writer = Writer::createFromFileObject($convertedFile);
+            $writer = Writer::from($convertedFile);
         } else {
             throw new NotYetImplementedException('Invalid File');
         }
@@ -209,7 +209,7 @@ class CSV extends Builder
     public function toStream($phpStream, bool $writeHeader = true): void
     {
         if (\is_resource($phpStream)) {
-            $writer = Writer::createFromStream($phpStream);
+            $writer = Writer::from($phpStream);
         } else {
             throw new NotYetImplementedException('Invalid Stream');
         }
@@ -222,7 +222,7 @@ class CSV extends Builder
      */
     public function toString(bool $writeHeader = true): string
     {
-        $writer = Writer::createFromString();
+        $writer = Writer::fromString();
         $this->writeCsv($writer, $writeHeader);
 
         return $writer->toString();

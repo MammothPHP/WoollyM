@@ -66,10 +66,10 @@ class XLSX extends Builder
         $data = [];
 
         $highestColumn = $sheet->getHighestColumn();
-        $highestColumn++;
+        $highestColumn = str_increment($highestColumn); // Move to next column for loop end condition
 
         foreach ($sheet->getRowIterator($this->colRow) as $i => $row) {
-            for ($column = 'A'; $column != $highestColumn; $column++) {
+            for ($column = 'A'; $column != $highestColumn; $column = str_increment($column)) {
                 /*
                  * If the current row is the column row then assemble our columns.
                  */
