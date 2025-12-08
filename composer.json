@@ -18,7 +18,7 @@
     "laravel/pint": "^1.25",
     "pestphp/pest": "^4.1",
     "phpbench/phpbench": "^1.4",
-    "tomasvotruba/lines": "^1.0",
+    "tomasvotruba/lines": "^1.2",
     "phpstan/phpstan": "^2.1"
   },
   "autoload": {
