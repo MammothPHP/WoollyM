@@ -15,7 +15,7 @@
     "spatie/regex": "^3.1"
   },
   "require-dev": {
-    "laravel/pint": "^1.25",
+    "laravel/pint": "^1.26",
     "pestphp/pest": "^4.1",
     "phpbench/phpbench": "^1.4",
     "tomasvotruba/lines": "^1.2",
